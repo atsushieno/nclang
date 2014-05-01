@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5AE560F9-0E8E-488E-B6C4-3C8196F9013A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>NClang</RootNamespace>
+    <AssemblyName>NClang</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="LanguageService\ClangService.cs" />
+    <Compile Include="LanguageService\AllEnums.cs" />
+    <Compile Include="LanguageService\ClangIndex.cs" />
+    <Compile Include="LanguageService\ClangObject.cs" />
+    <Compile Include="LanguageService\ClangServiceException.cs" />
+    <Compile Include="LanguageService\ClangParseException.cs" />
+    <Compile Include="LanguageService\ClangResourceUsage.cs" />
+    <Compile Include="LanguageService\ClangTranslationUnit.cs" />
+    <Compile Include="LanguageService\ClangUnsavedFile.cs" />
+    <Compile Include="LanguageService\ClangFile.cs" />
+    <Compile Include="LanguageService\ClangFileUniqueId.cs" />
+    <Compile Include="LanguageService\ClangDiagnostic.cs" />
+    <Compile Include="LanguageService\ClangCursor.cs" />
+    <Compile Include="LanguageService\ClangPlatformAvailability.cs" />
+    <Compile Include="LanguageService\ClangVersion.cs" />
+    <Compile Include="LanguageService\ClangCursorSet.cs" />
+    <Compile Include="LanguageService\ClangCodeCompleteResults.cs" />
+    <Compile Include="NClang.Native\NativeCodeCompletion.cs" />
+    <Compile Include="NClang.Native\NativeCommentASTIntrospection.cs" />
+    <Compile Include="NClang.Native\NativeCompilationDatabase.cs" />
+    <Compile Include="NClang.Native\NativeCppASTIntrospection.cs" />
+    <Compile Include="NClang.Native\NativeCrossReferencingAST.cs" />
+    <Compile Include="NClang.Native\NativeCursorManipulations.cs" />
+    <Compile Include="NClang.Native\NativeDebuggingFacilities.cs" />
+    <Compile Include="NClang.Native\NativeDiagnosticReporting.cs" />
+    <Compile Include="NClang.Native\NativeFileManipulation.cs" />
+    <Compile Include="NClang.Native\NativeHighLevelApi.cs" />
+    <Compile Include="NClang.Native\NativeInformationForAttributes.cs" />
+    <Compile Include="NClang.Native\NativeMappingBetweenCursorAndSourceCode.cs" />
+    <Compile Include="NClang.Native\NativeMiscellaneousUtilityFunctions.cs" />
+    <Compile Include="NClang.Native\NativeModuleIntrospection.cs" />
+    <Compile Include="NClang.Native\NativePhysicalSourceLocation.cs" />
+    <Compile Include="NClang.Native\NativeRemappingFunctions.cs" />
+    <Compile Include="NClang.Native\NativeStringManipulation.cs" />
+    <Compile Include="NClang.Native\NativeTokenExtractionAndManipulation.cs" />
+    <Compile Include="NClang.Native\NativeTopLevel.cs" />
+    <Compile Include="NClang.Native\NativeTranslationUnitManipulation.cs" />
+    <Compile Include="NClang.Native\NativeTraversingAstWithCursors.cs" />
+    <Compile Include="NClang.Native\NativeTypeInformationForCXCursor.cs" />
+    <Compile Include="LanguageService\ClangType.cs" />
+    <Compile Include="NClang.Native\CSharpSpecific.cs" />
+    <Compile Include="LanguageService\ClangCompletionResult.cs" />
+    <Compile Include="LanguageService\ClangCompletionString.cs" />
+    <Compile Include="LanguageService\ClangSourceLocation.cs" />
+    <Compile Include="LanguageService\ClangSourceRange.cs" />
+    <Compile Include="LanguageService\ClangIndexAction.cs" />
+    <Compile Include="LanguageService\ClangDiagnosticSet.cs" />
+    <Compile Include="LanguageService\ClangIndexerCallbacks.cs" />
+    <Compile Include="LanguageService\ClangIndexClientFile.cs" />
+    <Compile Include="LanguageService\ClangIndexedFileInfo.cs" />
+    <Compile Include="LanguageService\ClangIndexImportedAstFileInfo.cs" />
+    <Compile Include="LanguageService\ClangIndexClientAstFile.cs" />
+    <Compile Include="LanguageService\ClangIndexDeclarationInfo.cs" />
+    <Compile Include="LanguageService\ClangIndexEntityReferenceInfo.cs" />
+    <Compile Include="LanguageService\ClangModule.cs" />
+    <Compile Include="LanguageService\ClangIndexLocation.cs" />
+    <Compile Include="LanguageService\ClangString.cs" />
+    <Compile Include="LanguageService\ClangComment.cs" />
+    <Compile Include="LanguageService\ClangCompilationDatabase.cs" />
+    <Compile Include="LanguageService\ClangCompileCommands.cs" />
+    <Compile Include="LanguageService\ClangCompileCommand.cs" />
+    <Compile Include="LanguageService\ClangRemapping.cs" />
+    <Compile Include="LanguageService\ClangToken.cs" />
+    <Compile Include="LanguageService\ClangTokenSet.cs" />
+    <Compile Include="LanguageService\ClangIndexEntityInfo.cs" />
+    <Compile Include="LanguageService\ClangIndexAttributeInfo.cs" />
+    <Compile Include="LanguageService\ClangIndexIBOutletCollectionAttributeInfo.cs" />
+    <Compile Include="LanguageService\ClangIndexContainerInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="LanguageService\" />
+    <Folder Include="NClang.Native\" />
+  </ItemGroup>
+</Project>
