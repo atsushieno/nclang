@@ -1,6 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
 using NClang.Natives;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace NClang
 {
@@ -22,7 +24,11 @@ namespace NClang
 
 		public ClangDiagnostic Get (int index)
 		{
-			return new ClangDiagnostic (LibClang.clang_getDiagnostic (Handle, (uint) index));
+			return new ClangDiagnostic (LibClang.clang_getDiagnosticInSet (Handle, (uint) index));
+		}
+
+		public IEnumerable<ClangDiagnostic> Items {
+			get { return Enumerable.Range (0, Count).Select (i => Get (i)); }
 		}
 	}
 }
