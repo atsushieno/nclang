@@ -39,6 +39,7 @@
     <Compile Include="ClangCursorTest.cs" />
     <Compile Include="ClangTestHelpers.cs" />
     <Compile Include="ClangTypeTest.cs" />
+    <Compile Include="ClangDiagnosticTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
