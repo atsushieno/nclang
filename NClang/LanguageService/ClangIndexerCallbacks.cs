@@ -24,7 +24,7 @@ namespace NClang
 			//if (Diagnostic != null)
 			ret.Diagnostic = (clientData, ds, reserved) => Diagnostic (clientData, new ClangDiagnosticSet (ds));
 			//if (EnteredMainFile != null)
-			ret.EnteredMainFile = (clientData, f, reserved) => EnteredMainFile (clientData, new ClangFile (ClangService.GetNullCursor (), f)).Handle;
+			ret.EnteredMainFile = (clientData, f, reserved) => EnteredMainFile (clientData, new ClangFile (f)).Handle;
 			//if (PreprocessIncludedFile != null)
 			ret.PpIncludedFile = (IntPtr clientData, ref CXIdxIncludedFileInfo includedFile) => PreprocessIncludedFile (clientData, new ClangIndexedFileInfo (includedFile)).Handle;
 			//if (ImportedAstFile != null)

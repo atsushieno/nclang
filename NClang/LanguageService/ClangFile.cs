@@ -13,11 +13,6 @@ namespace NClang
 		{
 		}
 
-		internal ClangFile (ClangCursor cursor, CXFile handle)
-			: base (handle)
-		{
-		}
-
 		public string FileName {
 			get { return LibClang.clang_getFileName (Handle).Unwrap (); }
 		}

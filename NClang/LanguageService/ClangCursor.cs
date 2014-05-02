@@ -104,7 +104,7 @@ namespace NClang
 		public ClangFile IncludedFile {
 			get {
 				var h = LibClang.clang_getIncludedFile (source);
-				return h == IntPtr.Zero ? null : new ClangFile (this, h);
+				return h == IntPtr.Zero ? null : new ClangFile (h);
 			}
 		}
 
