@@ -78,9 +78,9 @@ namespace NClang
 
 		public CommandLineOptions Options {
 			get {
-				IntPtr d = IntPtr.Zero;
-				var e = LibClang.clang_getDiagnosticOption (Handle, ref d);
-				return new CommandLineOptions (e.Unwrap (), d != IntPtr.Zero ? Marshal.PtrToStructure<ClangString> (d).Unwrap () : null);
+				ClangString d;
+				var e = LibClang.clang_getDiagnosticOption (Handle, out d);
+				return new CommandLineOptions (e.Unwrap (), d.Unwrap ());
 			}
 		}
 

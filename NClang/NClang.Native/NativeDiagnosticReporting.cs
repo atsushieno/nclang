@@ -59,7 +59,7 @@ namespace NClang.Natives
 		 internal static extern CXString clang_getDiagnosticSpelling (CXDiagnostic _);
 
 		[DllImport (LibraryName)]
-		internal static extern CXString clang_getDiagnosticOption (CXDiagnostic diag, ref IntPtr disable);
+		internal static extern CXString clang_getDiagnosticOption (CXDiagnostic diag, out CXString disable);
 
 		[return:MarshalAs (UnmanagedType.SysUInt)]
 		[DllImport (LibraryName)]
