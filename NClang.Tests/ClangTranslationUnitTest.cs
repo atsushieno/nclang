@@ -44,8 +44,16 @@ namespace NClang.Tests
 		public void GetFile ()
 		{
 			string filename = "TranslationUnitTest.ResourceUsage.c";
+			int count = 0;
 			ClangTestHelpers.WithTranslationUnit ((idx, tu) => {
-				tu.GetFile (filename);
+				var f = tu.GetFile (filename);
+				var result = tu.FindIncludesInFile (f, (cursor, range) => {
+					count++;
+					Assert.AreEqual (CursorKind.InclusionDirective, cursor.Kind, "cursor.Kind");
+					return VisitorResult.Continue;
+				});
+				Assert.AreEqual (FindResult.Success, result, "result");
+				Assert.AreEqual (1, count, "count");
 			}, filename);
 		}
 	}

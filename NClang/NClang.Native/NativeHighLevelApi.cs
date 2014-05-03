@@ -24,26 +24,26 @@ using CXTranslationUnit = System.IntPtr; // CXTranslationUnitImpl*
 
 namespace NClang.Natives
 {
-	delegate VisitorResult CXVisitorResultVisitor (object context, CXCursor _, CXSourceRange __);
+	delegate VisitorResult CXVisitorResultVisitor (IntPtr context, CXCursor _, CXSourceRange __);
 
 	[StructLayout (LayoutKind.Sequential)]
-	struct ClangCursorAndRangeVisitor
+	struct CXCursorAndRangeVisitor
 	{
-		internal ClangCursorAndRangeVisitor (object context, CXVisitorResultVisitor visit)
+		internal CXCursorAndRangeVisitor (CXVisitorResultVisitor visit)
 		{
-			Context = context;
+			Context = IntPtr.Zero;
 			Visit = visit;
 		}
 
-		public readonly object Context;
+		public readonly IntPtr Context;
 		public readonly CXVisitorResultVisitor Visit;
 	}
 
 	[StructLayout (LayoutKind.Sequential)]
 	struct CXIdxLoc
 	{
-		[MarshalAs (UnmanagedType.LPArray, SizeConst = 2)]
-		public IntPtr[] PtrData;
+		public IntPtr PtrData1;
+		public IntPtr PtrData2;
 		[MarshalAs (UnmanagedType.SysUInt)]
 		public uint IntData;
 	}
@@ -240,10 +240,10 @@ namespace NClang.Natives
 	static partial class LibClang
 	{
 		[DllImport (LibraryName)]
-		 internal static extern FindResult 	clang_findReferencesInFile (CXCursor cursor, CXFile file, ClangCursorAndRangeVisitor visitor);
+		 internal static extern FindResult 	clang_findReferencesInFile (CXCursor cursor, CXFile file, CXCursorAndRangeVisitor visitor);
 
 		[DllImport (LibraryName)]
-		 internal static extern FindResult 	clang_findIncludesInFile (CXTranslationUnit TU, CXFile file, ClangCursorAndRangeVisitor visitor);
+		 internal static extern FindResult 	clang_findIncludesInFile (CXTranslationUnit TU, CXFile file, CXCursorAndRangeVisitor visitor);
 
 		[return:MarshalAs (UnmanagedType.SysInt)]
 		[DllImport (LibraryName)]

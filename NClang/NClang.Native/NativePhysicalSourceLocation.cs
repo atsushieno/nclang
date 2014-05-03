@@ -20,14 +20,8 @@ namespace NClang.Natives
 	[StructLayout (LayoutKind.Sequential)]
 	struct CXSourceRange
 	{
-		public CXSourceRange (IntPtr[] ptrData, uint beginIntData, uint endIntData)
-		{
-			this.PtrData = ptrData;
-			this.BeginIntData = beginIntData;
-			this.EndIntData = endIntData;
-		}
-
-		public readonly IntPtr[] PtrData;
+		public readonly IntPtr PtrData1;
+		public readonly IntPtr PtrData2;
 		[MarshalAs (UnmanagedType.SysUInt)]
 		public readonly uint BeginIntData;
 		[MarshalAs (UnmanagedType.SysUInt)]
@@ -101,9 +95,11 @@ namespace NClang.Natives
 		[DllImport (LibraryName)]
 		 internal static extern CXSourceLocation clang_getRangeEnd (CXSourceRange range);
 
+		/* does not exist in clang 3.5
 		[DllImport (LibraryName)]
 		 internal static extern IntPtr clang_getSkippedRanges (CXTranslationUnit tu, CXFile file); // CXSourceRangeList*
-		
+		*/
+
 		[DllImport (LibraryName)]
 		internal static extern void clang_disposeSourceRangeList (IntPtr ranges); // CXSourceRangeList*
 	}

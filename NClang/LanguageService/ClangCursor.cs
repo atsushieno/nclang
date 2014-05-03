@@ -386,7 +386,7 @@ namespace NClang
 
 		public FindResult FindReferenceInFile (ClangFile file, Func<object,ClangCursor,ClangSourceRange,VisitorResult> visitor)
 		{
-			return LibClang.clang_findReferencesInFile (source, file.Handle, new ClangCursorAndRangeVisitor (new Object (), (ctx, cursor, range) => visitor (ctx, new ClangCursor (cursor), new ClangSourceRange (range))));
+			return LibClang.clang_findReferencesInFile (source, file.Handle, new CXCursorAndRangeVisitor ((ctx, cursor, range) => visitor (ctx, new ClangCursor (cursor), new ClangSourceRange (range))));
 		}
 	}
 }

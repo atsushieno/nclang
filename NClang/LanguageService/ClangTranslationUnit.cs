@@ -114,6 +114,8 @@ namespace NClang
 
 		// PhysicalSourceLocations
 
+		/* does not exist in clang 3.5
+
 		int? range_size;
 
 		public ClangSourceRange [] GetSkippedRanges (ClangFile file)
@@ -127,6 +129,7 @@ namespace NClang
 				LibClang.clang_disposeSourceRangeList (ret);
 			}
 		}
+		*/
 
 		// MappingBetweenCursorAndLocation
 
@@ -198,9 +201,9 @@ namespace NClang
 
 		// HighLevelAPI
 
-		public FindResult FindIncludesInFile (ClangFile file, Func<object,ClangCursor,ClangSourceRange,VisitorResult> visitor)
+		public FindResult FindIncludesInFile (ClangFile file, Func<ClangCursor,ClangSourceRange,VisitorResult> visitor)
 		{
-			return LibClang.clang_findIncludesInFile (Handle, file.Handle, new ClangCursorAndRangeVisitor (new Object (), (ctx, cursor, range) => visitor (ctx, new ClangCursor (cursor), new ClangSourceRange (range))));
+			return LibClang.clang_findIncludesInFile (Handle, file.Handle, new CXCursorAndRangeVisitor ((ctx, cursor, range) => visitor (new ClangCursor (cursor), new ClangSourceRange (range))));
 		}
 	}
 }
