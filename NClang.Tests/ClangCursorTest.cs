@@ -17,8 +17,7 @@ namespace NClang.Tests
 			Assert.IsNotNull (t, "CursorType");
 
 			Assert.AreEqual (CXXAccessSpecifier.Invalid, c.CxxAccessSpecifier, "CxxAccessSpecifier");
-			// FIXME: enable it
-			//Assert.AreEqual (string.Empty, c.DeclObjCTypeEncoding, "DeclObjCTypeEncoding");
+			Assert.AreEqual (string.Empty, c.DeclObjCTypeEncoding, "DeclObjCTypeEncoding");
 			Assert.AreEqual (18446744073709551615m, c.EnumConstantDeclUnsignedValue, "EnumConstantDeclUnsignedValue");
 			Assert.AreEqual (-9223372036854775808m, c.EnumConstantDeclValue, "EnumConstantDeclValue");
 
@@ -61,8 +60,7 @@ namespace NClang.Tests
 				Assert.IsNotNull (t, "CursorType");
 
 				Assert.AreEqual (CXXAccessSpecifier.Invalid, c.CxxAccessSpecifier, "CxxAccessSpecifier");
-				// FIXME: enable it
-				//Assert.AreEqual (string.Empty, c.DeclObjCTypeEncoding, "DeclObjCTypeEncoding");
+				Assert.AreEqual (string.Empty, c.DeclObjCTypeEncoding, "DeclObjCTypeEncoding");
 				Assert.AreEqual (18446744073709551615m, c.EnumConstantDeclUnsignedValue, "EnumConstantDeclUnsignedValue");
 				Assert.AreEqual (-9223372036854775808m, c.EnumConstantDeclValue, "EnumConstantDeclValue");
 
