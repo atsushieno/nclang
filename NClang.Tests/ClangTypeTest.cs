@@ -40,8 +40,7 @@ namespace NClang.Tests
 			tt = t.ResultType;
 			Assert.IsNotNull (tt, "ResultType");
 			Assert.AreEqual (-1, t.SizeOf, "SizeOf");
-			// FIXME: enable this
-			//Assert.AreEqual (null, t.Spelling, "Spelling");
+			Assert.AreEqual (string.Empty, t.Spelling, "Spelling");
 			// not in libclang 3.5
 			// Assert.AreEqual (-1, t.TemplateArgumentCount, "TemplateArgumentCount");
 			var cc = t.TypeDeclaration;
