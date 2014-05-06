@@ -523,7 +523,7 @@ namespace NClang
 
 	}
 
-	public enum IndexOptFlags
+	public enum IndexOptionFlags
 	{
 		None = 0x0,
 		SuppressRedundantRefs = 0x1,

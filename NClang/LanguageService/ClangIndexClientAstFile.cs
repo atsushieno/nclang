@@ -6,7 +6,7 @@ namespace NClang
 
 	public class ClangIndexClientAstFile : ClangObject
 	{
-		internal ClangIndexClientAstFile (IntPtr handle)
+		public ClangIndexClientAstFile (IntPtr handle)
 			: base (handle)
 		{
 		}

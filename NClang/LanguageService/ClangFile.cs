@@ -32,5 +32,10 @@ namespace NClang
 				return new ClangFileUniqueId (uid);
 			}
 		}
+
+		public override string ToString ()
+		{
+			return string.Format ("[ClangFile: FileName={0}, FileUniqueId={1}]", FileName, FileUniqueId);
+		}
 	}
 }

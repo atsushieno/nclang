@@ -31,6 +31,11 @@ namespace NClang
 			public ClangFile File { get; private set; }
 
 			public int Offset { get; private set; }
+
+			public override string ToString ()
+			{
+				return string.Format ("[PhysicalLocation: File={0} ({1}, {2}) offset={3}]", File, Line, Column, Offset);
+			}
 		}
 
 		public class IndexFileLocation : PhysicalLocation
@@ -142,6 +147,10 @@ namespace NClang
 				return new PhysicalLocation (f.Wrap (), (int) l, (int) c, (int) o);
 			}
 		}
+
+		public override string ToString ()
+		{
+			return ExpansionLocation.ToString ();
+		}
 	}
-	
 }

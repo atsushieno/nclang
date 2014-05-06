@@ -18,21 +18,21 @@ namespace NClang
 			LibClang.clang_IndexAction_dispose (Handle);
 		}
 
-		public ClangTranslationUnit IndexSourceFile (IntPtr clientData, ClangIndexerCallbacks [] indexCallbacks, IndexOptFlags options, string sourceFileName, string [] commandLineArgs, ClangUnsavedFile [] unsavedFiles, TranslationUnitFlags translationUnitOptions)
+		public ClangTranslationUnit IndexSourceFile (IntPtr clientData, ClangIndexerCallbacks [] indexCallbacks, IndexOptionFlags options, string sourceFileName, string [] commandLineArgs, ClangUnsavedFile [] unsavedFiles, TranslationUnitFlags translationUnitOptions)
 		{
 			if (indexCallbacks == null)
 				throw new ArgumentNullException ("indexCallbacks");
 
 			var cbs = indexCallbacks.Select (ic => ic.ToNative ()).ToArray ();
 			IntPtr tu;
-			var uf = unsavedFiles.Select (u => new CXUnsavedFile (u.FileName, u.Contents)).ToArray ();
-			var ret = LibClang.clang_indexSourceFile (Handle, clientData, cbs, (uint) cbs.Length, options, sourceFileName, commandLineArgs, commandLineArgs.Length, uf, (uint) unsavedFiles.Length, out tu, translationUnitOptions);
+			var uf = unsavedFiles.ToNative ();
+			var ret = LibClang.clang_indexSourceFile (Handle, clientData, cbs, (uint) cbs.Length, options, sourceFileName, commandLineArgs, commandLineArgs.Length, uf, (uint) uf.Length, out tu, translationUnitOptions);
 			if (ret != 0)
 				throw new ClangServiceException ("Faied to index source file");
 			return new ClangTranslationUnit (tu);
 		}
 
-		public void IndexTranslationUnit (IntPtr clientData, ClangIndexerCallbacks [] indexCallbacks, IndexOptFlags options, ClangTranslationUnit translationUnit)
+		public void IndexTranslationUnit (IntPtr clientData, ClangIndexerCallbacks [] indexCallbacks, IndexOptionFlags options, ClangTranslationUnit translationUnit)
 		{
 			if (indexCallbacks == null)
 				throw new ArgumentNullException ("indexCallbacks");
@@ -40,9 +40,9 @@ namespace NClang
 				throw new ArgumentNullException ("translationUnit");
 
 			var cbs = indexCallbacks.Select (ic => ic.ToNative ()).ToArray ();
-			var ret = LibClang.clang_indexTranslationUnit (Handle, clientData, cbs, (uint) cbs.Length, options, translationUnit.Handle);
+			var ret = LibClang.clang_indexTranslationUnit (Handle, clientData, cbs, (uint) (cbs.Length * Marshal.SizeOf<IndexerCallbacks> ()), options, translationUnit.Handle);
 			if (ret != 0)
-				throw new ClangServiceException ("Faied to index translation unit: " + translationUnit.TranslationUnitSpelling);
+				throw new ClangServiceException (string.Format ("Faied to index translation unit: {0} Reason: {1}", translationUnit.TranslationUnitSpelling, ret));
 		}
 	}
 

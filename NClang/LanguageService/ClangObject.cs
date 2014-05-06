@@ -13,7 +13,7 @@ namespace NClang
 			this.Handle = handle;
 		}
 		
-		internal IntPtr Handle { get; set; }
+		public IntPtr Handle { get; set; }
 	}
 
 

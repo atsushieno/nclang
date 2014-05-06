@@ -10,7 +10,7 @@ namespace NClang
 		readonly CXIdxContainerInfo source;
 		readonly IntPtr address;
 
-		internal ClangIndexContainerInfo (IntPtr address)
+		public ClangIndexContainerInfo (IntPtr address)
 		{
 			this.address = address;
 			source = Marshal.PtrToStructure<CXIdxContainerInfo> (address);

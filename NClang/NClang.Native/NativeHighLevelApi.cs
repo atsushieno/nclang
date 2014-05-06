@@ -22,6 +22,8 @@ using CXClientData = System.IntPtr; // void*
 using CXDiagnosticSet = System.IntPtr; // void*
 using CXTranslationUnit = System.IntPtr; // CXTranslationUnitImpl*
 
+using MarshalCallConv = System.Runtime.InteropServices.CallingConvention;
+
 namespace NClang.Natives
 {
 	delegate VisitorResult CXVisitorResultVisitor (IntPtr context, CXCursor _, CXSourceRange __);
@@ -213,26 +215,42 @@ namespace NClang.Natives
 		public IntPtr Container; // const CXIdxContainerInfo *
 	}
 	
+	[UnmanagedFunctionPointer (MarshalCallConv.Cdecl)]
 	[return:MarshalAs (UnmanagedType.SysInt)]
-	delegate int AbortQueryHandler (CXClientData client_data,IntPtr reserved);
+	delegate int AbortQueryHandler (CXClientData client_data, IntPtr reserved);
+	[UnmanagedFunctionPointer (MarshalCallConv.Cdecl)]
 	delegate void DiagnosticHandler (CXClientData client_data,CXDiagnosticSet _,IntPtr reserved);
+	[UnmanagedFunctionPointer (MarshalCallConv.Cdecl)]
 	delegate CXIdxClientFile EnteredMainFileHandler (CXClientData client_data,CXFile mainFile,IntPtr reserved);
-	delegate CXIdxClientFile PpIncludedFileHandler (CXClientData client_data,ref CXIdxIncludedFileInfo _);
-	delegate CXIdxClientASTFile ImportedASTFileHandler (CXClientData client_data,ref CXIdxImportedASTFileInfo _);
+	[UnmanagedFunctionPointer (MarshalCallConv.Cdecl)]
+	delegate CXIdxClientFile PpIncludedFileHandler (CXClientData client_data, IntPtr _); // CXIdxIncludedFileInfo*
+	[UnmanagedFunctionPointer (MarshalCallConv.Cdecl)]
+	delegate CXIdxClientASTFile ImportedASTFileHandler (CXClientData client_data, IntPtr _); // CXIdxImportedASTFileInfo*
+	[UnmanagedFunctionPointer (MarshalCallConv.Cdecl)]
 	delegate CXIdxClientContainer StartedTranslationUnitHandler (CXClientData client_data,IntPtr reserved);
+	[UnmanagedFunctionPointer (MarshalCallConv.Cdecl)]
 	delegate void IndexDeclarationHandler (CXClientData client_data, IntPtr _); //  CXIdxDeclInfo*
+	[UnmanagedFunctionPointer (MarshalCallConv.Cdecl)]
 	delegate void IndexEntityReferenceHandler (CXClientData client_data, IntPtr _); // CXIdxEntityRefInfo*
 
 	[StructLayout (LayoutKind.Sequential)]
 	struct IndexerCallbacks
 	{
+		[MarshalAs (UnmanagedType.FunctionPtr)]
 		public AbortQueryHandler AbortQuery;
+		[MarshalAs (UnmanagedType.FunctionPtr)]
 		public DiagnosticHandler Diagnostic;
+		[MarshalAs (UnmanagedType.FunctionPtr)]
 		public EnteredMainFileHandler EnteredMainFile;
+		[MarshalAs (UnmanagedType.FunctionPtr)]
 		public PpIncludedFileHandler PpIncludedFile;
+		[MarshalAs (UnmanagedType.FunctionPtr)]
 		public ImportedASTFileHandler ImportedASTFile;
+		[MarshalAs (UnmanagedType.FunctionPtr)]
 		public StartedTranslationUnitHandler StartedTranslationUnit;
+		[MarshalAs (UnmanagedType.FunctionPtr)]
 		public IndexDeclarationHandler IndexDeclaration;
+		[MarshalAs (UnmanagedType.FunctionPtr)]
 		public IndexEntityReferenceHandler IndexEntityReference;
 	}
 
@@ -279,10 +297,10 @@ namespace NClang.Natives
 
 		[return:MarshalAs (UnmanagedType.SysInt)]
 		[DllImport (LibraryName)]
-		 internal static extern int 	clang_indexSourceFile (CXIndexAction _, CXClientData client_data,
+		internal static extern ErrorCode 	clang_indexSourceFile (CXIndexAction _, CXClientData client_data,
 			[MarshalAs (UnmanagedType.LPArray, SizeParamIndex = 3)] IndexerCallbacks [] index_callbacks,
 			[MarshalAs (UnmanagedType.SysUInt)] uint index_callbacks_size,
-			[MarshalAs (UnmanagedType.SysUInt)] IndexOptFlags index_options,
+			[MarshalAs (UnmanagedType.SysUInt)] IndexOptionFlags index_options,
 			string source_filename,
 			[MarshalAs (UnmanagedType.LPArray, SizeParamIndex = 7)] string [] command_line_args, // const char *const *
 			[MarshalAs (UnmanagedType.SysInt)] int num_command_line_args,
@@ -292,9 +310,9 @@ namespace NClang.Natives
 
 		[return:MarshalAs (UnmanagedType.SysInt)]
 		[DllImport (LibraryName)]
-		 internal static extern int 	clang_indexTranslationUnit (CXIndexAction _, CXClientData client_data,
+		internal static extern ErrorCode 	clang_indexTranslationUnit (CXIndexAction _, CXClientData client_data,
 			[MarshalAs (UnmanagedType.LPArray, SizeParamIndex = 3)] IndexerCallbacks [] index_callbacks, [MarshalAs (UnmanagedType.SysUInt)] uint index_callbacks_size,
-			[MarshalAs (UnmanagedType.SysUInt)] IndexOptFlags index_options, CXTranslationUnit __);
+			[MarshalAs (UnmanagedType.SysUInt)] IndexOptionFlags index_options, CXTranslationUnit __);
 
 		[DllImport (LibraryName)]
 		internal static extern void 	clang_indexLoc_getFileLocation (CXIdxLoc loc, out IntPtr indexFile, out IntPtr file, // CXIdxClientFile*, CXIdxClientFile

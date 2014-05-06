@@ -5,13 +5,11 @@ using NClang.Natives;
 namespace NClang
 {
 
-	public class ClangIndexImportedAstFileInfo
+	public class ClangIndexImportedAstFileInfo : ClangObject
 	{
-		CXIdxImportedASTFileInfo source;
-
-		internal ClangIndexImportedAstFileInfo (CXIdxImportedASTFileInfo source)
+		internal ClangIndexImportedAstFileInfo (IntPtr handle)
+			: base (handle)
 		{
-			this.source = source;
 		}
 
 		// FIXME: these properties must be bound to source.

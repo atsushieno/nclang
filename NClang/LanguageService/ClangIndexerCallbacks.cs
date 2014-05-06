@@ -19,22 +19,22 @@ namespace NClang
 		internal IndexerCallbacks ToNative ()
 		{
 			var ret = new IndexerCallbacks ();
-			//if (AbortQuery != null)
-			ret.AbortQuery = (clientData, reserved) => AbortQuery (clientData);
-			//if (Diagnostic != null)
-			ret.Diagnostic = (clientData, ds, reserved) => Diagnostic (clientData, new ClangDiagnosticSet (ds));
-			//if (EnteredMainFile != null)
-			ret.EnteredMainFile = (clientData, f, reserved) => EnteredMainFile (clientData, new ClangFile (f)).Handle;
-			//if (PreprocessIncludedFile != null)
-			ret.PpIncludedFile = (IntPtr clientData, ref CXIdxIncludedFileInfo includedFile) => PreprocessIncludedFile (clientData, new ClangIndexedFileInfo (includedFile)).Handle;
-			//if (ImportedAstFile != null)
-			ret.ImportedASTFile = (IntPtr clientData, ref CXIdxImportedASTFileInfo importedAstFile) => ImportedAstFile (clientData, new ClangIndexImportedAstFileInfo (importedAstFile)).Handle;
-			//if (StartedTranslationUnit != null)
-			ret.StartedTranslationUnit = (clientData, reserved) => StartedTranslationUnit (clientData).Address;
-			//if (IndexDeclaration != null)
-			ret.IndexDeclaration = (IntPtr clientData, IntPtr declInfo) => IndexDeclaration (clientData, new ClangIndexDeclarationInfo (declInfo));
-			//if (IndexEntityReference != null)
-			ret.IndexEntityReference = (IntPtr clientData, IntPtr entRefInfo) => IndexEntityReference (clientData, new ClangIndexEntityReferenceInfo (entRefInfo));
+			if (AbortQuery != null)
+				ret.AbortQuery = (clientData, reserved) => AbortQuery (clientData);
+			if (Diagnostic != null)
+				ret.Diagnostic = (clientData, ds, reserved) => Diagnostic (clientData, new ClangDiagnosticSet (ds));
+			if (EnteredMainFile != null)
+				ret.EnteredMainFile = (clientData, f, reserved) => EnteredMainFile (clientData, new ClangFile (f)).Handle;
+			if (PreprocessIncludedFile != null)
+				ret.PpIncludedFile = (IntPtr clientData, IntPtr includedFile) => PreprocessIncludedFile (clientData, new ClangIndexedFileInfo (includedFile)).Handle;
+			if (ImportedAstFile != null)
+				ret.ImportedASTFile = (IntPtr clientData, IntPtr importedAstFile) => ImportedAstFile (clientData, new ClangIndexImportedAstFileInfo (importedAstFile)).Handle;
+			if (StartedTranslationUnit != null)
+				ret.StartedTranslationUnit = (clientData, reserved) => StartedTranslationUnit (clientData).Address;
+			if (IndexDeclaration != null)
+				ret.IndexDeclaration = (IntPtr clientData, IntPtr declInfo) => IndexDeclaration (clientData, new ClangIndexDeclarationInfo (declInfo));
+			if (IndexEntityReference != null)
+				ret.IndexEntityReference = (IntPtr clientData, IntPtr entRefInfo) => IndexEntityReference (clientData, new ClangIndexEntityReferenceInfo (entRefInfo));
 
 			return ret;
 		}

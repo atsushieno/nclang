@@ -5,11 +5,11 @@ using NClang.Natives;
 namespace NClang
 {
 
-	public class ClangIndexedFileInfo
+	public class ClangIndexedFileInfo : ClangObject
 	{
-		internal ClangIndexedFileInfo (CXIdxIncludedFileInfo includedFile)
+		internal ClangIndexedFileInfo (IntPtr handle) // CXIdxIncludedFileInfo*
+			: base (handle)
 		{
-			throw new NotImplementedException ();
 		}
 	}
 }
