@@ -41,18 +41,13 @@ namespace NClang
 			LibClang.clang_disposeCodeCompleteResults (Handle);
 		}
 
-		public void Sort (int numResults)
-		{
-			LibClang.clang_sortCodeCompletionResults (Handle, (uint) numResults);
-		}
-
 		public int DiagnosticsCount {
 			get { return (int) LibClang.clang_codeCompleteGetNumDiagnostics (Handle); }
 		}
 
 		public ClangDiagnostic GetDiagnostic (int index)
 		{
-			return new ClangDiagnostic (LibClang.clang_getDiagnostic (Handle, (uint) index));
+			return new ClangDiagnostic (LibClang.clang_codeCompleteGetDiagnostic (Handle, (uint) index));
 		}
 
 		public CompletionContext Contexts {

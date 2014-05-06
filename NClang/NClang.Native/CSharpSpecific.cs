@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 namespace NClang.Natives
 {
@@ -10,6 +12,11 @@ namespace NClang.Natives
 		public static ClangFile Wrap (this IntPtr cxFile)
 		{
 			return cxFile == IntPtr.Zero ? null : new ClangFile (cxFile);
+		}
+
+		internal static CXUnsavedFile [] ToNative (this IEnumerable<ClangUnsavedFile> source)
+		{
+			return source != null && source.Any () ? source.Select (s => new CXUnsavedFile (s.FileName, s.Contents)).ToArray () : new CXUnsavedFile [0];
 		}
 	}
 }

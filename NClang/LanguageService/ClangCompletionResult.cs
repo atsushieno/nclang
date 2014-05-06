@@ -11,10 +11,12 @@ namespace NClang
 	{
 		internal ClangCompletionResult (IntPtr handle)
 		{
+			this.handle = handle;
 			// This handle does not have to be freed; CXCodeCompletionResults takes care of it.
 			source = Marshal.PtrToStructure<CXCompletionResult> (handle);
 		}
 
+		IntPtr handle;
 		CXCompletionResult source;
 
 		public CursorKind CursorKind {
@@ -23,6 +25,11 @@ namespace NClang
 
 		public ClangCompletionString CompletionString {
 			get { return new ClangCompletionString (source.CompletionString); }
+		}
+
+		public void Sort (int numResults)
+		{
+			LibClang.clang_sortCodeCompletionResults (handle, (uint) numResults);
 		}
 	}
 

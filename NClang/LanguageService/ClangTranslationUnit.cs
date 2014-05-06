@@ -98,8 +98,8 @@ namespace NClang
 		// CodeCompletion
 		public ClangCodeCompleteResults CodeCompleteAt (string completeFilename, int completeLine, int completeColumn, ClangUnsavedFile [] unsavedFiles, CodeCompleteFlags options)
 		{
-			var cx = unsavedFiles.Select (o => new CXUnsavedFile (o.FileName, o.Contents)).ToArray ();
-			return new ClangCodeCompleteResults (LibClang.clang_codeCompleteAt (Handle, completeFilename, (uint) completeLine, (uint) completeColumn, cx, (uint) unsavedFiles.Length, options));
+			var cx = unsavedFiles.ToNative ();
+			return new ClangCodeCompleteResults (LibClang.clang_codeCompleteAt (Handle, completeFilename, (uint) completeLine, (uint) completeColumn, cx, (uint) cx.Length, options));
 		}
 
 		public ClangSourceLocation GetLocation (ClangFile file, int line, int column)

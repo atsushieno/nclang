@@ -48,8 +48,8 @@ namespace NClang
 			get { return (int) LibClang.clang_getNumCompletionChunks (source); }
 		}
 
-		public IEnumerable<Chunk> Chunks {
-			get { return Enumerable.Range (0, ChunkCount).Select (i => new Chunk (source, i)); }
+		public Chunk [] Chunks {
+			get { return Enumerable.Range (0, ChunkCount).Select (i => new Chunk (source, i)).ToArray (); }
 		}
 
 		public uint Priority {

@@ -352,6 +352,7 @@ namespace NClang
 		IncludeBriefComments = 0x04
 	}
 
+	[Flags]
 	public enum CompletionContext
 	{
 		Unexposed = 0,
