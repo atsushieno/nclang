@@ -6,7 +6,7 @@ using NClang.Natives;
 namespace NClang
 {
 	
-	public class ClangIndex : ClangObject, IDisposable
+	public partial class ClangIndex : ClangObject, IDisposable
 	{
 		// TopLevel
 		

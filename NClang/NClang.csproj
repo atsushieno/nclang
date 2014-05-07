@@ -81,14 +81,8 @@
     <Compile Include="LanguageService\ClangIndexAction.cs" />
     <Compile Include="LanguageService\ClangDiagnosticSet.cs" />
     <Compile Include="LanguageService\ClangIndexerCallbacks.cs" />
-    <Compile Include="LanguageService\ClangIndexClientFile.cs" />
     <Compile Include="LanguageService\ClangIndexedFileInfo.cs" />
-    <Compile Include="LanguageService\ClangIndexImportedAstFileInfo.cs" />
-    <Compile Include="LanguageService\ClangIndexClientAstFile.cs" />
-    <Compile Include="LanguageService\ClangIndexDeclarationInfo.cs" />
-    <Compile Include="LanguageService\ClangIndexEntityReferenceInfo.cs" />
     <Compile Include="LanguageService\ClangModule.cs" />
-    <Compile Include="LanguageService\ClangIndexLocation.cs" />
     <Compile Include="LanguageService\ClangString.cs" />
     <Compile Include="LanguageService\ClangComment.cs" />
     <Compile Include="LanguageService\ClangCompilationDatabase.cs" />
@@ -97,10 +91,7 @@
     <Compile Include="LanguageService\ClangRemapping.cs" />
     <Compile Include="LanguageService\ClangToken.cs" />
     <Compile Include="LanguageService\ClangTokenSet.cs" />
-    <Compile Include="LanguageService\ClangIndexEntityInfo.cs" />
-    <Compile Include="LanguageService\ClangIndexAttributeInfo.cs" />
-    <Compile Include="LanguageService\ClangIndexIBOutletCollectionAttributeInfo.cs" />
-    <Compile Include="LanguageService\ClangIndexContainerInfo.cs" />
+    <Compile Include="LanguageService\ClangIndex_Infos.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

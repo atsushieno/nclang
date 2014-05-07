@@ -136,7 +136,7 @@ namespace NClang.Natives
 		[MarshalAs (UnmanagedType.SysUInt)]
 		public uint NumAttributes;
 		[MarshalAs (UnmanagedType.SysUInt)]
-		public uint Flags;
+		public IndexDeclInfoFlags Flags;
 	}
 
 	[StructLayout (LayoutKind.Sequential)]
