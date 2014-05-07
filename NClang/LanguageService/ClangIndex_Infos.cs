@@ -348,6 +348,14 @@ namespace NClang
 			}
 		}
 
+		public class IncludedFileInfo : ClangObject
+		{
+			internal IncludedFileInfo (IntPtr handle) // CXIdxIncludedFileInfo*
+				: base (handle)
+			{
+			}
+		}
+
 		public class ObjCContainerDeclarationInfo : ClangIndexInfo
 		{
 			public ObjCContainerDeclarationInfo (IntPtr address)

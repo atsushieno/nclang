@@ -10,7 +10,7 @@ namespace NClang
 		public event Func<IntPtr,bool> AbortQuery;
 		public event Action<IntPtr,ClangDiagnosticSet> Diagnostic;
 		public event Func<IntPtr,ClangFile,ClangIndex.ClientFile> EnteredMainFile;
-		public event Func<IntPtr,ClangIndexedFileInfo,ClangIndex.ClientFile> PreprocessIncludedFile;
+		public event Func<IntPtr,ClangIndex.IncludedFileInfo,ClangIndex.ClientFile> PreprocessIncludedFile;
 		public event Func<IntPtr,ClangIndex.ImportedAstFileInfo,ClangIndex.ClientAstFile> ImportedAstFile;
 		public event Func<IntPtr,ClangIndex.ContainerInfo> StartedTranslationUnit;
 		public event Action<IntPtr,ClangIndex.DeclarationInfo> IndexDeclaration;
@@ -26,7 +26,7 @@ namespace NClang
 			if (EnteredMainFile != null)
 				ret.EnteredMainFile = (clientData, f, reserved) => EnteredMainFile (clientData, new ClangFile (f)).Address;
 			if (PreprocessIncludedFile != null)
-				ret.PpIncludedFile = (IntPtr clientData, IntPtr includedFile) => PreprocessIncludedFile (clientData, new ClangIndexedFileInfo (includedFile)).Address;
+				ret.PpIncludedFile = (IntPtr clientData, IntPtr includedFile) => PreprocessIncludedFile (clientData, new ClangIndex.IncludedFileInfo (includedFile)).Address;
 			if (ImportedAstFile != null)
 				ret.ImportedASTFile = (IntPtr clientData, IntPtr importedAstFile) => ImportedAstFile (clientData, new ClangIndex.ImportedAstFileInfo (importedAstFile)).Address;
 			if (StartedTranslationUnit != null)

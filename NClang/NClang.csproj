@@ -81,7 +81,6 @@
     <Compile Include="LanguageService\ClangIndexAction.cs" />
     <Compile Include="LanguageService\ClangDiagnosticSet.cs" />
     <Compile Include="LanguageService\ClangIndexerCallbacks.cs" />
-    <Compile Include="LanguageService\ClangIndexedFileInfo.cs" />
     <Compile Include="LanguageService\ClangModule.cs" />
     <Compile Include="LanguageService\ClangString.cs" />
     <Compile Include="LanguageService\ClangComment.cs" />
