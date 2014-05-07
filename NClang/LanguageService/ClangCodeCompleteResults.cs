@@ -9,10 +9,6 @@ namespace NClang
 	
 	public class ClangCodeCompleteResults : ClangObject, IDisposable
 	{
-		public static CodeCompleteFlags DefaultCodeCompleteOptions {
-			get { return LibClang.clang_defaultCodeCompleteOptions (); }
-		}
-
 		static readonly int result_size = Marshal.SizeOf<CXCompletionResult> ();
 		CXCodeCompletionResults? source;
 

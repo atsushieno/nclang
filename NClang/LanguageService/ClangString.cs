@@ -9,10 +9,5 @@ namespace NClang
 		internal readonly IntPtr Data;
 		[MarshalAs (UnmanagedType.SysUInt)]
 		internal uint PrivateFlags;
-
-		public static bool IsNull (ClangString s)
-		{
-			return s.Data == IntPtr.Zero;
-		}
 	}
 }

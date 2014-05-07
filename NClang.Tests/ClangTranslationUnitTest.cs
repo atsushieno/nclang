@@ -11,7 +11,7 @@ namespace NClang.Tests
 		[Test]
 		public void DefaultEditingTranslationUnitOptions ()
 		{
-			Assert.AreEqual (TranslationUnitFlags.PrecompiledPreamble | TranslationUnitFlags.CacheCompletionResults, ClangTranslationUnit.DefaultEditingTranslationUnitOptions, "#1");
+			Assert.AreEqual (TranslationUnitFlags.PrecompiledPreamble | TranslationUnitFlags.CacheCompletionResults, ClangService.DefaultEditingTranslationUnitOptions, "#1");
 		}
 
 		// TranslationUnitManipulation

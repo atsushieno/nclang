@@ -21,6 +21,51 @@ namespace NClang
 			return new ClangCursor (LibClang.clang_getNullCursor ());
 		}
 
+		public static bool IsAttribute (CursorKind kind)
+		{
+			return LibClang.clang_isAttribute (kind) != 0;
+		}
+
+		public static bool IsDeclaration (CursorKind kind)
+		{
+			return LibClang.clang_isDeclaration (kind) != 0;
+		}
+
+		public static bool IsExpression (CursorKind kind)
+		{
+			return LibClang.clang_isExpression (kind) != 0;
+		}
+
+		public static bool IsInvalid (CursorKind kind)
+		{
+			return LibClang.clang_isInvalid (kind) != 0;
+		}
+
+		public static bool IsPreprocessing (CursorKind kind)
+		{
+			return LibClang.clang_isPreprocessing (kind) != 0;
+		}
+
+		public static bool IsReference (CursorKind kind)
+		{
+			return LibClang.clang_isReference (kind) != 0;
+		}
+
+		public static bool IsStatement (CursorKind kind)
+		{
+			return LibClang.clang_isStatement (kind) != 0;
+		}
+
+		public static bool IsTranslationUnit (CursorKind kind)
+		{
+			return LibClang.clang_isTranslationUnit (kind) != 0;
+		}
+
+		public static bool IsUnexposed (CursorKind kind)
+		{
+			return LibClang.clang_isUnexposed (kind) != 0;
+		}
+
 		public static ClangCursorSet CreateCursorSet ()
 		{
 			return new ClangCursorSet (LibClang.clang_createCXCursorSet ());

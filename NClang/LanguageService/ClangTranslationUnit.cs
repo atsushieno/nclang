@@ -10,15 +10,6 @@ namespace NClang
 	{
 		// TranslationUnitManipulation
 
-		public static TranslationUnitFlags DefaultEditingTranslationUnitOptions {
-			get { return ClangService.DefaultEditingTranslationUnitOptions; }
-		}
-
-		public static string GetResourceUsageName (ResourceUsageKind kind)
-		{
-			return LibClang.clang_getTUResourceUsageName (kind);
-		}
-
 		internal ClangTranslationUnit (IntPtr handle)
 			: base (handle)
 		{

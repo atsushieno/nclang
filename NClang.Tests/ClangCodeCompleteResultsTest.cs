@@ -13,7 +13,7 @@ namespace NClang.Tests
 		[Test]
 		public void DefaultCodeCompleteOptions ()
 		{
-			Assert.AreEqual (CodeCompleteFlags.IncludeMacros, ClangCodeCompleteResults.DefaultCodeCompleteOptions, "#1");
+			Assert.AreEqual (CodeCompleteFlags.IncludeMacros, ClangService.DefaultCodeCompleteOptions, "#1");
 		}
 
 		[Test]

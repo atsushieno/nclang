@@ -9,7 +9,7 @@ namespace NClang.Tests
 		[Test]
 		public void NullCursorType ()
 		{
-			var c = ClangCursor.GetNullCursor ();
+			var c = ClangService.GetNullCursor ();
 			Assert.AreEqual (-1, c.ArgumentCount, "ArgumentCount");
 			Assert.AreEqual (AvailabilityKind.Available, c.AvailabilityKind, "AvailabilityKind");
 
