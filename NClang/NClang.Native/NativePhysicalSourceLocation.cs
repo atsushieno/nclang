@@ -20,12 +20,19 @@ namespace NClang.Natives
 	[StructLayout (LayoutKind.Sequential)]
 	struct CXSourceRange
 	{
+		public CXSourceRange (int begin, int end)
+		{
+			PtrData1 = PtrData2 = IntPtr.Zero;
+			BeginIntData = begin;
+			EndIntData = end;
+		}
+
 		public readonly IntPtr PtrData1;
 		public readonly IntPtr PtrData2;
 		[MarshalAs (UnmanagedType.SysUInt)]
-		public readonly uint BeginIntData;
+		public readonly int BeginIntData;
 		[MarshalAs (UnmanagedType.SysUInt)]
-		public readonly uint EndIntData;
+		public readonly int EndIntData;
 	}
 
 	[StructLayout (LayoutKind.Sequential)]

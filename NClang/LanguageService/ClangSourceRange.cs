@@ -12,6 +12,11 @@ namespace NClang
 			this.source = source;
 		}
 
+		public ClangSourceRange (int begin, int end)
+		{
+			this.source = new CXSourceRange (begin, end);
+		}
+
 		internal CXSourceRange Source {
 			get { return source; }
 		}
@@ -51,6 +56,11 @@ namespace NClang
 
 		public ClangSourceLocation End {
 			get { return new ClangSourceLocation (LibClang.clang_getRangeEnd (source)); }
+		}
+
+		public override string ToString ()
+		{
+			return IsNull ? "[Null]" : string.Format ("[{0} - {1}]", Start, End);
 		}
 	}	
 }

@@ -27,7 +27,7 @@ namespace NClang
 		static readonly int cxtoken_size = Marshal.SizeOf<CXToken> ();
 
 		public IEnumerable<ClangToken> Tokens {
-			get { return Enumerable.Range (0, count).Select (i => new ClangToken (Marshal.PtrToStructure<CXToken> (tokens + cxtoken_size * i))); }
+			get { return Enumerable.Range (0, count).Select (i => new ClangToken (tu, Marshal.PtrToStructure<CXToken> (tokens + cxtoken_size * i))); }
 		}
 
 		static readonly int cxcursor_size = Marshal.SizeOf<CXCursor> ();

@@ -11,8 +11,10 @@ namespace NClang.Natives
 	[StructLayout (LayoutKind.Sequential)]
 	struct CXToken
 	{
-		[MarshalAs (UnmanagedType.SafeArray, SizeConst = 4)]
-		public readonly uint[] int_data;
+		public readonly uint int_data1;
+		public readonly uint int_data2;
+		public readonly uint int_data3;
+		public readonly uint int_data4;
 		public readonly IntPtr ptr_data;
 	}
 

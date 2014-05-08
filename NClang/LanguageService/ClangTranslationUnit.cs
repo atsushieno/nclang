@@ -175,21 +175,6 @@ namespace NClang
 			return new ClangTokenSet (Handle, tokens, (int) count);
 		}
 
-		public string GetTokenSpelling (ClangToken token)
-		{
-			return LibClang.clang_getTokenSpelling (Handle, token.Source).Unwrap ();
-		}
-
-		public ClangSourceLocation GetTokenLocation (ClangToken token)
-		{
-			return new ClangSourceLocation (LibClang.clang_getTokenLocation (Handle, token.Source));
-		}
-
-		public ClangSourceRange GetTokenExtent (ClangToken token)
-		{
-			return new ClangSourceRange (LibClang.clang_getTokenExtent (Handle, token.Source));
-		}
-
 		// HighLevelAPI
 
 		public FindResult FindIncludesInFile (ClangFile file, Func<ClangCursor,ClangSourceRange,VisitorResult> visitor)

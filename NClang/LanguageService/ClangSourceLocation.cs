@@ -34,7 +34,7 @@ namespace NClang
 
 			public override string ToString ()
 			{
-				return string.Format ("[PhysicalLocation: File={0} ({1}, {2}) offset={3}]", File, Line, Column, Offset);
+				return Line > 0 ? string.Format ("{0} ({1}, {2})", File, Line, Column) : string.Format ("{0} (offset: {1})", File, Offset);
 			}
 		}
 
