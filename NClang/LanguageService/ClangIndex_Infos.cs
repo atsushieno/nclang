@@ -358,41 +358,184 @@ namespace NClang
 
 		public class ObjCContainerDeclarationInfo : ClangIndexInfo
 		{
+			CXIdxObjCContainerDeclInfo? info;
+
 			public ObjCContainerDeclarationInfo (IntPtr address)
 				: base (address)
 			{
+			}
+
+			CXIdxObjCContainerDeclInfo Info {
+				get { return (CXIdxObjCContainerDeclInfo) (info ?? (info = Marshal.PtrToStructure<CXIdxObjCContainerDeclInfo> (Address))); }
+			}
+
+			public DeclarationInfo Declaration {
+				get { return new DeclarationInfo (Info.DeclInfo); }
+			}
+
+			public IndexObjCContainerKind Kind {
+				get { return Info.Kind; }
 			}
 		}
 
 		public class ObjCInterfaceDeclarationInfo : ClangIndexInfo
 		{
+			CXIdxObjCInterfaceDeclInfo? info;
+
 			public ObjCInterfaceDeclarationInfo (IntPtr address)
 				: base (address)
 			{
+			}
+
+			CXIdxObjCInterfaceDeclInfo Info {
+				get { return (CXIdxObjCInterfaceDeclInfo) (info ?? (info = Marshal.PtrToStructure<CXIdxObjCInterfaceDeclInfo> (Address))); }
+			}
+
+			public ObjCContainerDeclarationInfo Container {
+				get { return new ObjCContainerDeclarationInfo (Info.ContainerInfo); }
+			}
+
+			public BaseClassInfo Super {
+				get { return Info.SuperInfo != IntPtr.Zero ? new BaseClassInfo (Info.SuperInfo) : null; }
+			}
+
+			public ObjCProtocolReferenceListDeclarationInfo Protocols {
+				get { return new ObjCProtocolReferenceListDeclarationInfo (Info.Protocols); }
+			}
+		}
+
+		public class BaseClassInfo : ClangIndexInfo
+		{
+			CXIdxBaseClassInfo? info;
+
+			public BaseClassInfo (IntPtr address)
+				: base (address)
+			{
+			}
+
+			CXIdxBaseClassInfo Info {
+				get { return (CXIdxBaseClassInfo) (info ?? (info = Marshal.PtrToStructure<CXIdxBaseClassInfo> (Address))); }
+			}
+
+			public EntityInfo EntityInfo {
+				get { return Info.Base != IntPtr.Zero ? new EntityInfo (Info.Base) : null; }
+			}
+
+			public ClangCursor Cursor {
+				get { return new ClangCursor (Info.Cursor); }
+			}
+
+			public Location Location {
+				get { return new Location (Info.Loc); }
 			}
 		}
 
 		public class ObjCCategoryDeclarationInfo : ClangIndexInfo
 		{
+			CXIdxObjCCategoryDeclInfo? info;
+
 			public ObjCCategoryDeclarationInfo (IntPtr address)
 				: base (address)
 			{
+			}
+
+			CXIdxObjCCategoryDeclInfo Info {
+				get { return (CXIdxObjCCategoryDeclInfo) (info ?? (info = Marshal.PtrToStructure<CXIdxObjCCategoryDeclInfo> (Address))); }
+			}
+
+			public ObjCContainerDeclarationInfo Container {
+				get { return new ObjCContainerDeclarationInfo (Info.ContainerInfo); }
+			}
+
+			public EntityInfo Class {
+				get { return new EntityInfo (Info.ObjcClass); }
+			}
+
+			public ClangCursor ClassCursor {
+				get { return new ClangCursor (Info.ClassCursor); }
+			}
+
+			public Location ClassLocation {
+				get { return new Location (Info.ClassLoc); }
+			}
+
+			public ObjCProtocolReferenceListDeclarationInfo Protocols {
+				get { return new ObjCProtocolReferenceListDeclarationInfo (Info.Protocols); }
+			}
+		}
+
+		public class ObjCProtocolReferenceInfo : ClangIndexInfo
+		{
+			CXIdxObjCProtocolRefInfo? info;
+
+			public ObjCProtocolReferenceInfo (IntPtr address)
+				: base (address)
+			{
+			}
+
+			CXIdxObjCProtocolRefInfo Info {
+				get { return (CXIdxObjCProtocolRefInfo) (info ?? (info = Marshal.PtrToStructure<CXIdxObjCProtocolRefInfo> (Address))); }
+			}
+
+			public EntityInfo EntityInfo {
+				get { return new EntityInfo (Info.Protocol); }
+			}
+
+			public ClangCursor Cursor {
+				get { return new ClangCursor (Info.Cursor); }
+			}
+
+			public Location Location {
+				get { return new Location (Info.Loc); }
 			}
 		}
 
 		public class ObjCProtocolReferenceListDeclarationInfo : ClangIndexInfo
 		{
+			CXIdxObjCProtocolRefListInfo? info;
+
 			public ObjCProtocolReferenceListDeclarationInfo (IntPtr address)
 				: base (address)
 			{
+			}
+
+			CXIdxObjCProtocolRefListInfo Info {
+				get { return (CXIdxObjCProtocolRefListInfo) (info ?? (info = Marshal.PtrToStructure<CXIdxObjCProtocolRefListInfo> (Address))); }
+			}
+
+			public int Count {
+				get { return (int) Info.NumProtocols; }
+			}
+
+			public IEnumerable<ObjCProtocolReferenceInfo> Items {
+				get { return Enumerable.Range (0, Count).Select (i => Get (i)); }
+			}
+
+			public ObjCProtocolReferenceInfo Get (int index)
+			{
+				return new ObjCProtocolReferenceInfo (Info.Protocols + (index * Marshal.SizeOf<CXIdxObjCProtocolRefInfo> ()));
 			}
 		}
 
 		public class ObjCPropertyDeclarationInfo : ClangIndexInfo
 		{
+			CXIdxObjCPropertyDeclInfo? info;
+
 			public ObjCPropertyDeclarationInfo (IntPtr address)
 				: base (address)
 			{
+			}
+
+			CXIdxObjCPropertyDeclInfo Info {
+				get { return (CXIdxObjCPropertyDeclInfo) (info ?? (info = Marshal.PtrToStructure<CXIdxObjCPropertyDeclInfo> (Address))); }
+			}
+
+			public EntityInfo Getter {
+				get { return Info.Getter != IntPtr.Zero ? new EntityInfo (Info.Getter) : null; }
+			}
+
+			public EntityInfo Setter {
+				get { return Info.Setter != IntPtr.Zero ? new EntityInfo (Info.Setter) : null; }
 			}
 		}
 
