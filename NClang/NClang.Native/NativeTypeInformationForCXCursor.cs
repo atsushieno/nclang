@@ -144,7 +144,7 @@ namespace NClang.Natives
 		*/
 
 		[DllImport (LibraryName)]
-		internal static extern CXType clang_Type_getTemplateArgumentAsType (CXType T, [MarshalAs (UnmanagedType.SysUInt) uint i);
+		internal static extern CXType clang_Type_getTemplateArgumentAsType (CXType T, [MarshalAs (UnmanagedType.SysUInt)] uint i);
 		
 		[DllImport (LibraryName)]
 		 internal static extern RefQualifierKind 	clang_Type_getCXXRefQualifier (CXType T);
