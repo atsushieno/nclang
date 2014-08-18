@@ -1,0 +1,9 @@
+#Visual Studio files
+[Oo]bj/
+[Bb]in
+*.user
+*.suo
+
+#NuGet
+packages/
+*.nupkg
