@@ -7,7 +7,7 @@ namespace NClang.Natives
 {
 	static partial class LibClang
 	{
-		public const string LibraryName = "clang";
+        public const string LibraryName = "libclang.dll";
 
 		public static ClangFile Wrap (this IntPtr cxFile)
 		{
