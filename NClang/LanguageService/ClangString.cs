@@ -7,7 +7,6 @@ namespace NClang
 	public struct ClangString
 	{
 		internal readonly IntPtr Data;
-		[MarshalAs (UnmanagedType.SysUInt)]
 		internal uint PrivateFlags;
 	}
 }

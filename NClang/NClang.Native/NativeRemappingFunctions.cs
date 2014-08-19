@@ -12,20 +12,19 @@ namespace NClang.Natives
 	// done
 	static partial class LibClang
 	{
-		[DllImport (LibraryName)]
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern CXRemapping 	clang_getRemappings (string path);
 
-		[DllImport (LibraryName)]
-		 internal static extern CXRemapping 	clang_getRemappingsFromFileList ([MarshalAs (UnmanagedType.LPArray)] string[] filePaths, [MarshalAs (UnmanagedType.SysUInt)] uint numFiles);
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		 internal static extern CXRemapping 	clang_getRemappingsFromFileList ([MarshalAs (UnmanagedType.LPArray)] string[] filePaths, uint numFiles);
 
-		[return:MarshalAs (UnmanagedType.SysUInt)]
-		[DllImport (LibraryName)]
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern uint 	clang_remap_getNumFiles (CXRemapping _);
 
-		[DllImport (LibraryName)]
-		 internal static extern void 	clang_remap_getFilenames (CXRemapping _, [MarshalAs (UnmanagedType.SysUInt)] uint index, out CXString original, out CXString transformed);
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		 internal static extern void 	clang_remap_getFilenames (CXRemapping _, uint index, out CXString original, out CXString transformed);
 
-		[DllImport (LibraryName)]
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern void 	clang_remap_dispose (CXRemapping _);
 	}
 }

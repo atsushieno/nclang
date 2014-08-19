@@ -22,10 +22,9 @@ using CXClientData = System.IntPtr; // void*
 using CXDiagnosticSet = System.IntPtr; // void*
 using CXTranslationUnit = System.IntPtr; // CXTranslationUnitImpl*
 
-using MarshalCallConv = System.Runtime.InteropServices.CallingConvention;
-
 namespace NClang.Natives
 {
+    [UnmanagedFunctionPointer(LibClang.LibraryCallingConvention)]
 	delegate VisitorResult CXVisitorResultVisitor (IntPtr context, CXCursor _, CXSourceRange __);
 
 	[StructLayout (LayoutKind.Sequential)]
@@ -46,7 +45,6 @@ namespace NClang.Natives
 	{
 		public IntPtr PtrData1;
 		public IntPtr PtrData2;
-		[MarshalAs (UnmanagedType.SysUInt)]
 		public uint IntData;
 	}
 
@@ -96,7 +94,6 @@ namespace NClang.Natives
 		public string USR;
 		public CXCursor Cursor;
 		public IntPtr Attributes; // const CXIdxAttrInfo *const *
-		[MarshalAs (UnmanagedType.SysUInt)]
 		public uint NumAttributes;
 	}
 
@@ -123,19 +120,13 @@ namespace NClang.Natives
 		public CXIdxLoc Loc;
 		public IntPtr SemanticContainer; // const CXIdxContainerInfo *
 		public IntPtr LexicalContainer; // const CXIdxContainerInfo *
-		[MarshalAs (UnmanagedType.SysInt)]
 		public int IsRedeclaration;
-		[MarshalAs (UnmanagedType.SysInt)]
 		public int IsDefinition;
-		[MarshalAs (UnmanagedType.SysInt)]
 		public int IsContainer;
 		public IntPtr DeclAsContainer; // const CXIdxContainerInfo *
-		[MarshalAs (UnmanagedType.SysInt)]
 		public int IsImplicit;
 		public IntPtr Attributes; // const CXIdxAttrInfo *const *
-		[MarshalAs (UnmanagedType.SysUInt)]
 		public uint NumAttributes;
-		[MarshalAs (UnmanagedType.SysUInt)]
 		public IndexDeclInfoFlags Flags;
 	}
 
@@ -215,22 +206,21 @@ namespace NClang.Natives
 		public IntPtr Container; // const CXIdxContainerInfo *
 	}
 	
-	[UnmanagedFunctionPointer (MarshalCallConv.Cdecl)]
-	[return:MarshalAs (UnmanagedType.SysInt)]
+	[UnmanagedFunctionPointer (LibClang.LibraryCallingConvention)]
 	delegate int AbortQueryHandler (CXClientData client_data, IntPtr reserved);
-	[UnmanagedFunctionPointer (MarshalCallConv.Cdecl)]
+	[UnmanagedFunctionPointer (LibClang.LibraryCallingConvention)]
 	delegate void DiagnosticHandler (CXClientData client_data,CXDiagnosticSet _,IntPtr reserved);
-	[UnmanagedFunctionPointer (MarshalCallConv.Cdecl)]
+	[UnmanagedFunctionPointer (LibClang.LibraryCallingConvention)]
 	delegate CXIdxClientFile EnteredMainFileHandler (CXClientData client_data,CXFile mainFile,IntPtr reserved);
-	[UnmanagedFunctionPointer (MarshalCallConv.Cdecl)]
+	[UnmanagedFunctionPointer (LibClang.LibraryCallingConvention)]
 	delegate CXIdxClientFile PpIncludedFileHandler (CXClientData client_data, IntPtr _); // CXIdxIncludedFileInfo*
-	[UnmanagedFunctionPointer (MarshalCallConv.Cdecl)]
+	[UnmanagedFunctionPointer (LibClang.LibraryCallingConvention)]
 	delegate CXIdxClientASTFile ImportedASTFileHandler (CXClientData client_data, IntPtr _); // CXIdxImportedASTFileInfo*
-	[UnmanagedFunctionPointer (MarshalCallConv.Cdecl)]
+	[UnmanagedFunctionPointer (LibClang.LibraryCallingConvention)]
 	delegate CXIdxClientContainer StartedTranslationUnitHandler (CXClientData client_data,IntPtr reserved);
-	[UnmanagedFunctionPointer (MarshalCallConv.Cdecl)]
+	[UnmanagedFunctionPointer (LibClang.LibraryCallingConvention)]
 	delegate void IndexDeclarationHandler (CXClientData client_data, IntPtr _); //  CXIdxDeclInfo*
-	[UnmanagedFunctionPointer (MarshalCallConv.Cdecl)]
+	[UnmanagedFunctionPointer (LibClang.LibraryCallingConvention)]
 	delegate void IndexEntityReferenceHandler (CXClientData client_data, IntPtr _); // CXIdxEntityRefInfo*
 
 	[StructLayout (LayoutKind.Sequential)]
@@ -257,68 +247,65 @@ namespace NClang.Natives
 	// done
 	static partial class LibClang
 	{
-		[DllImport (LibraryName)]
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern FindResult 	clang_findReferencesInFile (CXCursor cursor, CXFile file, CXCursorAndRangeVisitor visitor);
 
-		[DllImport (LibraryName)]
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern FindResult 	clang_findIncludesInFile (CXTranslationUnit TU, CXFile file, CXCursorAndRangeVisitor visitor);
 
-		[return:MarshalAs (UnmanagedType.SysInt)]
-		[DllImport (LibraryName)]
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern int 	clang_index_isEntityObjCContainerKind (IndexEntityKind _);
 
-		[DllImport (LibraryName)]
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern CXIdxObjCContainerDeclInfoPtr clang_index_getObjCContainerDeclInfo (IntPtr _); // const CXIdxDeclInfo *
-		[DllImport (LibraryName)]
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern CXIdxObjCInterfaceDeclInfoPtr 	clang_index_getObjCInterfaceDeclInfo (IntPtr _); // const CXIdxDeclInfo *
-		[DllImport (LibraryName)]
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern CXIdxObjCCategoryDeclInfoPtr 	clang_index_getObjCCategoryDeclInfo (IntPtr _); // const CXIdxDeclInfo *
-		[DllImport (LibraryName)]
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern CXIdxObjCProtocolRefListInfoPtr 	clang_index_getObjCProtocolRefListInfo (IntPtr _); // const CXIdxDeclInfo *
-		[DllImport (LibraryName)]
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern CXIdxObjCPropertyDeclInfoPtr 	clang_index_getObjCPropertyDeclInfo (IntPtr _); // const CXIdxDeclInfo *
-		[DllImport (LibraryName)]
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern CXIdxIBOutletCollectionAttrInfoPtr 	clang_index_getIBOutletCollectionAttrInfo (IntPtr _); // const CXIdxAttrInfo *
-		[DllImport (LibraryName)]
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern CXIdxCXXClassDeclInfoPtr 	clang_index_getCXXClassDeclInfo (IntPtr _); // const CXIdxDeclInfo *
-		[DllImport (LibraryName)]
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern CXIdxClientContainer 	clang_index_getClientContainer (IntPtr _); // const CXIdxContainerInfo *
-		[DllImport (LibraryName)]
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern void 	clang_index_setClientContainer (IntPtr _, CXIdxClientContainer __); // const CXIdxContainerInfo *
-		[DllImport (LibraryName)]
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern CXIdxClientEntity 	clang_index_getClientEntity (IntPtr _); // const CXIdxEntityInfo *
-		[DllImport (LibraryName)]
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern void 	clang_index_setClientEntity (IntPtr _, CXIdxClientEntity __); // const CXIdxEntityInfo *
-		[DllImport (LibraryName)]
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern CXIndexAction 	clang_IndexAction_create (CXIndex CIdx);
 
-		[DllImport (LibraryName)]
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern void 	clang_IndexAction_dispose (CXIndexAction _);
 
-		[return:MarshalAs (UnmanagedType.SysInt)]
-		[DllImport (LibraryName)]
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		internal static extern ErrorCode 	clang_indexSourceFile (CXIndexAction _, CXClientData client_data,
 			[MarshalAs (UnmanagedType.LPArray, SizeParamIndex = 3)] IndexerCallbacks [] index_callbacks,
-			[MarshalAs (UnmanagedType.SysUInt)] uint index_callbacks_size,
-			[MarshalAs (UnmanagedType.SysUInt)] IndexOptionFlags index_options,
+			uint index_callbacks_size,
+			IndexOptionFlags index_options,
 			string source_filename,
 			[MarshalAs (UnmanagedType.LPArray, SizeParamIndex = 7)] string [] command_line_args, // const char *const *
-			[MarshalAs (UnmanagedType.SysInt)] int num_command_line_args,
+			int num_command_line_args,
 			[MarshalAs (UnmanagedType.LPArray, SizeParamIndex = 9)] CXUnsavedFile[] unsaved_files,
-			[MarshalAs (UnmanagedType.SysUInt)] uint num_unsaved_files,
-			out CXTranslationUnit out_TU, [MarshalAs (UnmanagedType.SysUInt)] TranslationUnitFlags TU_options);
+			uint num_unsaved_files,
+			out CXTranslationUnit out_TU, TranslationUnitFlags TU_options);
 
-		[return:MarshalAs (UnmanagedType.SysInt)]
-		[DllImport (LibraryName)]
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		internal static extern ErrorCode 	clang_indexTranslationUnit (CXIndexAction _, CXClientData client_data,
-			[MarshalAs (UnmanagedType.LPArray, SizeParamIndex = 3)] IndexerCallbacks [] index_callbacks, [MarshalAs (UnmanagedType.SysUInt)] uint index_callbacks_size,
-			[MarshalAs (UnmanagedType.SysUInt)] IndexOptionFlags index_options, CXTranslationUnit __);
+			[MarshalAs (UnmanagedType.LPArray, SizeParamIndex = 3)] IndexerCallbacks [] index_callbacks, uint index_callbacks_size,
+			IndexOptionFlags index_options, CXTranslationUnit __);
 
-		[DllImport (LibraryName)]
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		internal static extern void 	clang_indexLoc_getFileLocation (CXIdxLoc loc, out IntPtr indexFile, out IntPtr file, // CXIdxClientFile*, CXIdxClientFile
 			out uint line, out uint column, out uint offset);
 
-		[DllImport (LibraryName)]
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern CXSourceLocation 	clang_indexLoc_getCXSourceLocation (CXIdxLoc loc);
 	}
 }
