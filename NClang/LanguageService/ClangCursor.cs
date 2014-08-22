@@ -282,7 +282,7 @@ namespace NClang
 				var ptrs = new IntPtr [n];
 				for (int i = 0; i < n; i++)
 					LibClang.clang_getOverriddenCursors (source, out ptrs [i], ref n);
-				return Enumerable.Range (0, (int) n).Select (i => new ClangCursor (Marshal.PtrToStructure<CXCursor> (ptrs [i])));
+				return Enumerable.Range (0, (int) n).Select (i => new ClangCursor ((CXCursor)Marshal.PtrToStructure (ptrs [i], typeof(CXCursor))));
 			}
 		}
 
