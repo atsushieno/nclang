@@ -20,6 +20,6 @@ namespace NClang
         Atomic = 0x100,
         Weak = 0x200,
         Strong = 0x400,
-        UnsafeU7nretained = 0x800
+        UnsafeUnretained = 0x800
     }
 }
