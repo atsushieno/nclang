@@ -5,34 +5,6 @@ using CXString = NClang.ClangString;
 
 namespace NClang.Natives
 {
-	enum  	CXObjCPropertyAttrKind
-	{
-		NoAttr = 0x00,
-		ReadOnly = 0x01,
-		Getter = 0x02,
-		Assign = 0x04,
-		ReadWrite = 0x08,
-		Retain = 0x10,
-		Copy = 0x20,
-		NonAtomic = 0x40,
-		Setter = 0x80,
-		Atomic = 0x100,
-		Weak = 0x200,
-		Strong = 0x400,
-		UnsafeU7nretained = 0x800
-	}
-
-	enum  	CXObjCDeclQualifierKind
-	{
-		None = 0x0,
-		In = 0x1,
-		Inout = 0x2,
-		Out = 0x4,
-		Bycopy = 0x8,
-		Byref = 0x10,
-		Oneway = 0x20
-	}
-
 	// done
 	static partial class LibClang
 	{

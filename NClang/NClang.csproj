@@ -36,6 +36,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LanguageService\ClangService.cs" />
+    <Compile Include="LanguageService\Enums\ObjCDeclarationQualifierFlags.cs" />
     <Compile Include="LanguageService\Enums\IndexEntityRefKind.cs" />
     <Compile Include="LanguageService\ClangIndex.cs" />
     <Compile Include="LanguageService\ClangObject.cs" />
@@ -80,6 +81,7 @@
     <Compile Include="LanguageService\Enums\LinkageKind.cs" />
     <Compile Include="LanguageService\Enums\LoadDiagError.cs" />
     <Compile Include="LanguageService\Enums\NameRefFlags.cs" />
+    <Compile Include="LanguageService\Enums\ObjCPropertyAttributeFlags.cs" />
     <Compile Include="LanguageService\Enums\RefQualifierKind.cs" />
     <Compile Include="LanguageService\Enums\ReparseTranslationUnitFlags.cs" />
     <Compile Include="LanguageService\Enums\ResourceUsageKind.cs" />

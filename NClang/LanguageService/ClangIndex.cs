@@ -5,7 +5,10 @@ using NClang.Natives;
 
 namespace NClang
 {
-	
+    /// <summary>
+    /// An "index" that consists of a set of translation units that would
+    /// typically be linked together into an executable or library.
+    /// </summary>
 	public partial class ClangIndex : ClangObject, IDisposable
 	{
 		// TopLevel
@@ -22,24 +25,104 @@ namespace NClang
 			LibClang.clang_disposeIndex (Handle);
 		}
 		
+        /// <summary>
+        /// Gets or sets general options associated with a <see cref="ClangIndex"/>.
+        /// </summary>
 		public GlobalOptionFlags GlobalOptions {
 			get { return LibClang.clang_CXIndex_getGlobalOptions (Handle); }
 			set { LibClang.clang_CXIndex_setGlobalOptions (Handle, value); }
 		}
 		
 		// TranslationUnitManipulation
-		
+
+        /// <summary>
+        /// Return the CXTranslationUnit for a given source file and the provided
+        /// command line arguments one would pass to the compiler.
+        /// </summary>
+        /// <param name="sourceFilename">
+        /// The name of the source file to load, or NULL if the
+        /// source file is included in <paramref name="clangCommandLineAgs"/>.
+        /// </param>
+        /// <param name="clangCommandLineAgs">
+        /// The command-line arguments that would be
+        /// passed to the clang executable if it were being invoked out-of-process.
+        /// These command-line options will be parsed and will affect how the translation
+        /// unit is parsed. Note that the following options are ignored: '-c',
+        /// '-emit-ast', '-fsyntax-only' (which is the default), and '-o \&lt;output file&gt;'.
+        /// </param>
+        /// <param name="unsavedFiles">
+        /// The files that have not yet been saved to disk
+        /// but may be required for code completion, including the contents of
+        /// those files.  The contents and name of these files (as specified by
+        /// CXUnsavedFile) are copied when necessary, so the client only needs to
+        /// guarantee their validity until the call to this function returns.
+        /// </param>
+        /// <remarks>
+        /// Note: The <paramref name="sourceFilename"/> argument is optional.  If the caller provides a
+        /// NULL pointer, the name of the source file is expected to reside in the
+        /// specified command line arguments.
+        ///
+        /// Note: When encountered in 'clang_command_line_args', the following options
+        /// are ignored:
+        ///
+        ///   '-c'
+        ///   '-emit-ast'
+        ///   '-fsyntax-only'
+        ///   '-o \&lt;output file&gt;'  (both '-o' and '\&lt;output file&gt;' are ignored)
+        /// </remarks>
 		public ClangTranslationUnit CreateTranslationUnitFromSourceFile (string sourceFilename, string [] clangCommandLineAgs, ClangUnsavedFile [] unsavedFiles)
 		{
 			var cx = unsavedFiles.Select (o => new CXUnsavedFile (o.FileName, o.Contents)).ToArray ();
 			return new ClangTranslationUnit (LibClang.clang_createTranslationUnitFromSourceFile (Handle, sourceFilename, clangCommandLineAgs.Length, clangCommandLineAgs, (uint) unsavedFiles.Length, cx));
 		}
-		
+
+        /// <summary>
+        /// Create a translation unit from an AST file (-emit-ast).
+        /// </summary>
 		public ClangTranslationUnit CreateTranslationUnit (string astFilename)
 		{
 			return new ClangTranslationUnit (LibClang.clang_createTranslationUnit (Handle, astFilename));
 		}
-		
+
+        /// <summary>
+        /// Parse the given source file and the translation unit corresponding
+        /// to that file.
+        /// </summary>
+        /// <remarks>
+        /// This routine is the main entry point for the Clang C API, providing the
+        /// ability to parse a source file into a translation unit that can then be
+        /// queried by other functions in the API. This routine accepts a set of
+        /// command-line arguments so that the compilation can be configured in the same
+        /// way that the compiler is configured on the command line.
+        /// </remarks>
+        /// <param name="sourceFilename">
+        /// The name of the source file to load, or NULL if the
+        /// source file is included in \p command_line_args.
+        /// </param>
+        /// <param name="commandLineArgs">
+        /// The command-line arguments that would be
+        /// passed to the clang executable if it were being invoked out-of-process.
+        /// These command-line options will be parsed and will affect how the translation
+        /// unit is parsed. Note that the following options are ignored: '-c', 
+        /// '-emit-ast', '-fsyntax-only' (which is the default), and '-o \&lt;output file&gt;'.
+        /// </param>
+        /// <param name="unsavedFiles">
+        /// the files that have not yet been saved to disk
+        /// but may be required for parsing, including the contents of
+        /// those files.  The contents and name of these files (as specified by
+        /// CXUnsavedFile) are copied when necessary, so the client only needs to
+        /// guarantee their validity until the call to this function returns.
+        /// </param>
+        /// <param name="options">
+        /// A bitmask of options that affects how the translation unit
+        /// is managed but not its compilation. This should be a bitwise OR of the
+        /// <see cref="TranslationUnitFlags"/> flags.
+        /// </param>
+        /// <returns>
+        /// A new translation unit describing the parsed code and containing
+        /// any diagnostics produced by the compiler. If there is a failure from which
+        /// the compiler cannot recover, returns NULL.
+        /// </returns>
 		public ClangTranslationUnit ParseTranslationUnit (string sourceFilename, string [] commandLineArgs, ClangUnsavedFile [] unsavedFiles, TranslationUnitFlags options)
 		{
 			var files = unsavedFiles.Select (u => new CXUnsavedFile (u.FileName, u.Contents)).ToArray ();
@@ -47,6 +130,10 @@ namespace NClang
 		}
 
 		// HighLevelApi
+        /// <summary>
+        /// An indexing action/session, to be applied to one or multiple
+        /// translation units.
+        /// </summary>
 		public ClangIndexAction CreateIndexAction ()
 		{
 			return new ClangIndexAction (LibClang.clang_IndexAction_create (Handle));
