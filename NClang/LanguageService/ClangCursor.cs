@@ -8,6 +8,7 @@ using SystemULongLong = System.UInt64;
 
 using CXString = NClang.ClangString;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace NClang
 {
@@ -488,6 +489,44 @@ namespace NClang
 			var ret = LibClang.clang_visitChildren (source, (cursor, parent, cd) => visitor (new ClangCursor (cursor), new ClangCursor (parent), cd), clientData);
             return ret != 0;
 		}
+
+        /// <summary>
+        /// Return an iterator for accessing the children of this cursor.
+        /// </summary>
+        /// <returns></returns>
+        public ReadOnlyCollection<ClangCursor> GetChildren()
+        {
+            List<ClangCursor> children = new List<ClangCursor>();
+
+            this.VisitChildren((child, parent, data) =>
+            {
+                children.Add(child);
+                return ChildVisitResult.Continue;
+            }, IntPtr.Zero);
+
+            return new ReadOnlyCollection<ClangCursor>(children);
+        }
+
+        /// <summary>
+        /// Return an iterator for accessing the children of this cursor that are
+        /// of the specified <paramref name="kind"/>.
+        /// </summary>
+        /// <returns></returns>
+        public ReadOnlyCollection<ClangCursor> GetChildrenOfKind(CursorKind kind)
+        {
+            List<ClangCursor> children = new List<ClangCursor>();
+
+            this.VisitChildren((child, parent, data) =>
+            {
+                if (child.Kind == kind)
+                {
+                    children.Add(child);
+                }
+                return ChildVisitResult.Continue;
+            }, IntPtr.Zero);
+
+            return new ReadOnlyCollection<ClangCursor>(children);
+        }
 
 		// CrossReferencingAST
 
