@@ -121,13 +121,62 @@ namespace NClang
         /// <returns>
         /// A new translation unit describing the parsed code and containing
         /// any diagnostics produced by the compiler. If there is a failure from which
-        /// the compiler cannot recover, returns NULL.
+        /// the compiler cannot recover, returns <c>null</c>.
         /// </returns>
 		public ClangTranslationUnit ParseTranslationUnit (string sourceFilename, string [] commandLineArgs, ClangUnsavedFile [] unsavedFiles, TranslationUnitFlags options)
 		{
 			var files = unsavedFiles.Select (u => new CXUnsavedFile (u.FileName, u.Contents)).ToArray ();
 			return new ClangTranslationUnit (LibClang.clang_parseTranslationUnit (Handle, sourceFilename, commandLineArgs, commandLineArgs.Length, files, (uint) files.Length, options));
 		}
+
+        /// <summary>
+        /// Parse the given source file and the translation unit corresponding
+        /// to that file.
+        /// </summary>
+        /// <remarks>
+        /// This routine is the main entry point for the Clang C API, providing the
+        /// ability to parse a source file into a translation unit that can then be
+        /// queried by other functions in the API. This routine accepts a set of
+        /// command-line arguments so that the compilation can be configured in the same
+        /// way that the compiler is configured on the command line.
+        /// </remarks>
+        /// <param name="sourceFilename">
+        /// The name of the source file to load, or NULL if the
+        /// source file is included in \p command_line_args.
+        /// </param>
+        /// <param name="commandLineArgs">
+        /// The command-line arguments that would be
+        /// passed to the clang executable if it were being invoked out-of-process.
+        /// These command-line options will be parsed and will affect how the translation
+        /// unit is parsed. Note that the following options are ignored: '-c', 
+        /// '-emit-ast', '-fsyntax-only' (which is the default), and '-o \&lt;output file&gt;'.
+        /// </param>
+        /// <param name="unsavedFiles">
+        /// the files that have not yet been saved to disk
+        /// but may be required for parsing, including the contents of
+        /// those files.  The contents and name of these files (as specified by
+        /// CXUnsavedFile) are copied when necessary, so the client only needs to
+        /// guarantee their validity until the call to this function returns.
+        /// </param>
+        /// <param name="options">
+        /// A bitmask of options that affects how the translation unit
+        /// is managed but not its compilation. This should be a bitwise OR of the
+        /// <see cref="TranslationUnitFlags"/> flags.
+        /// </param>
+        /// <param name="translationUnit">
+        /// A new translation unit describing the parsed code and containing
+        /// any diagnostics produced by the compiler. If there is a failure from which
+        /// the compiler cannot recover, returns <c>null</c>.
+        /// </param>
+        /// <returns>An <seealso cref="ErrorCode"/>.</returns>
+        public ErrorCode ParseTranslationUnit(string sourceFilename, string [] commandLineArgs, ClangUnsavedFile [] unsavedFiles, TranslationUnitFlags options, out ClangTranslationUnit translationUnit)
+        {
+            var files = unsavedFiles.Select(u => new CXUnsavedFile(u.FileName, u.Contents)).ToArray();
+            IntPtr tuptr;
+            ErrorCode error = LibClang.clang_parseTranslationUnit2(Handle, sourceFilename, commandLineArgs, commandLineArgs.Length, files, (uint)files.Length, options, out tuptr);
+            translationUnit = tuptr != IntPtr.Zero ? new ClangTranslationUnit(tuptr) : null;
+            return error;
+        }
 
 		// HighLevelApi
         /// <summary>

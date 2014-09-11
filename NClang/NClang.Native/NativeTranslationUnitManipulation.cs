@@ -47,14 +47,13 @@ namespace NClang.Natives
 		                                                                     [MarshalAs (UnmanagedType.LPArray)] CXUnsavedFile[] unsaved_files, uint num_unsaved_files,
 		                                                                     TranslationUnitFlags options);
 
-		/* this doesn't exist in LLVM 3.2 nor 3.4.
+		// NOTE: this doesn't exist in LLVM 3.2 nor 3.4.
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		internal static extern ErrorCode clang_parseTranslationUnit2 (CXIndex cIdx, string source_filename, 
 		                                                              [MarshalAs (UnmanagedType.LPArray)] string[] command_line_args, int num_command_line_args,
 		                                                              [MarshalAs (UnmanagedType.LPArray)] CXUnsavedFile[] unsaved_files, uint num_unsaved_files, 
 		                                                              TranslationUnitFlags options,
 		                                                              out CXTranslationUnit out_TU);
-		                                                              */
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		internal static extern SaveTranslationUnitFlags clang_defaultSaveOptions (CXTranslationUnit TU);
