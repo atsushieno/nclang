@@ -131,11 +131,11 @@ namespace NClang
 
 		// MiscellaneousUtilityFunctions
 
-		static readonly int loc_size = Marshal.SizeOf<CXSourceLocation> ();
+		static readonly int loc_size = Marshal.SizeOf (typeof(CXSourceLocation));
 
 		public void GetInclusions (Action<ClangFile,ClangSourceLocation[],IntPtr> visitor, IntPtr clientData)
 		{
-			CXInclusionVisitor v = (file, locations, len, cd) => visitor (new ClangFile (file), Enumerable.Range (0, (int) len).Select (i => new ClangSourceLocation (Marshal.PtrToStructure<CXSourceLocation> (locations + loc_size * i))).ToArray (), cd);
+			CXInclusionVisitor v = (file, locations, len, cd) => visitor (new ClangFile (file), Enumerable.Range (0, (int) len).Select (i => new ClangSourceLocation ((CXSourceLocation)Marshal.PtrToStructure (locations + loc_size * i, typeof(CXSourceLocation)))).ToArray (), cd);
 			LibClang.clang_getInclusions (Handle, v, clientData);
 		}
 

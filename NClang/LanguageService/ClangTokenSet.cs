@@ -24,19 +24,19 @@ namespace NClang
 			LibClang.clang_disposeTokens (tu, tokens, (uint) count);
 		}
 
-		static readonly int cxtoken_size = Marshal.SizeOf<CXToken> ();
+		static readonly int cxtoken_size = Marshal.SizeOf (typeof(CXToken));
 
 		public IEnumerable<ClangToken> Tokens {
-			get { return Enumerable.Range (0, count).Select (i => new ClangToken (tu, Marshal.PtrToStructure<CXToken> (tokens + cxtoken_size * i))); }
+			get { return Enumerable.Range (0, count).Select (i => new ClangToken (tu, (CXToken)Marshal.PtrToStructure (tokens + cxtoken_size * i, typeof(CXToken)))); }
 		}
 
-		static readonly int cxcursor_size = Marshal.SizeOf<CXCursor> ();
+		static readonly int cxcursor_size = Marshal.SizeOf (typeof(CXCursor));
 
 		public IEnumerable<ClangCursor> Annotate ()
 		{
 			IntPtr cursors = IntPtr.Zero;
 			LibClang.clang_annotateTokens (tu, tokens, (uint) count, ref cursors);
-			return Enumerable.Range (0, count).Select (i => new ClangCursor (Marshal.PtrToStructure<CXCursor> (cursors + cxcursor_size * i)));
+			return Enumerable.Range (0, count).Select (i => new ClangCursor ((CXCursor)Marshal.PtrToStructure (cursors + cxcursor_size * i, typeof(CXCursor))));
 		}
 	}
 

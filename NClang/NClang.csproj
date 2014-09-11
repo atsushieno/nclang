@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -7,7 +7,8 @@
     <OutputType>Library</OutputType>
     <RootNamespace>NClang</RootNamespace>
     <AssemblyName>NClang</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,7 +35,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LanguageService\ClangService.cs" />
-    <Compile Include="LanguageService\AllEnums.cs" />
+    <Compile Include="LanguageService\Enums\ObjCDeclarationQualifierFlags.cs" />
+    <Compile Include="LanguageService\Enums\IndexEntityRefKind.cs" />
     <Compile Include="LanguageService\ClangIndex.cs" />
     <Compile Include="LanguageService\ClangObject.cs" />
     <Compile Include="LanguageService\ClangServiceException.cs" />
@@ -50,6 +52,44 @@
     <Compile Include="LanguageService\ClangVersion.cs" />
     <Compile Include="LanguageService\ClangCursorSet.cs" />
     <Compile Include="LanguageService\ClangCodeCompleteResults.cs" />
+    <Compile Include="LanguageService\Enums\AvailabilityKind.cs" />
+    <Compile Include="LanguageService\Enums\CallingConvention.cs" />
+    <Compile Include="LanguageService\Enums\ChildVisitResult.cs" />
+    <Compile Include="LanguageService\Enums\CodeCompleteFlags.cs" />
+    <Compile Include="LanguageService\Enums\CommentInlineCommandRenderKind.cs" />
+    <Compile Include="LanguageService\Enums\CommentKind.cs" />
+    <Compile Include="LanguageService\Enums\CommentParamPassDirection.cs" />
+    <Compile Include="LanguageService\Enums\CompilationDatabaseError.cs" />
+    <Compile Include="LanguageService\Enums\CompletionChunkKind.cs" />
+    <Compile Include="LanguageService\Enums\CompletionContext.cs" />
+    <Compile Include="LanguageService\Enums\CursorKind.cs" />
+    <Compile Include="LanguageService\Enums\CXXAccessSpecifier.cs" />
+    <Compile Include="LanguageService\Enums\DiagnosticDisplayOptions.cs" />
+    <Compile Include="LanguageService\Enums\DiagnosticSeverity.cs" />
+    <Compile Include="LanguageService\Enums\ErrorCode.cs" />
+    <Compile Include="LanguageService\Enums\FindResult.cs" />
+    <Compile Include="LanguageService\Enums\GlobalOptionFlags.cs" />
+    <Compile Include="LanguageService\Enums\IndexAttributeKind.cs" />
+    <Compile Include="LanguageService\Enums\IndexDeclInfoFlags.cs" />
+    <Compile Include="LanguageService\Enums\IndexEntityCxxTemplateKind.cs" />
+    <Compile Include="LanguageService\Enums\IndexEntityKind.cs" />
+    <Compile Include="LanguageService\Enums\IndexEntityLanguage.cs" />
+    <Compile Include="LanguageService\Enums\IndexObjCContainerKind.cs" />
+    <Compile Include="LanguageService\Enums\IndexOptionFlags.cs" />
+    <Compile Include="LanguageService\Enums\LanguageKind.cs" />
+    <Compile Include="LanguageService\Enums\LinkageKind.cs" />
+    <Compile Include="LanguageService\Enums\LoadDiagError.cs" />
+    <Compile Include="LanguageService\Enums\NameRefFlags.cs" />
+    <Compile Include="LanguageService\Enums\ObjCPropertyAttributeFlags.cs" />
+    <Compile Include="LanguageService\Enums\RefQualifierKind.cs" />
+    <Compile Include="LanguageService\Enums\ReparseTranslationUnitFlags.cs" />
+    <Compile Include="LanguageService\Enums\ResourceUsageKind.cs" />
+    <Compile Include="LanguageService\Enums\SaveError.cs" />
+    <Compile Include="LanguageService\Enums\SaveTranslationUnitFlags.cs" />
+    <Compile Include="LanguageService\Enums\TokenKind.cs" />
+    <Compile Include="LanguageService\Enums\TranslationUnitFlags.cs" />
+    <Compile Include="LanguageService\Enums\TypeKind.cs" />
+    <Compile Include="LanguageService\Enums\VisitorResult.cs" />
     <Compile Include="NClang.Native\NativeCodeCompletion.cs" />
     <Compile Include="NClang.Native\NativeCommentASTIntrospection.cs" />
     <Compile Include="NClang.Native\NativeCompilationDatabase.cs" />
@@ -93,8 +133,5 @@
     <Compile Include="LanguageService\ClangIndex_Infos.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="LanguageService\" />
-    <Folder Include="NClang.Native\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>

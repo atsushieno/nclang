@@ -10,17 +10,16 @@ namespace NClang.Natives
 	// done
 	static partial class LibClang
 	{
-		[DllImport (LibraryName)]
-		internal static extern CXIndex clang_createIndex ([MarshalAs (UnmanagedType.SysInt)] int excludeDeclarationsFromPCH, [MarshalAs (UnmanagedType.SysInt)] int displayDiagnostics);
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		internal static extern CXIndex clang_createIndex (int excludeDeclarationsFromPCH, int displayDiagnostics);
 
-		[DllImport (LibraryName)]
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		internal static extern void clang_disposeIndex (CXIndex index);
 
-		[DllImport (LibraryName)]
-		internal static extern void clang_CXIndex_setGlobalOptions (CXIndex _, [MarshalAs (UnmanagedType.SysInt)] GlobalOptionFlags options);
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		internal static extern void clang_CXIndex_setGlobalOptions (CXIndex _, GlobalOptionFlags options);
 
-		[return:MarshalAs (UnmanagedType.SysUInt)]
-		[DllImport (LibraryName)]
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		internal static extern GlobalOptionFlags clang_CXIndex_getGlobalOptions (CXIndex _);
 	}
 
@@ -49,11 +48,8 @@ namespace NClang.Natives
 			SubMinor = subminor;
 		}
 
-		[MarshalAs (UnmanagedType.SysInt)]
 		public readonly int Major;
-		[MarshalAs (UnmanagedType.SysInt)]
 		public readonly int Minor;
-		[MarshalAs (UnmanagedType.SysInt)]
 		public readonly int SubMinor;
 	}
 
@@ -69,9 +65,7 @@ namespace NClang.Natives
 			this.Data3 = data [2];
 		}
 
-		[MarshalAs (UnmanagedType.SysInt)]
 		public readonly CursorKind Kind;
-		[MarshalAs (UnmanagedType.SysInt)]
 		public readonly int XData;
 		// void* [3]
 		public readonly IntPtr Data1;
