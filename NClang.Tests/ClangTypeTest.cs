@@ -14,7 +14,9 @@ namespace NClang.Tests
 			Assert.AreEqual (AvailabilityKind.Available, c.AvailabilityKind, "AvailabilityKind");
 
 			var t = c.CursorType;
+			Assert.IsNull (t, "IsNull");
 
+			/*
 			Assert.AreEqual (-1, t.AlignOf, "AlignOf");
 			Assert.AreEqual (-1, t.ArgumentTypeCount, "ArgumentTypeCount");
 			var tt = t.ArrayElementType;
@@ -45,6 +47,7 @@ namespace NClang.Tests
 			// Assert.AreEqual (-1, t.TemplateArgumentCount, "TemplateArgumentCount");
 			var cc = t.TypeDeclaration;
 			Assert.IsNotNull (cc, "TypeDeclaration");
+			*/
 		}
 	}
 }

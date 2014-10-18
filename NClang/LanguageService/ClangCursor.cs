@@ -122,15 +122,15 @@ namespace NClang
 		// TypeInformationForCXCursor
 
 		public ClangType CursorType {
-			get { return new ClangType (LibClang.clang_getCursorType (source)); }
+			get { return LibClang.clang_getCursorType (source).ToManaged (); }
 		}
 
 		public ClangType TypeDefDeclUnderlyingType {
-			get { return new ClangType (LibClang.clang_getTypedefDeclUnderlyingType (source)); }
+			get { return LibClang.clang_getTypedefDeclUnderlyingType (source).ToManaged (); }
 		}
 
 		public ClangType EnumDeclIntegerType {
-			get { return new ClangType (LibClang.clang_getEnumDeclIntegerType (source)); }
+			get { return LibClang.clang_getEnumDeclIntegerType (source).ToManaged (); }
 		}
 
 		public SystemLongLong EnumConstantDeclValue {
@@ -159,7 +159,7 @@ namespace NClang
 		}
 
 		public ClangType ResultType {
-			get { return new ClangType (LibClang.clang_getCursorResultType (source)); }
+			get { return LibClang.clang_getCursorResultType (source).ToManaged (); }
 		}
 
 		public bool IsBitField {
@@ -242,7 +242,7 @@ namespace NClang
 		}
 
 		public ClangType ReceiverType {
-			get { return new ClangType (LibClang.clang_Cursor_getReceiverType (source)); }
+			get { return LibClang.clang_Cursor_getReceiverType (source).ToManaged (); }
 		}
 
 		public uint GetObjCPropertyAttributes ()
@@ -321,7 +321,7 @@ namespace NClang
 
 		// InformationForAttributes
 		public ClangType IBOutletCollectionType {
-			get { return new ClangType (LibClang.clang_getIBOutletCollectionType (source)); }
+			get { return LibClang.clang_getIBOutletCollectionType (source).ToManaged (); }
 		}
 
 		// ModuleIntrospection

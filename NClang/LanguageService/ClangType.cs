@@ -5,7 +5,7 @@ using SystemULongLong = System.UInt64;
 
 namespace NClang
 {
-	public struct ClangType
+	public class ClangType
 	{
 		// Static members
 
@@ -35,17 +35,17 @@ namespace NClang
 
 		public bool Equals (ClangType other)
 		{
-			return LibClang.clang_equalTypes (source, other.source) != 0;
+			return other != null && LibClang.clang_equalTypes (source, other.source) != 0;
 		}
 
 		public static bool operator == (ClangType o1, ClangType o2)
 		{
-			return o1.Equals (o2);
+			return (object) o1 == null ? (object) o2 == null : o1.Equals (o2);
 		}
 
 		public static bool operator != (ClangType o1, ClangType o2)
 		{
-			return !o1.Equals (o2);
+			return (object) o1 == null ? (object) o2 != null : !o1.Equals (o2);
 		}
 
 		public override bool Equals (object obj)
@@ -59,7 +59,7 @@ namespace NClang
 		}
 
 		public ClangType CanonicalType {
-			get { return new ClangType (LibClang.clang_getCanonicalType (source)); }
+			get { return LibClang.clang_getCanonicalType (source).ToManaged (); }
 		}
 
 		public bool IsConstQualifiedType {
@@ -75,7 +75,7 @@ namespace NClang
 		}
 
 		public ClangType PointeeType {
-			get { return new ClangType (LibClang.clang_getPointeeType (source)); }
+			get { return LibClang.clang_getPointeeType (source).ToManaged (); }
 		}
 
 		public ClangCursor TypeDeclaration {
@@ -87,7 +87,7 @@ namespace NClang
 		}
 
 		public ClangType ResultType {
-			get { return new ClangType (LibClang.clang_getResultType (source)); }
+			get { return LibClang.clang_getResultType (source).ToManaged (); }
 		}
 
 		public int ArgumentTypeCount {
@@ -96,7 +96,7 @@ namespace NClang
 
 		public ClangType GetArgumentType (int index)
 		{
-			return new ClangType (LibClang.clang_getArgType (source, (uint) index));
+			return LibClang.clang_getArgType (source, (uint) index).ToManaged ();
 		}
 
 		public bool IsFunctionTypeVariadic {
@@ -108,7 +108,7 @@ namespace NClang
 		}
 
 		public ClangType ElementType {
-			get { return new ClangType (LibClang.clang_getElementType (source)); }
+			get { return LibClang.clang_getElementType (source).ToManaged (); }
 		}
 
 		public int ElementCount {
@@ -120,7 +120,7 @@ namespace NClang
 		}
 
 		public ClangType ArrayElementType {
-			get { return new ClangType (LibClang.clang_getArrayElementType (source)); }
+			get { return LibClang.clang_getArrayElementType (source).ToManaged (); }
 		}
 
 		public int ArraySize {
@@ -140,7 +140,7 @@ namespace NClang
 		}
 
 		public ClangType ClassType {
-			get { return new ClangType (LibClang.clang_Type_getClassType (source)); }
+			get { return LibClang.clang_Type_getClassType (source).ToManaged (); }
 		}
 
 		public int SizeOf {
@@ -169,7 +169,7 @@ namespace NClang
 
 		public ClangType GetTemplateArgumentAsType (int index)
 		{
-			return new ClangType (LibClang.clang_Type_getTemplateArgumentAsType (source, (uint) index));
+			return LibClang.clang_Type_getTemplateArgumentAsType (source, (uint) index).ToManaged ();
 		}
 
 		public RefQualifierKind RefQualifier {

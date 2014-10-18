@@ -91,6 +91,7 @@
     <Compile Include="LanguageService\ClangToken.cs" />
     <Compile Include="LanguageService\ClangTokenSet.cs" />
     <Compile Include="LanguageService\ClangIndex_Infos.cs" />
+    <Compile Include="NClang.Native\Extensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

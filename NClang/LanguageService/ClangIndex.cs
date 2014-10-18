@@ -40,10 +40,10 @@ namespace NClang
 			return new ClangTranslationUnit (LibClang.clang_createTranslationUnit (Handle, astFilename));
 		}
 		
-		public ClangTranslationUnit ParseTranslationUnit (string sourceFilename, string [] commandLineArgs, ClangUnsavedFile [] unsavedFiles, TranslationUnitFlags options)
+		public ClangTranslationUnit ParseTranslationUnit (string sourceFilename, string [] commandLineArgs = null, ClangUnsavedFile [] unsavedFiles = null, TranslationUnitFlags options = TranslationUnitFlags.None)
 		{
-			var files = unsavedFiles.Select (u => new CXUnsavedFile (u.FileName, u.Contents)).ToArray ();
-			return new ClangTranslationUnit (LibClang.clang_parseTranslationUnit (Handle, sourceFilename, commandLineArgs, commandLineArgs.Length, files, (uint) files.Length, options));
+			var files = (unsavedFiles ?? new ClangUnsavedFile [0]).Select (u => new CXUnsavedFile (u.FileName, u.Contents)).ToArray ();
+			return new ClangTranslationUnit (LibClang.clang_parseTranslationUnit (Handle, sourceFilename, commandLineArgs, (commandLineArgs ?? new string [0]).Length, files, (uint) files.Length, options));
 		}
 
 		// HighLevelApi

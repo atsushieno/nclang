@@ -14,7 +14,7 @@ namespace NClang.Tests
 			Assert.AreEqual (AvailabilityKind.Available, c.AvailabilityKind, "AvailabilityKind");
 
 			var t = c.CursorType;
-			Assert.IsNotNull (t, "CursorType");
+			Assert.IsNull (t, "CursorType");
 
 			Assert.AreEqual (CXXAccessSpecifier.Invalid, c.CxxAccessSpecifier, "CxxAccessSpecifier");
 			Assert.AreEqual (string.Empty, c.DeclObjCTypeEncoding, "DeclObjCTypeEncoding");
@@ -22,7 +22,7 @@ namespace NClang.Tests
 			Assert.AreEqual (-9223372036854775808m, c.EnumConstantDeclValue, "EnumConstantDeclValue");
 
 			t = c.EnumDeclIntegerType;
-			Assert.IsNotNull (t, "EnumDeclIntegerType");
+			Assert.IsNull (t, "EnumDeclIntegerType");
 
 			Assert.AreEqual (-1, c.FieldDeclBitWidth, "FieldDeclBitWidth");
 			Assert.AreEqual (null, c.IncludedFile, "IncludedFile");
@@ -37,14 +37,14 @@ namespace NClang.Tests
 			Assert.AreEqual (LinkageKind.Invalid, c.Linkage, "Linkage");
 			Assert.AreEqual (0, c.OverloadedDeclarationCount, "OverloadedDeclarationCount");
 			t = c.ResultType;
-			Assert.IsNotNull (t, "ResultType");
+			Assert.IsNull (t, "ResultType");
 
 			cc = c.SemanticParent;
 			Assert.IsNotNull (cc, "SemanticParent");
 
 			Assert.IsNull (c.TranslationUnit, "TranslationUnit");
 			t = c.TypeDefDeclUnderlyingType;
-			Assert.IsNotNull (t, "TypeDefDeclUnderlyingType");
+			Assert.IsNull (t, "TypeDefDeclUnderlyingType");
 		}
 
 		[Test]
@@ -57,7 +57,7 @@ namespace NClang.Tests
 				Assert.AreEqual (AvailabilityKind.Available, c.AvailabilityKind, "AvailabilityKind");
 
 				var t = c.CursorType;
-				Assert.IsNotNull (t, "CursorType");
+				Assert.IsNull (t, "CursorType");
 
 				Assert.AreEqual (CXXAccessSpecifier.Invalid, c.CxxAccessSpecifier, "CxxAccessSpecifier");
 				Assert.AreEqual (string.Empty, c.DeclObjCTypeEncoding, "DeclObjCTypeEncoding");
@@ -65,7 +65,7 @@ namespace NClang.Tests
 				Assert.AreEqual (-9223372036854775808m, c.EnumConstantDeclValue, "EnumConstantDeclValue");
 
 				t = c.EnumDeclIntegerType;
-				Assert.IsNotNull (t, "EnumDeclIntegerType");
+				Assert.IsNull (t, "EnumDeclIntegerType");
 
 				Assert.AreEqual (-1, c.FieldDeclBitWidth, "FieldDeclBitWidth");
 				Assert.AreEqual (null, c.IncludedFile, "IncludedFile");
@@ -80,14 +80,14 @@ namespace NClang.Tests
 				Assert.AreEqual (LinkageKind.Invalid, c.Linkage, "Linkage");
 				Assert.AreEqual (0, c.OverloadedDeclarationCount, "OverloadedDeclarationCount");
 				t = c.ResultType;
-				Assert.IsNotNull (t, "ResultType");
+				Assert.IsNull (t, "ResultType");
 
 				cc = c.SemanticParent;
 				Assert.IsNotNull (cc, "SemanticParent");
 
 				Assert.AreEqual (tu, c.TranslationUnit, "TranslationUnit");
 				t = c.TypeDefDeclUnderlyingType;
-				Assert.IsNotNull (t, "TypeDefDeclUnderlyingType");
+				Assert.IsNull (t, "TypeDefDeclUnderlyingType");
 			}, filename);
 		}
 
