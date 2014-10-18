@@ -33,6 +33,9 @@ namespace NClang
 
 	public enum CursorKind
 	{
+		// this is not defined in libclang, but this happens.
+		Invalid = 0,
+
 		UnexposedDeclaration = 1,
 		StructDeclaration = 2,
 		UnionDeclaration = 3,
