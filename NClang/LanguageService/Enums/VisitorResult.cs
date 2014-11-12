@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 
 namespace NClang
 {
-    public enum VisitorResult
-    {
-        Break,
-        Continue
-    }
+	public enum VisitorResult
+	{
+		Break,
+		Continue
+	}
 }

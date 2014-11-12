@@ -1,13 +1,13 @@
-﻿using System;
+using System;
 
 namespace NClang
 {
-    public enum TokenKind
-    {
-        Punctuation,
-        Keyword,
-        Identifier,
-        Literal,
-        Comment
-    }
+	public enum TokenKind
+	{
+		Punctuation,
+		Keyword,
+		Identifier,
+		Literal,
+		Comment
+	}
 }

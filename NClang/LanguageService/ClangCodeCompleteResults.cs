@@ -9,7 +9,7 @@ namespace NClang
 	
 	public class ClangCodeCompleteResults : ClangObject, IDisposable
 	{
-        static readonly int result_size = Marshal.SizeOf(typeof(CXCompletionResult));
+		static readonly int result_size = Marshal.SizeOf (typeof(CXCompletionResult));
 		CXCodeCompletionResults? source;
 
 		public ClangCodeCompleteResults (IntPtr handle)
@@ -22,7 +22,7 @@ namespace NClang
 		}
 
 		public int ResultCount {
-			get { return (int) Source.NumResults; }
+			get { return (int)Source.NumResults; }
 		}
 
 		public IEnumerable<ClangCompletionResult> Results {
@@ -38,16 +38,16 @@ namespace NClang
 		}
 
 		public int DiagnosticsCount {
-			get { return (int) LibClang.clang_codeCompleteGetNumDiagnostics (Handle); }
+			get { return (int)LibClang.clang_codeCompleteGetNumDiagnostics (Handle); }
 		}
 
 		public ClangDiagnostic GetDiagnostic (int index)
 		{
-			return new ClangDiagnostic (LibClang.clang_codeCompleteGetDiagnostic (Handle, (uint) index));
+			return new ClangDiagnostic (LibClang.clang_codeCompleteGetDiagnostic (Handle, (uint)index));
 		}
 
 		public CompletionContext Contexts {
-			get { return (CompletionContext) LibClang.clang_codeCompleteGetContexts (Handle); }
+			get { return (CompletionContext)LibClang.clang_codeCompleteGetContexts (Handle); }
 		}
 
 		public CursorKind GetContainerKind (out bool isComplete)

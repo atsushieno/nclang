@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 
 namespace NClang
 {
-    public enum CommentParamPassDirection
-    {
-        In,
-        Out,
-        InOut
-    }
+	public enum CommentParamPassDirection
+	{
+		In,
+		Out,
+		InOut
+	}
 }

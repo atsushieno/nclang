@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using CXCompilationDatabase = System.IntPtr; // void*
 using CXCompileCommands = System.IntPtr; // void*

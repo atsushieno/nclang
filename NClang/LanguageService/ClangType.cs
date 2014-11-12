@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using NClang.Natives;
 using SystemLongLong = System.Int64;
 using SystemULongLong = System.UInt64;

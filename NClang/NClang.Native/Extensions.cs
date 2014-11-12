@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using NClang.Natives;
 
 namespace NClang
