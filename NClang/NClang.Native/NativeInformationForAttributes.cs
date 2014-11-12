@@ -6,7 +6,7 @@ namespace NClang.Natives
 	// done
 	static partial class LibClang
 	{
-		[DllImport (LibraryName)]
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern CXType 	clang_getIBOutletCollectionType (CXCursor _);
 	}
 }

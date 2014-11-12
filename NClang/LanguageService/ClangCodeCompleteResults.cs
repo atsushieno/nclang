@@ -9,7 +9,7 @@ namespace NClang
 	
 	public class ClangCodeCompleteResults : ClangObject, IDisposable
 	{
-		static readonly int result_size = Marshal.SizeOf<CXCompletionResult> ();
+        static readonly int result_size = Marshal.SizeOf(typeof(CXCompletionResult));
 		CXCodeCompletionResults? source;
 
 		public ClangCodeCompleteResults (IntPtr handle)
@@ -18,7 +18,7 @@ namespace NClang
 		}
 
 		CXCodeCompletionResults Source {
-			get { return (CXCodeCompletionResults)(source ?? (source = Marshal.PtrToStructure<CXCodeCompletionResults> (Handle))); }
+			get { return (CXCodeCompletionResults)(source ?? (source = (CXCodeCompletionResults)Marshal.PtrToStructure (Handle, typeof(CXCodeCompletionResults)))); }
 		}
 
 		public int ResultCount {

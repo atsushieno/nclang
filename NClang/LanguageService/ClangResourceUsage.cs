@@ -33,7 +33,7 @@ namespace NClang
 
 		public Entry GetEntry (int i)
 		{
-			return new Entry (Marshal.PtrToStructure<CXTUResourceUsageEntry> (source.Entries + Marshal.SizeOf<CXTUResourceUsageEntry> () * i));
+			return new Entry ((CXTUResourceUsageEntry)Marshal.PtrToStructure (source.Entries + Marshal.SizeOf (typeof(CXTUResourceUsageEntry)) * i, typeof(CXTUResourceUsageEntry)));
 		}
 
 		public void Dispose ()

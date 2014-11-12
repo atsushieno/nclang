@@ -7,11 +7,11 @@ namespace NClang.Natives
 {
 	public static partial class LibClang
 	{
-		[DllImport (LibraryName)]
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern IntPtr clang_getCString (CXString @string);
 
 		// FIXME: determine how/when to call it.
-		[DllImport (LibraryName)]
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern void clang_disposeString (CXString @string);
 
 		internal static string Unwrap (this CXString s)
@@ -27,6 +27,10 @@ namespace NClang.Natives
 					x++;
 				var e = System.Text.Encoding.Default;
 				var l = e.GetCharCount (ptr, x);
+                if (l == 0)
+                {
+                    return string.Empty;
+                }
 				char* buf = stackalloc char [l];
 				e.GetChars (ptr, x, buf, l);
 				return new string (buf, 0, l);

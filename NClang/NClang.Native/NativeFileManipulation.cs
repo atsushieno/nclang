@@ -31,22 +31,20 @@ namespace NClang.Natives
 	// done
 	public static partial class LibClang
 	{
-		[DllImport (LibraryName)]
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern CXString clang_getFileName (CXFile sFile);
 		
 		// not sure how to deal with time_t. So far we can skip it.
-		//[DllImport (LibraryName)]
+		//[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		// internal static extern TimeT clang_getFileTime (CXFile sFile);
 		
-		[return:MarshalAs (UnmanagedType.SysInt)]
-		[DllImport (LibraryName)]
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern int clang_getFileUniqueID (CXFile file, out CXFileUniqueID outID);
 
-		[return:MarshalAs (UnmanagedType.SysUInt)]
-		[DllImport (LibraryName)]
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern uint clang_isFileMultipleIncludeGuarded (CXTranslationUnit tu, CXFile file);
 
-		[DllImport (LibraryName)]
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern CXFile clang_getFile (CXTranslationUnit tu, string fileName);
 	}
 }
