@@ -30,12 +30,12 @@ namespace NClang.Natives
 		{
 			this.FileName = filename;
 			this.Contents = contents;
-			this.Length = (ulong) contents.Length;
+			this.Length = (uint) contents.Length;
 		}
 
 		public readonly string FileName;
 		public readonly string Contents;
-		public readonly ulong Length;
+		public readonly uint Length;
 	}
 
 	[StructLayout (LayoutKind.Sequential)]
