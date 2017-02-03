@@ -1,8 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <OutputType>library</OutputType>
     <TargetFramework>netcoreapp1.1</TargetFramework>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
-
+  <ItemGroup>
+    <Compile Remove="LanguageService\AllEnums.cs" />
+  </ItemGroup>
 </Project>
