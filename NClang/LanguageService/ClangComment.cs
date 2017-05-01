@@ -89,7 +89,7 @@ namespace NClang
 			get { return LibClang.clang_BlockCommandComment_getCommandName (source).Unwrap (); }
 		}
 
-		public int BlockCommandArgumentCunt {
+		public int BlockCommandArgumentCount {
 			get { return (int) LibClang.clang_BlockCommandComment_getNumArgs (source); }
 		}
 

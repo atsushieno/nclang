@@ -25,7 +25,12 @@ namespace NClang
 			get { return (int)Source.NumResults; }
 		}
 
-		public IEnumerable<ClangCompletionResult> Results {
+        public void Sort()
+        {
+            LibClang.clang_sortCodeCompletionResults(Source.Results, Source.NumResults);
+        }
+
+        public IEnumerable<ClangCompletionResult> Results {
 			get {
 				for (int i = 0; i < Source.NumResults; i++)
 					yield return new ClangCompletionResult (Source.Results + result_size * i);
