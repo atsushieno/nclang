@@ -55,17 +55,26 @@ namespace PInvokeGenerator
 							InsideUsingDeclaration = false;
 						}
 					}
+					if (cursor.Kind == CursorKind.EnumConstantDeclaration)
+						current.Fields.Add (new Variable ()
+						{
+							Type = ToTypeName (cursor.CursorType),
+							Name = cursor.Spelling,
+							// FIXME: this is HACK.
+							Value = (cursor.EnumConstantDeclValue != 0 ? (decimal) cursor.EnumConstantDeclValue : (decimal) cursor.EnumConstantDeclUnsignedValue).ToString(),
+						});
 					if (cursor.Kind == CursorKind.FieldDeclaration)
 						current.Fields.Add (new Variable () {
 							Type = ToTypeName (cursor.CursorType),
 							Name = cursor.Spelling
 						});
-					if (cursor.Kind == CursorKind.StructDeclaration || cursor.Kind == CursorKind.UnionDeclaration) {
+					if (cursor.Kind == CursorKind.StructDeclaration || cursor.Kind == CursorKind.UnionDeclaration || cursor.Kind == CursorKind.EnumDeclaration) {
 						current = new Struct () {
 							Name = cursor.DisplayName,
 							Line = cursor.Location.FileLocation.Line,
 							Column = cursor.Location.FileLocation.Column,
-							IsUnion = cursor.Kind == CursorKind.UnionDeclaration
+							IsUnion = cursor.Kind == CursorKind.UnionDeclaration,
+							IsEnum = cursor.Kind == CursorKind.EnumDeclaration,
 						};
 						if (members.All (m => m.Line != current.Line || m.Column != current.Column)) {
 							var dup = members.OfType<Struct> ().Where (m => m.Name == current.Name).ToArray ();
@@ -151,22 +160,32 @@ public struct ConstArrayOf<T> {}
 		{
 			public string Name;
 			public string Type;
+			public string Value;
 		}
 
 		class Struct : Locatable
 		{
 			public bool IsUnion;
+			public bool IsEnum;
 			public string Name;
 			public List<Variable> Fields = new List<Variable> ();
 
 			public override void Write (TextWriter w)
 			{
-				w.WriteLine ("[StructLayout (LayoutKind.Sequential)]");
-				w.WriteLine ("struct {0} //line:{1}, column:{2}", Name, Line, Column);
-				w.WriteLine ("{");
-				foreach (var m in Fields)
-					w.WriteLine ("\tpublic {0} {1};", m.Type, m.Name);
-				w.WriteLine ("}");
+				if (IsEnum) {
+					w.WriteLine("enum {0} //line:{1}, column:{2}", Name, Line, Column);
+					w.WriteLine("{");
+					foreach (var m in Fields)
+						w.WriteLine("\t{0} {1}{2},", m.Name, m.Value != null ? " = " : null, m.Value);
+					w.WriteLine("}");
+				} else {
+					w.WriteLine ("[StructLayout (LayoutKind.Sequential)]");
+					w.WriteLine ("struct {0} //line:{1}, column:{2}", Name, Line, Column);
+					w.WriteLine ("{");
+					foreach (var m in Fields)
+						w.WriteLine ("\tpublic {0} {1};", m.Type, m.Name);
+					w.WriteLine ("}");
+				}
 			}
 		}
 
@@ -280,7 +299,7 @@ public struct ConstArrayOf<T> {}
 			if (strip && type.IsConstQualifiedType)
 				return ToTypeName (type, false).Substring (6); // "const "
 			else
-				return type.Spelling.Replace ("struct ", "").Replace ("union", "");
+				return type.Spelling.Replace ("struct ", "").Replace ("union", "").Replace ("enum", "");
 		}
 	}
 }
