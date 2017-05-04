@@ -131,6 +131,12 @@ public struct Pointer<T>
 {
 	public IntPtr Handle;
 	public static implicit operator IntPtr (Pointer<T> value) { return value.Handle; }
+	public static implicit operator Pointer<T> (IntPtr value) { return new Pointer<T> (value); }
+
+	public Pointer (IntPtr handle)
+	{
+		Handle = handle;
+	}
 }
 public struct ArrayOf<T> {}
 public struct ConstArrayOf<T> {}
