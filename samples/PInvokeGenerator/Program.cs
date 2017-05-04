@@ -15,6 +15,7 @@ namespace PInvokeGenerator
 		}
 
 		public static string LibraryName;
+		public static string Namespace;
 
 		bool InsideUsingDeclaration;
 		List<TypeDef> usings = new List<TypeDef> ();
@@ -29,6 +30,8 @@ namespace PInvokeGenerator
 					output = File.CreateText (arg.Substring (6));
 				else if (arg.StartsWith ("--lib:", StringComparison.Ordinal))
 					LibraryName = arg.Substring (6);
+				else if (arg.StartsWith ("--ns:", StringComparison.Ordinal))
+					Namespace = arg.Substring (5);
 				else
 					tus.Add (idx.ParseTranslationUnit (arg, null, null, TranslationUnitFlags.None));
 			}
@@ -71,6 +74,7 @@ namespace PInvokeGenerator
 					if (cursor.Kind == CursorKind.StructDeclaration || cursor.Kind == CursorKind.UnionDeclaration || cursor.Kind == CursorKind.EnumDeclaration) {
 						current = new Struct () {
 							Name = cursor.DisplayName,
+							SourceFile = cursor.Location.FileLocation.File.FileName,
 							Line = cursor.Location.FileLocation.Line,
 							Column = cursor.Location.FileLocation.Column,
 							IsUnion = cursor.Kind == CursorKind.UnionDeclaration,
@@ -87,6 +91,7 @@ namespace PInvokeGenerator
 						members.Add (new Function () {
 							Name = cursor.Spelling,
 							Return = ToTypeName (cursor.ResultType),
+							SourceFile = cursor.Location.FileLocation.File.FileName,
 							Line = cursor.Location.FileLocation.Line,
 							Column = cursor.Location.FileLocation.Column,
 							Args = Enumerable.Range (0, cursor.ArgumentCount).Select (i => cursor.GetArgument (i)).Select (a => new Variable () { Name = a.Spelling, Type = ToTypeName (a.CursorType) }).ToArray () });
@@ -103,12 +108,16 @@ namespace PInvokeGenerator
 				if (u.Alias != u.Actual)
 					output.WriteLine ("using {0} = {1};", u.Alias, u.Actual);
 			output.WriteLine ();
+
+			if (Namespace != null)
+				output.WriteLine ("namespace {0} {{", Namespace);
+			
 			foreach (var o in members.OfType<Struct> ()) {
 				o.Write (output);
 				output.WriteLine ();
 			}
 
-			output.WriteLine ("class Marshal");
+			output.WriteLine ("class Natives");
 			output.WriteLine ("{");
 			foreach (var o in members.OfType<Function> ()) {
 				o.Write (output);
@@ -126,6 +135,10 @@ public struct Pointer<T>
 public struct ArrayOf<T> {}
 public struct ConstArrayOf<T> {}
 ");
+
+			if (Namespace != null)
+				output.WriteLine ("}");
+
 			output.Close ();
 		}
 
@@ -150,8 +163,13 @@ public struct ConstArrayOf<T> {}
 
 		abstract class Locatable
 		{
+			public string SourceFile;
 			public int Line;
 			public int Column;
+
+			public string SourceFileName {
+				get { return SourceFile == null ? null : Path.GetFileName (SourceFile); }
+			}
 
 			public abstract void Write (TextWriter w);
 		}
@@ -173,14 +191,14 @@ public struct ConstArrayOf<T> {}
 			public override void Write (TextWriter w)
 			{
 				if (IsEnum) {
-					w.WriteLine("enum {0} //line:{1}, column:{2}", Name, Line, Column);
+					w.WriteLine("enum {0} // {1} ({2}, {3})", Name, SourceFileName, Line, Column);
 					w.WriteLine("{");
 					foreach (var m in Fields)
 						w.WriteLine("\t{0} {1}{2},", m.Name, m.Value != null ? " = " : null, m.Value);
 					w.WriteLine("}");
 				} else {
 					w.WriteLine ("[StructLayout (LayoutKind.Sequential)]");
-					w.WriteLine ("struct {0} //line:{1}, column:{2}", Name, Line, Column);
+					w.WriteLine ("struct {0} // {1} ({2}, {3})", Name, SourceFileName, Line, Column);
 					w.WriteLine ("{");
 					foreach (var m in Fields)
 						w.WriteLine ("\tpublic {0} {1};", m.Type, m.Name);
@@ -197,7 +215,7 @@ public struct ConstArrayOf<T> {}
 
 			public override void Write (TextWriter w)
 			{
-				w.WriteLine ("\t// function {0} line:{1}, column:{2}", Name, Line, Column);
+				w.WriteLine ("\t// function {0} - {1} ({2}, {3})", Name, SourceFileName, Line, Column);
 				if (Driver.LibraryName != null)
 					w.WriteLine ("\t[DllImport (\"{0}\")]", Driver.LibraryName);
 				w.WriteLine ("\tinternal static extern {0} {1} ({2});", Return, Name, string.Join (", ", Args.Select (a => a.Type + " " + a.Name)));
@@ -207,6 +225,8 @@ public struct ConstArrayOf<T> {}
 		string ToNonKeywordTypeName (string s)
 		{
 			switch (s) {
+			case "void":
+				return "void";
 			case "byte":
 				return "System.Byte";
 			case "sbyte":
@@ -232,7 +252,12 @@ public struct ConstArrayOf<T> {}
 			case "double":
 				return "System.Double";
 			}
-			return s;
+			return WithNamespace (s);
+		}
+
+		string WithNamespace (string s)
+		{
+			return s.StartsWith ("System.", StringComparison.Ordinal) ? s : (Namespace != null ? Namespace + '.' : null) + s;
 		}
 
 		string ToTypeName (ClangType type, bool strip = true)
@@ -263,6 +288,8 @@ public struct ConstArrayOf<T> {}
 				case "long":
 					return "long"; // FIXME: this should be actually platform dependent
 				case "unsigned long":
+					return "ulong"; // FIXME: this should be actually platform dependent
+				case "unsigned long long":
 					return "ulong"; // FIXME: this should be actually platform dependent
 				case "int":
 					return "int"; // FIXME: this should be actually platform dependent
