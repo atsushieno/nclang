@@ -1,0 +1,341 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5AE560F9-0E8E-488E-B6C4-3C8196F9013A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>NClang</RootNamespace>
+    <AssemblyName>NClang</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;NET35</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DefineConstants>NET35</DefineConstants>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\NClang\LanguageService\ClangCodeCompleteResults.cs">
+      <Link>LanguageService\ClangCodeCompleteResults.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\ClangComment.cs">
+      <Link>LanguageService\ClangComment.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\ClangCompilationDatabase.cs">
+      <Link>LanguageService\ClangCompilationDatabase.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\ClangCompileCommand.cs">
+      <Link>LanguageService\ClangCompileCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\ClangCompileCommands.cs">
+      <Link>LanguageService\ClangCompileCommands.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\ClangCompletionResult.cs">
+      <Link>LanguageService\ClangCompletionResult.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\ClangCompletionString.cs">
+      <Link>LanguageService\ClangCompletionString.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\ClangCursor.cs">
+      <Link>LanguageService\ClangCursor.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\ClangCursorSet.cs">
+      <Link>LanguageService\ClangCursorSet.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\ClangDiagnostic.cs">
+      <Link>LanguageService\ClangDiagnostic.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\ClangDiagnosticSet.cs">
+      <Link>LanguageService\ClangDiagnosticSet.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\ClangFile.cs">
+      <Link>LanguageService\ClangFile.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\ClangFileUniqueId.cs">
+      <Link>LanguageService\ClangFileUniqueId.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\ClangIndex.cs">
+      <Link>LanguageService\ClangIndex.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\ClangIndexAction.cs">
+      <Link>LanguageService\ClangIndexAction.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\ClangIndexerCallbacks.cs">
+      <Link>LanguageService\ClangIndexerCallbacks.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\ClangIndex_Infos.cs">
+      <Link>LanguageService\ClangIndex_Infos.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\ClangModule.cs">
+      <Link>LanguageService\ClangModule.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\ClangObject.cs">
+      <Link>LanguageService\ClangObject.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\ClangParseException.cs">
+      <Link>LanguageService\ClangParseException.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\ClangPlatformAvailability.cs">
+      <Link>LanguageService\ClangPlatformAvailability.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\ClangRemapping.cs">
+      <Link>LanguageService\ClangRemapping.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\ClangResourceUsage.cs">
+      <Link>LanguageService\ClangResourceUsage.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\ClangService.cs">
+      <Link>LanguageService\ClangService.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\ClangServiceException.cs">
+      <Link>LanguageService\ClangServiceException.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\ClangSourceLocation.cs">
+      <Link>LanguageService\ClangSourceLocation.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\ClangSourceRange.cs">
+      <Link>LanguageService\ClangSourceRange.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\ClangString.cs">
+      <Link>LanguageService\ClangString.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\ClangToken.cs">
+      <Link>LanguageService\ClangToken.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\ClangTokenSet.cs">
+      <Link>LanguageService\ClangTokenSet.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\ClangTranslationUnit.cs">
+      <Link>LanguageService\ClangTranslationUnit.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\ClangType.cs">
+      <Link>LanguageService\ClangType.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\ClangUnsavedFile.cs">
+      <Link>LanguageService\ClangUnsavedFile.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\ClangVersion.cs">
+      <Link>LanguageService\ClangVersion.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\AvailabilityKind.cs">
+      <Link>LanguageService\Enums\AvailabilityKind.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\CallingConvention.cs">
+      <Link>LanguageService\Enums\CallingConvention.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\ChildVisitResult.cs">
+      <Link>LanguageService\Enums\ChildVisitResult.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\CodeCompleteFlags.cs">
+      <Link>LanguageService\Enums\CodeCompleteFlags.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\CommentInlineCommandRenderKind.cs">
+      <Link>LanguageService\Enums\CommentInlineCommandRenderKind.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\CommentKind.cs">
+      <Link>LanguageService\Enums\CommentKind.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\CommentParamPassDirection.cs">
+      <Link>LanguageService\Enums\CommentParamPassDirection.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\CompilationDatabaseError.cs">
+      <Link>LanguageService\Enums\CompilationDatabaseError.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\CompletionChunkKind.cs">
+      <Link>LanguageService\Enums\CompletionChunkKind.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\CompletionContext.cs">
+      <Link>LanguageService\Enums\CompletionContext.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\CursorKind.cs">
+      <Link>LanguageService\Enums\CursorKind.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\CXXAccessSpecifier.cs">
+      <Link>LanguageService\Enums\CXXAccessSpecifier.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\DiagnosticDisplayOptions.cs">
+      <Link>LanguageService\Enums\DiagnosticDisplayOptions.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\DiagnosticSeverity.cs">
+      <Link>LanguageService\Enums\DiagnosticSeverity.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\ErrorCode.cs">
+      <Link>LanguageService\Enums\ErrorCode.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\FindResult.cs">
+      <Link>LanguageService\Enums\FindResult.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\GlobalOptionFlags.cs">
+      <Link>LanguageService\Enums\GlobalOptionFlags.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\IndexAttributeKind.cs">
+      <Link>LanguageService\Enums\IndexAttributeKind.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\IndexDeclInfoFlags.cs">
+      <Link>LanguageService\Enums\IndexDeclInfoFlags.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\IndexEntityCxxTemplateKind.cs">
+      <Link>LanguageService\Enums\IndexEntityCxxTemplateKind.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\IndexEntityKind.cs">
+      <Link>LanguageService\Enums\IndexEntityKind.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\IndexEntityLanguage.cs">
+      <Link>LanguageService\Enums\IndexEntityLanguage.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\IndexEntityRefKind.cs">
+      <Link>LanguageService\Enums\IndexEntityRefKind.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\IndexObjCContainerKind.cs">
+      <Link>LanguageService\Enums\IndexObjCContainerKind.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\IndexOptionFlags.cs">
+      <Link>LanguageService\Enums\IndexOptionFlags.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\LanguageKind.cs">
+      <Link>LanguageService\Enums\LanguageKind.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\LinkageKind.cs">
+      <Link>LanguageService\Enums\LinkageKind.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\LoadDiagError.cs">
+      <Link>LanguageService\Enums\LoadDiagError.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\NameRefFlags.cs">
+      <Link>LanguageService\Enums\NameRefFlags.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\ObjCDeclarationQualifierFlags.cs">
+      <Link>LanguageService\Enums\ObjCDeclarationQualifierFlags.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\ObjCPropertyAttributeFlags.cs">
+      <Link>LanguageService\Enums\ObjCPropertyAttributeFlags.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\RefQualifierKind.cs">
+      <Link>LanguageService\Enums\RefQualifierKind.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\ReparseTranslationUnitFlags.cs">
+      <Link>LanguageService\Enums\ReparseTranslationUnitFlags.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\ResourceUsageKind.cs">
+      <Link>LanguageService\Enums\ResourceUsageKind.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\SaveError.cs">
+      <Link>LanguageService\Enums\SaveError.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\SaveTranslationUnitFlags.cs">
+      <Link>LanguageService\Enums\SaveTranslationUnitFlags.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\TokenKind.cs">
+      <Link>LanguageService\Enums\TokenKind.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\TranslationUnitFlags.cs">
+      <Link>LanguageService\Enums\TranslationUnitFlags.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\TypeKind.cs">
+      <Link>LanguageService\Enums\TypeKind.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Enums\VisitorResult.cs">
+      <Link>LanguageService\Enums\VisitorResult.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\LanguageService\Location.cs">
+      <Link>LanguageService\Location.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\NClang.Native\CSharpSpecific.cs">
+      <Link>NClang.Native\CSharpSpecific.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\NClang.Native\Extensions.cs">
+      <Link>NClang.Native\Extensions.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\NClang.Native\NativeCodeCompletion.cs">
+      <Link>NClang.Native\NativeCodeCompletion.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\NClang.Native\NativeCommentASTIntrospection.cs">
+      <Link>NClang.Native\NativeCommentASTIntrospection.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\NClang.Native\NativeCompilationDatabase.cs">
+      <Link>NClang.Native\NativeCompilationDatabase.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\NClang.Native\NativeCppASTIntrospection.cs">
+      <Link>NClang.Native\NativeCppASTIntrospection.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\NClang.Native\NativeCrossReferencingAST.cs">
+      <Link>NClang.Native\NativeCrossReferencingAST.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\NClang.Native\NativeCursorManipulations.cs">
+      <Link>NClang.Native\NativeCursorManipulations.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\NClang.Native\NativeDebuggingFacilities.cs">
+      <Link>NClang.Native\NativeDebuggingFacilities.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\NClang.Native\NativeDiagnosticReporting.cs">
+      <Link>NClang.Native\NativeDiagnosticReporting.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\NClang.Native\NativeFileManipulation.cs">
+      <Link>NClang.Native\NativeFileManipulation.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\NClang.Native\NativeHighLevelApi.cs">
+      <Link>NClang.Native\NativeHighLevelApi.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\NClang.Native\NativeInformationForAttributes.cs">
+      <Link>NClang.Native\NativeInformationForAttributes.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\NClang.Native\NativeMappingBetweenCursorAndSourceCode.cs">
+      <Link>NClang.Native\NativeMappingBetweenCursorAndSourceCode.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\NClang.Native\NativeMiscellaneousUtilityFunctions.cs">
+      <Link>NClang.Native\NativeMiscellaneousUtilityFunctions.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\NClang.Native\NativeModuleIntrospection.cs">
+      <Link>NClang.Native\NativeModuleIntrospection.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\NClang.Native\NativePhysicalSourceLocation.cs">
+      <Link>NClang.Native\NativePhysicalSourceLocation.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\NClang.Native\NativeRemappingFunctions.cs">
+      <Link>NClang.Native\NativeRemappingFunctions.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\NClang.Native\NativeStringManipulation.cs">
+      <Link>NClang.Native\NativeStringManipulation.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\NClang.Native\NativeTokenExtractionAndManipulation.cs">
+      <Link>NClang.Native\NativeTokenExtractionAndManipulation.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\NClang.Native\NativeTopLevel.cs">
+      <Link>NClang.Native\NativeTopLevel.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\NClang.Native\NativeTranslationUnitManipulation.cs">
+      <Link>NClang.Native\NativeTranslationUnitManipulation.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\NClang.Native\NativeTraversingAstWithCursors.cs">
+      <Link>NClang.Native\NativeTraversingAstWithCursors.cs</Link>
+    </Compile>
+    <Compile Include="..\NClang\NClang.Native\NativeTypeInformationForCXCursor.cs">
+      <Link>NClang.Native\NativeTypeInformationForCXCursor.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup />
+</Project>

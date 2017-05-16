@@ -21,13 +21,13 @@ namespace NClang
 			CommandLineArgs = (string []) commandLineArgs.Clone ();
 			UnsavedFiles = (ClangUnsavedFile []) unsavedFiles.Clone ();
 		}
-		
+#if !NETSTANDARD1_4
 		public ClangParseException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) : base (info, context)
 		{
 			throw new NotImplementedException ();
 		}
-		
-		public ClangParseException (string message, Exception innerException) : base (message, innerException)
+#endif   
+        public ClangParseException (string message, Exception innerException) : base (message, innerException)
 		{
 		}
 		

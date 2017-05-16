@@ -13,7 +13,7 @@ namespace NClang
 		{
 			this.handle = handle;
 			// This handle does not have to be freed; CXCodeCompletionResults takes care of it.
-			source = (CXCompletionResult) Marshal.PtrToStructure (handle, typeof (CXCompletionResult));
+			source = handle.ToStructure<CXCompletionResult>();
 		}
 
 		IntPtr handle;

@@ -12,7 +12,7 @@ namespace NClang
 		internal ClangPlatformAvailability (IntPtr handle)
 			: base (handle)
 		{
-			this.source = (CXPlatformAvailability)Marshal.PtrToStructure (handle, typeof(CXPlatformAvailability));
+			this.source = handle.ToStructure<CXPlatformAvailability>();
 		}
 
 		public void Dispose ()

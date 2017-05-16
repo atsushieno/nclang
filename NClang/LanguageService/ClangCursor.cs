@@ -232,7 +232,7 @@ namespace NClang
 			CXString dm, um;
 			IntPtr dummy = IntPtr.Zero;
 			var n = LibClang.clang_getCursorPlatformAvailability (source, out ad, out dm, out au, out um, ref dummy, 0);
-			var size = Marshal.SizeOf (typeof (CXPlatformAvailability));
+			var size = Extensions.SizeOf<CXPlatformAvailability>();
 			var ptr = Marshal.AllocHGlobal (size * n);
 			LibClang.clang_getCursorPlatformAvailability (source, out ad, out dm, out au, out um, ref ptr, n);
 			isAlwaysDeprecated = ad != 0;
@@ -241,7 +241,7 @@ namespace NClang
 			unavailableMessage = um.Unwrap ();
 			var ret = new ClangPlatformAvailability [n];
 			for (int i = 0; i < n; i++)
-				ret [i] = new ClangPlatformAvailability (ptr + size * i);
+				ret [i] = new ClangPlatformAvailability (ptr.Add(size * i));
 			return ret;
 		}
 
@@ -283,7 +283,7 @@ namespace NClang
 				var ptrs = new IntPtr [n];
 				for (int i = 0; i < n; i++)
 					LibClang.clang_getOverriddenCursors (source, out ptrs [i], ref n);
-				return Enumerable.Range (0, (int) n).Select (i => new ClangCursor ((CXCursor) Marshal.PtrToStructure (ptrs [i], typeof (CXCursor))));
+				return Enumerable.Range (0, (int) n).Select (i => new ClangCursor (ptrs [i].ToStructure<CXCursor>()));
 			}
 		}
 

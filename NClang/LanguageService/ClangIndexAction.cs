@@ -95,7 +95,7 @@ namespace NClang
 				throw new ArgumentNullException ("translationUnit");
 
 			var cbs = indexCallbacks.Select (ic => ic.ToNative ()).ToArray ();
-			var ret = LibClang.clang_indexTranslationUnit (Handle, clientData, cbs, (uint) (cbs.Length * Marshal.SizeOf (typeof(IndexerCallbacks))), options, translationUnit.Handle);
+			var ret = LibClang.clang_indexTranslationUnit (Handle, clientData, cbs, (uint) (cbs.Length * Extensions.SizeOf<IndexerCallbacks>()), options, translationUnit.Handle);
 			if (ret != 0)
 				throw new ClangServiceException (string.Format ("Faied to index translation unit: {0} Reason: {1}", translationUnit.TranslationUnitSpelling, ret));
 		}

@@ -9,7 +9,7 @@ namespace NClang
 	
 	public class ClangCodeCompleteResults : ClangObject, IDisposable
 	{
-		static readonly int result_size = Marshal.SizeOf (typeof(CXCompletionResult));
+		static readonly int result_size = Extensions.SizeOf<CXCompletionResult>();
 		CXCodeCompletionResults? source;
 
 		public ClangCodeCompleteResults (IntPtr handle)
@@ -18,7 +18,7 @@ namespace NClang
 		}
 
 		CXCodeCompletionResults Source {
-			get { return (CXCodeCompletionResults)(source ?? (source = (CXCodeCompletionResults)Marshal.PtrToStructure (Handle, typeof(CXCodeCompletionResults)))); }
+			get { return (CXCodeCompletionResults)(source ?? (source = Handle.ToStructure<CXCodeCompletionResults>())); }
 		}
 
 		public int ResultCount {
@@ -33,7 +33,7 @@ namespace NClang
         public IEnumerable<ClangCompletionResult> Results {
 			get {
 				for (int i = 0; i < Source.NumResults; i++)
-					yield return new ClangCompletionResult (Source.Results + result_size * i);
+					yield return new ClangCompletionResult (Source.Results.Add(result_size * i));
 			}
 		}
 

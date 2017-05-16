@@ -32,7 +32,7 @@ namespace NClang
 			CXIdxDeclInfo? info;
 
 			CXIdxDeclInfo Info {
-				get { return (CXIdxDeclInfo) (info ?? (info = (CXIdxDeclInfo)Marshal.PtrToStructure (Address, typeof(CXIdxDeclInfo)))); }
+				get { return (CXIdxDeclInfo) (info ?? (info = Address.ToStructure<CXIdxDeclInfo>())); }
 			}
 
 			public EntityInfo EntityInfo {
@@ -76,7 +76,7 @@ namespace NClang
 			}
 
 			public IEnumerable<AttributeInfo> Attributes {
-				get { return Enumerable.Range (0, (int) Info.NumAttributes).Select (i => new AttributeInfo (Info.Attributes + Marshal.SizeOf (typeof(IntPtr)) * i)); }
+				get { return Enumerable.Range (0, (int) Info.NumAttributes).Select (i => new AttributeInfo (Info.Attributes.Add(Extensions.SizeOf<IntPtr>() * i))); }
 			}
 
 			public IndexDeclInfoFlags Flags {
@@ -118,7 +118,7 @@ namespace NClang
 			}
 
 			CXIdxContainerInfo Info {
-				get { return (CXIdxContainerInfo)(info ?? (info = (CXIdxContainerInfo)Marshal.PtrToStructure (Address, typeof(CXIdxContainerInfo)))); }
+				get { return (CXIdxContainerInfo)(info ?? (info = Address.ToStructure<CXIdxContainerInfo>())); }
 			}
 
 			public ClangCursor Cursor {
@@ -141,7 +141,7 @@ namespace NClang
 			}
 
 			CXIdxAttrInfo Info {
-				get { return (CXIdxAttrInfo)(info ?? (info = (CXIdxAttrInfo)Marshal.PtrToStructure (Address, typeof(CXIdxAttrInfo)))); }
+				get { return (CXIdxAttrInfo)(info ?? (info = Address.ToStructure<CXIdxAttrInfo>())); }
 			}
 
 			public IndexAttributeKind Kind {
@@ -171,7 +171,7 @@ namespace NClang
 			}
 
 			CXIdxEntityInfo Info {
-				get { return (CXIdxEntityInfo)(info ?? (info = (CXIdxEntityInfo)Marshal.PtrToStructure (Address, typeof(CXIdxEntityInfo)))); }
+				get { return (CXIdxEntityInfo)(info ?? (info = Address.ToStructure<CXIdxEntityInfo>())); }
 			}
 
 			public IndexEntityKind Kind {
@@ -204,7 +204,7 @@ namespace NClang
 
 			public AttributeInfo GetAttribute (int index)
 			{
-				return new AttributeInfo (Info.Attributes + Marshal.SizeOf (typeof(IntPtr)) * index);
+				return new AttributeInfo (Info.Attributes.Add(Extensions.SizeOf<IntPtr>() * index));
 			}
 
 			public IntPtr ClientEntity {
@@ -223,7 +223,7 @@ namespace NClang
 			}
 
 			CXIdxEntityRefInfo Info {
-				get { return (CXIdxEntityRefInfo) (info ?? (info = (CXIdxEntityRefInfo)Marshal.PtrToStructure (Address, typeof(CXIdxEntityRefInfo)))); }
+				get { return (CXIdxEntityRefInfo) (info ?? (info = Address.ToStructure<CXIdxEntityRefInfo>())); }
 			}
 
 			public IndexEntityRefKind Kind {
@@ -257,7 +257,7 @@ namespace NClang
 			}
 
 			CXIdxIBOutletCollectionAttrInfo Info {
-				get { return (CXIdxIBOutletCollectionAttrInfo)(info ?? (info = (CXIdxIBOutletCollectionAttrInfo)Marshal.PtrToStructure (Address, typeof(CXIdxIBOutletCollectionAttrInfo)))); }
+				get { return (CXIdxIBOutletCollectionAttrInfo)(info ?? (info = Address.ToStructure<CXIdxIBOutletCollectionAttrInfo>())); }
 			}
 
 			public AttributeInfo AttrInfo {
@@ -287,7 +287,7 @@ namespace NClang
 			}
 
 			CXIdxImportedASTFileInfo Info {
-				get { return (CXIdxImportedASTFileInfo)(info ?? (info = (CXIdxImportedASTFileInfo)Marshal.PtrToStructure (Address, typeof(CXIdxImportedASTFileInfo)))); }
+				get { return (CXIdxImportedASTFileInfo)(info ?? (info = Address.ToStructure<CXIdxImportedASTFileInfo>())); }
 			}
 
 			public ClangFile File {
@@ -366,7 +366,7 @@ namespace NClang
 			}
 
 			CXIdxObjCContainerDeclInfo Info {
-				get { return (CXIdxObjCContainerDeclInfo) (info ?? (info = (CXIdxObjCContainerDeclInfo)Marshal.PtrToStructure (Address, typeof(CXIdxObjCContainerDeclInfo)))); }
+				get { return (CXIdxObjCContainerDeclInfo) (info ?? (info = Address.ToStructure<CXIdxObjCContainerDeclInfo>())); }
 			}
 
 			public DeclarationInfo Declaration {
@@ -388,7 +388,7 @@ namespace NClang
 			}
 
 			CXIdxObjCInterfaceDeclInfo Info {
-				get { return (CXIdxObjCInterfaceDeclInfo) (info ?? (info = (CXIdxObjCInterfaceDeclInfo)Marshal.PtrToStructure (Address, typeof(CXIdxObjCInterfaceDeclInfo)))); }
+				get { return (CXIdxObjCInterfaceDeclInfo) (info ?? (info = Address.ToStructure<CXIdxObjCInterfaceDeclInfo>())); }
 			}
 
 			public ObjCContainerDeclarationInfo Container {
@@ -414,7 +414,7 @@ namespace NClang
 			}
 
 			CXIdxBaseClassInfo Info {
-				get { return (CXIdxBaseClassInfo) (info ?? (info = (CXIdxBaseClassInfo)Marshal.PtrToStructure (Address, typeof(CXIdxBaseClassInfo)))); }
+				get { return (CXIdxBaseClassInfo) (info ?? (info = Address.ToStructure<CXIdxBaseClassInfo>())); }
 			}
 
 			public EntityInfo EntityInfo {
@@ -440,7 +440,7 @@ namespace NClang
 			}
 
 			CXIdxObjCCategoryDeclInfo Info {
-				get { return (CXIdxObjCCategoryDeclInfo) (info ?? (info = (CXIdxObjCCategoryDeclInfo)Marshal.PtrToStructure (Address, typeof(CXIdxObjCCategoryDeclInfo)))); }
+				get { return (CXIdxObjCCategoryDeclInfo) (info ?? (info = Address.ToStructure<CXIdxObjCCategoryDeclInfo>())); }
 			}
 
 			public ObjCContainerDeclarationInfo Container {
@@ -474,7 +474,7 @@ namespace NClang
 			}
 
 			CXIdxObjCProtocolRefInfo Info {
-				get { return (CXIdxObjCProtocolRefInfo) (info ?? (info = (CXIdxObjCProtocolRefInfo)Marshal.PtrToStructure (Address, typeof(CXIdxObjCProtocolRefInfo)))); }
+				get { return (CXIdxObjCProtocolRefInfo) (info ?? (info = Address.ToStructure<CXIdxObjCProtocolRefInfo>())); }
 			}
 
 			public EntityInfo EntityInfo {
@@ -500,7 +500,7 @@ namespace NClang
 			}
 
 			CXIdxObjCProtocolRefListInfo Info {
-				get { return (CXIdxObjCProtocolRefListInfo) (info ?? (info = (CXIdxObjCProtocolRefListInfo)Marshal.PtrToStructure (Address, typeof(CXIdxObjCProtocolRefListInfo)))); }
+				get { return (CXIdxObjCProtocolRefListInfo) (info ?? (info = Address.ToStructure<CXIdxObjCProtocolRefListInfo>())); }
 			}
 
 			public int Count {
@@ -513,7 +513,7 @@ namespace NClang
 
 			public ObjCProtocolReferenceInfo Get (int index)
 			{
-				return new ObjCProtocolReferenceInfo (Info.Protocols + (index * Marshal.SizeOf (typeof(CXIdxObjCProtocolRefInfo))));
+				return new ObjCProtocolReferenceInfo (Info.Protocols.Add(index * Extensions.SizeOf<CXIdxObjCProtocolRefInfo>()));
 			}
 		}
 
@@ -527,7 +527,7 @@ namespace NClang
 			}
 
 			CXIdxObjCPropertyDeclInfo Info {
-				get { return (CXIdxObjCPropertyDeclInfo) (info ?? (info = (CXIdxObjCPropertyDeclInfo)Marshal.PtrToStructure (Address, typeof(CXIdxObjCPropertyDeclInfo)))); }
+				get { return (CXIdxObjCPropertyDeclInfo) (info ?? (info = Address.ToStructure<CXIdxObjCPropertyDeclInfo>())); }
 			}
 
 			public EntityInfo Getter {

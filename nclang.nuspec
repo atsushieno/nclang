@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>NClang</id>
+    <version>$Version$</version>
+    <title>NClang - .NET binding for Clang</title>
+    <authors>atsushieno</authors>
+    <owners>atsushieno</owners>
+    <description>.NET binding library for Clang</description>
+    <summary>.NET binding library for Clang</summary>
+    <copyright>Copyright (c) 2014 Mono Project Contributors (atsushieno)</copyright>
+    <licenseUrl>https://opensource.org/licenses/MIT</licenseUrl>
+    <projectUrl>https://github.com/atsushieno/nclang</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <releaseNotes>.NET binding library for Clang</releaseNotes>
+    <tags>Clang binding</tags>
+  </metadata>
+  <files>
+    <file src="NClang.NET35/bin/$Configuration$/NClang.dll" target="lib/net35-Client" />
+    <file src="NClang.NET40/bin/$Configuration$/NClang.dll" target="lib/net40-Client" />
+    <file src="NClang.NETStandard/bin/$Configuration$/netstandard1.4/NClang.dll" target="lib/netstandard1.4" />
+  </files>
+</package>
