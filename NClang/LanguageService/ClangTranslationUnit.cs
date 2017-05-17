@@ -40,7 +40,7 @@ namespace NClang
 
 		public override int GetHashCode ()
 		{
-			return (int) Handle;
+			return (IntPtr.Size > 4) ? (int)Handle.ToInt64() : Handle.ToInt32();
 		}
 		
 		public string TranslationUnitSpelling {
