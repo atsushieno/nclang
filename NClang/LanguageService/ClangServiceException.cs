@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
 using NClang.Natives;
 
 namespace NClang
@@ -17,9 +16,9 @@ namespace NClang
 		{
 		}
 
-		public ClangServiceException (SerializationInfo info, StreamingContext context) : base (info, context)
+		/*public ClangServiceException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
-		}
+		}*/
 
 		public ClangServiceException (string message, Exception innerException) : base (message, innerException)
 		{

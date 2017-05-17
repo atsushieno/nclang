@@ -25,7 +25,7 @@ namespace NClang.Natives
 				byte* ptr = (byte*) p;
 				while (ptr [x] != 0)
 					x++;
-				var e = System.Text.Encoding.Default;
+				var e = System.Text.Encoding.ASCII;
 				var l = e.GetCharCount (ptr, x);
                 if (l == 0)
                 {

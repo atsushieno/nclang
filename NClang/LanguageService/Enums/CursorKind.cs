@@ -863,6 +863,9 @@ namespace NClang
 		MacroExpansion = 502,
 		MacroInstantiation = MacroExpansion,
 		InclusionDirective = 503,
+
+        OverloadCandidate = 700,
+
 		FirstPreprocessing = PreprocessingDirective,
 		LastPreprocessing = InclusionDirective
 	}

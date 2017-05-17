@@ -22,10 +22,10 @@ namespace NClang
 			UnsavedFiles = (ClangUnsavedFile []) unsavedFiles.Clone ();
 		}
 		
-		public ClangParseException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) : base (info, context)
+		/*public ClangParseException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) : base (info, context)
 		{
 			throw new NotImplementedException ();
-		}
+		}*/
 		
 		public ClangParseException (string message, Exception innerException) : base (message, innerException)
 		{
