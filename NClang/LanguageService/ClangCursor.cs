@@ -484,9 +484,10 @@ namespace NClang
 		/// <c>true</c> if the traversal was terminated prematurely by the visitor returning
 		/// <c>ChildVisitResult.Break</c>.
 		/// </returns>
-		public bool VisitChildren (Func<ClangCursor,ClangCursor,IntPtr,ChildVisitResult> visitor, IntPtr clientData)
+		public bool VisitChildren<T> (Func<ClangCursor,ClangCursor,T,ChildVisitResult> visitor, T clientData)
 		{
-			var ret = LibClang.clang_visitChildren (source, (cursor, parent, cd) => visitor (new ClangCursor (cursor), new ClangCursor (parent), cd), clientData);
+            // clientData is holding by function closure.
+            var ret = LibClang.clang_visitChildren(source, (cursor, parent, z) => visitor(new ClangCursor(cursor), new ClangCursor(parent), clientData), IntPtr.Zero);
 			return ret != 0;
 		}
 
