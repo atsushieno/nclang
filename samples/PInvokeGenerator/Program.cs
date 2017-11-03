@@ -26,7 +26,15 @@ namespace PInvokeGenerator
 			var tus = new List<ClangTranslationUnit> ();
 			TextWriter output = Console.Out;
 			foreach (var arg in args) {
-				if (arg.StartsWith ("--out:", StringComparison.Ordinal))
+				if (arg == "--help" || arg == "-?") {
+					Console.Error.WriteLine ($"[USAGE] {GetType ().Assembly.GetName ().CodeBase}");
+					Console.Error.WriteLine (@"options:
+	--out:[filename]	output source file name.
+	--lib:[library]		library name specified on [DllImport].
+	--ns:[namespace]	namespace name that wraps the entire code.");
+					return;
+				}
+				else if (arg.StartsWith ("--out:", StringComparison.Ordinal))
 					output = File.CreateText (arg.Substring (6));
 				else if (arg.StartsWith ("--lib:", StringComparison.Ordinal))
 					LibraryName = arg.Substring (6);
