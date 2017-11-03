@@ -317,12 +317,14 @@ public struct ConstArrayOf<T> {}
 					// function pointer
 					var pt = type.PointeeType;
 					string ret = ToTypeName (pt.ResultType);
-					string f = ret == "void" ? "System.Action<" : "System.Func<";
+					bool hasArgs = pt.ArgumentTypeCount > 0;
+					string f = ret == "void" ? (hasArgs ? "System.Action<" : "System.Action") : "System.Func<";
 					for (int i = 0; i < pt.ArgumentTypeCount; i++)
 						f += (i > 0 ? ", " : string.Empty) + ToTypeName (pt.GetArgumentType (i));
 					if (ret != "void")
 						f += (pt.ArgumentTypeCount > 0 ? ", " : string.Empty) + ret;
-					f += ">";
+					if (hasArgs)
+						f += ">";
 					return f;
 				} else {
 					var t = ToTypeName (type.PointeeType);
