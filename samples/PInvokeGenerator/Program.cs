@@ -342,7 +342,7 @@ public struct ConstArrayOf<T> {}
 			if (strip && type.IsConstQualifiedType)
 				return ToTypeName (type, false).Substring (6); // "const "
 			else
-				return type.Spelling.Replace ("struct ", "").Replace ("union", "").Replace ("enum", "");
+				return type.Spelling.Replace ("struct ", "").Replace ("union ", "").Replace ("enum ", "");
 		}
 	}
 }
