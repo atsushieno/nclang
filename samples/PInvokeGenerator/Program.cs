@@ -168,6 +168,7 @@ public struct Pointer<T>
 	}
 }
 public struct ArrayOf<T> {}
+public struct ConstArrayOf<T> {}
 ");
 
 			if (Namespace != null)
@@ -237,7 +238,7 @@ public struct ArrayOf<T> {}
 					w.WriteLine ("{");
 					foreach (var m in Fields) {
 						if (m.SizeConst > 0)
-							w.WriteLine ("\t[MarshalAs (UnmanagedType.LPArray, SizeConst=" + m.SizeConst + ")]");
+							w.WriteLine ("\t[MarshalAs (UnmanagedType.Struct, SizeConst=" + m.SizeConst + ")]");
 						w.WriteLine ("\tpublic {0} {1};", m.Type, m.Name);
 					}
 					w.WriteLine ("}");
@@ -341,7 +342,7 @@ public struct ArrayOf<T> {}
 				// for aliased types to POD they still have IsPODType = true, so we need to ignore them.
 			}
 			if (type.Kind == TypeKind.ConstantArray)
-				return ToTypeName (type.ElementType) + "[]";
+				return "/*Pointer<" + ToTypeName (type.ElementType) + ">*/IntPtr";
 			if (type.Kind == TypeKind.IncompleteArray)
 				return "ArrayOf<" + ToTypeName (type.ElementType) + ">";
 			if (type.Kind == TypeKind.Pointer) {
