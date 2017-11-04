@@ -144,6 +144,14 @@ namespace PInvokeGenerator
 			output.WriteLine ("}");
 			output.WriteLine ();
 
+			if (delegates.Any ()) {
+				output.WriteLine ("class Delegates");
+				output.WriteLine ("{");
+				foreach (var s in delegates)
+					output.WriteLine ("public " + s.DelegateDefinition + ";");
+				output.WriteLine ("}");
+			}
+
 			output.WriteLine (@"
 public struct Pointer<T>
 {
@@ -261,6 +269,7 @@ public class CTypeDetailsAttribute : Attribute
 							w.WriteLine ("\t[MarshalAs (UnmanagedType.ByValArray, SizeConst=" + m.ArraySize + ")]");
 						w.WriteLine ("\t{2}public {0} {1};", m.Type, m.Name, m.TypeDetails);
 					}
+
 					w.WriteLine ("}");
 				}
 			}
@@ -368,17 +377,7 @@ public class CTypeDetailsAttribute : Attribute
 			if (type.Kind == TypeKind.Pointer) {
 				if (type.PointeeType != null && type.PointeeType.ArgumentTypeCount >= 0) {
 					// function pointer
-					var pt = type.PointeeType;
-					string ret = ToTypeName (pt.ResultType);
-					bool hasArgs = pt.ArgumentTypeCount > 0;
-					string f = ret == "void" ? (hasArgs ? "System.Action<" : "System.Action") : "System.Func<";
-					for (int i = 0; i < pt.ArgumentTypeCount; i++)
-						f += (i > 0 ? ", " : string.Empty) + ToTypeName (pt.GetArgumentType (i));
-					if (ret != "void")
-						f += (pt.ArgumentTypeCount > 0 ? ", " : string.Empty) + ret;
-					if (hasArgs)
-						f += ">";
-					return f;
+					return CreateFunctionPointerDelegateName (type);
 				} else {
 					var t = ToTypeName (type.PointeeType);
 					return t == "void" ? "System.IntPtr" : "IntPtr";
@@ -388,6 +387,37 @@ public class CTypeDetailsAttribute : Attribute
 				return ToTypeName (type, false).Substring (6); // "const "
 			else
 				return type.Spelling.Replace ("struct ", "").Replace ("union ", "").Replace ("enum ", "");
+		}
+
+		class FunctionPointerDelegate
+		{
+			public ClangType Type;
+			public string DelegateDefinition;
+			public string TypeName;
+		}
+
+		List<FunctionPointerDelegate> delegates = new List<FunctionPointerDelegate> ();
+
+		string CreateFunctionPointerDelegateName (ClangType type)
+		{
+			var x = delegates.FirstOrDefault (e => e.Type == type);
+			if (x != null)
+				return x.TypeName;
+			
+			var pt = type.PointeeType;
+			string ret = ToTypeName (pt.ResultType);
+			var d = $"delegate {ret} delegate{delegates.Count} (";
+			bool hasArgs = pt.ArgumentTypeCount > 0;
+			string f = "Delegates.delegate" + delegates.Count;
+			for (int i = 0; i < pt.ArgumentTypeCount; i++) {
+				var tn = ToTypeName (pt.GetArgumentType (i));
+				if (i > 0)
+					d += ", ";
+				d += $"{tn} p{i}";
+			}
+			d += ")";
+			delegates.Add (new FunctionPointerDelegate { Type = type, DelegateDefinition = d, TypeName = f });
+			return f;
 		}
 
 		string GetTypeDetails (ClangType type)
