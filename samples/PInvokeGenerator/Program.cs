@@ -77,6 +77,7 @@ namespace PInvokeGenerator
 					if (cursor.Kind == CursorKind.FieldDeclaration)
 						current.Fields.Add (new Variable () {
 							Type = ToTypeName (cursor.CursorType),
+							SizeConst = cursor.CursorType.ArraySize,
 							Name = cursor.Spelling
 						});
 					if (cursor.Kind == CursorKind.StructDeclaration || cursor.Kind == CursorKind.UnionDeclaration || cursor.Kind == CursorKind.EnumDeclaration) {
@@ -145,9 +146,28 @@ public struct Pointer<T>
 	{
 		Handle = handle;
 	}
+
+	public override bool Equals (object obj)
+	{
+		return obj is Pointer<T> && this == (Pointer<T>) obj;
+	}
+
+	public override int GetHashCode ()
+	{
+		return (int) Handle;
+	}
+
+	public static bool operator == (Pointer<T> p1, Pointer<T> p2)
+	{
+		return p1.Handle == p2.Handle;
+	}
+
+	public static bool operator != (Pointer<T> p1, Pointer<T> p2)
+	{
+		return p1.Handle != p2.Handle;
+	}
 }
 public struct ArrayOf<T> {}
-public struct ConstArrayOf<T> {}
 ");
 
 			if (Namespace != null)
@@ -192,6 +212,7 @@ public struct ConstArrayOf<T> {}
 		{
 			public string Name;
 			public string Type;
+			public int SizeConst;
 			public string Value;
 		}
 
@@ -214,8 +235,11 @@ public struct ConstArrayOf<T> {}
 					w.WriteLine ("[StructLayout (LayoutKind.Sequential)]");
 					w.WriteLine ("struct {0} // {1} ({2}, {3})", Name, SourceFileName, Line, Column);
 					w.WriteLine ("{");
-					foreach (var m in Fields)
+					foreach (var m in Fields) {
+						if (m.SizeConst > 0)
+							w.WriteLine ("\t[MarshalAs (UnmanagedType.LPArray, SizeConst=" + m.SizeConst + ")]");
 						w.WriteLine ("\tpublic {0} {1};", m.Type, m.Name);
+					}
 					w.WriteLine ("}");
 				}
 			}
@@ -317,7 +341,7 @@ public struct ConstArrayOf<T> {}
 				// for aliased types to POD they still have IsPODType = true, so we need to ignore them.
 			}
 			if (type.Kind == TypeKind.ConstantArray)
-				return "ConstArrayOf<" + ToTypeName (type.ElementType) + ">";
+				return ToTypeName (type.ElementType) + "[]";
 			if (type.Kind == TypeKind.IncompleteArray)
 				return "ArrayOf<" + ToTypeName (type.ElementType) + ">";
 			if (type.Kind == TypeKind.Pointer) {
