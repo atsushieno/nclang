@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 
 using CXString = NClang.ClangString;
+using CXStringSet = NClang.ClangStringSet;
 
 namespace NClang.Natives
 {
@@ -13,6 +14,9 @@ namespace NClang.Natives
 		// FIXME: determine how/when to call it.
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern void clang_disposeString (CXString @string);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		internal static extern void clang_disposeStringSet (CXStringSet set);
 
 		internal static string Unwrap (this CXString s)
 		{

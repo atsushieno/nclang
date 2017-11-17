@@ -93,10 +93,11 @@ namespace NClang.Natives
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern CXSourceLocation clang_getRangeEnd (CXSourceRange range);
 
-		/* does not exist in clang 3.5
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern IntPtr clang_getSkippedRanges (CXTranslationUnit tu, CXFile file); // CXSourceRangeList*
-		*/
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		 internal static extern IntPtr clang_getAllSkippedRanges (CXTranslationUnit tu); // CXSourceRangeList*
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		internal static extern void clang_disposeSourceRangeList (IntPtr ranges); // CXSourceRangeList*

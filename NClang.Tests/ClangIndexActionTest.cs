@@ -103,7 +103,7 @@ int bar () { return 3; } int foo () { return 5; } int main () { return foo () * 
 				Assert.IsTrue (startedTranslationUnit, "startedTranslationUnit");
 				Assert.IsTrue (enteredMainFile, "enteredMainFile");
 				Assert.IsTrue (abortRequested > 0, "abortRequested > 0");
-				Assert.AreEqual (0, diagnosticCount, "diagnosticCount");
+				Assert.AreEqual (1, diagnosticCount, "diagnosticCount");
 				Assert.IsTrue (refs.Contains ("(2, 72)"), "Entity Reference Indexed: (2, 72)");
 				Assert.IsTrue (refs.Contains ("(2, 81)"), "Entity Reference Indexed: (2, 81)");
 				Assert.IsTrue (includeCount > 0, "includeCount > 0");

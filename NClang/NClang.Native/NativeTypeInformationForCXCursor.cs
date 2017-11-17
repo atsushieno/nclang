@@ -54,7 +54,22 @@ namespace NClang.Natives
 		 internal static extern int clang_Cursor_getNumArguments (CXCursor C);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
-		 internal static extern CXCursor 	clang_Cursor_getArgument (CXCursor C, uint i);
+		 internal static extern CXCursor clang_Cursor_getArgument (CXCursor C, uint l);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		 internal static extern int clang_Cursor_getNumTemplateArguments (CXCursor C);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		 internal static extern TemplateArgumentKind clang_Cursor_getTemplateArgumentKind (CXCursor C, uint l);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		 internal static extern CXType clang_Cursor_getTemplateArgumentType (CXCursor C, uint l);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		 internal static extern long clang_Cursor_getTemplateArgumentValue (CXCursor C, uint l);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		internal static extern SystemULongLong clang_Cursor_getTemplateArgumentUnsignedValue (CXCursor C, uint l);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern uint clang_equalTypes (CXType A, CXType B);
@@ -66,10 +81,25 @@ namespace NClang.Natives
 		 internal static extern uint clang_isConstQualifiedType (CXType T);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		 internal static extern uint clang_isMacroFunctionLike (CXCursor C);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		 internal static extern uint clang_isMacroBuiltin (CXCursor C);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		 internal static extern uint clang_isFunctionInlined (CXCursor C);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern uint clang_isVolatileQualifiedType (CXType T);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern uint clang_isRestrictQualifiedType (CXType T);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		 internal static extern uint clang_getAddressSpace (CXType T);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		 internal static extern CXString clang_getTypedefName (CXType T);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern CXType clang_getPointeeType (CXType T);
@@ -81,6 +111,9 @@ namespace NClang.Natives
 		 internal static extern CXString 	clang_getDeclObjCTypeEncoding (CXCursor C);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		 internal static extern CXString clang_getDeclObjCEncoding (CXType C);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern CXString 	clang_getTypeKindSpelling (TypeKind K);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
@@ -88,6 +121,9 @@ namespace NClang.Natives
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern CXType 	clang_getResultType (CXType T);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		 internal static extern int clang_getExceptionSpecificationType (CXType T);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern int clang_getNumArgTypes (CXType T);
@@ -100,6 +136,9 @@ namespace NClang.Natives
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern CXType 	clang_getCursorResultType (CXCursor C);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		 internal static extern int clang_getCursorExceptionSpecificationType (CXCursor C);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern uint clang_isPODType (CXType T);
@@ -117,6 +156,12 @@ namespace NClang.Natives
 		 internal static extern SystemLongLong clang_getArraySize (CXType T);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		 internal static extern CXType clang_getNamedType (CXType T);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		 internal static extern uint clang_getTransparentTagTypedef (CXType T);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern SystemLongLong clang_Type_getAlignOf (CXType T);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
@@ -128,11 +173,15 @@ namespace NClang.Natives
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern SystemLongLong clang_Type_getOffsetOf (CXType T, string S);
 
-		/* not in libclang 3.5
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		 internal static extern SystemLongLong clang_Cursor_getOffsetOfField (CXCursor C);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		 internal static extern int clang_Cursor_isAnonymous (CXCursor C);
+
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		[return:MarshalAs (UnmanagedType.SysInt)]
 		internal static extern int clang_Type_getNumTemplateArguments (CXType T);
-		*/
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		internal static extern CXType clang_Type_getTemplateArgumentAsType (CXType T, uint i);
@@ -148,6 +197,9 @@ namespace NClang.Natives
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern CXXAccessSpecifier 	clang_getCXXAccessSpecifier (CXCursor _);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		 internal static extern StorageClass clang_getStorageClass (CXCursor _);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern uint clang_getNumOverloadedDecls (CXCursor cursor);

@@ -60,6 +60,10 @@ namespace NClang
 		/// included into the set of code completions returned from this translation
 		/// unit.
 		/// </summary>
-		IncludeBriefCommentsInCodeCompletion = 0x80
+		IncludeBriefCommentsInCodeCompletion = 0x80,
+
+		CreatePreambleOnFirstParse = 0x100,
+		KeepGoing = 0x200,
+		SingleFileParse = 0x400 
 	}
 }

@@ -19,6 +19,10 @@ namespace NClang
 		IntelOclBicc = 9,
 		X64Win64 = 10,
 		X64SysV = 11,
+		X86VectorCall = 12,
+		Swift = 13,
+		PreserveMost = 14,
+		PreserveAll = 15,
 		Invalid = 100,
 		Unexposed = 200
 	}

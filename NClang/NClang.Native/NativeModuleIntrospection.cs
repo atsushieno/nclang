@@ -16,6 +16,9 @@ namespace NClang.Natives
 		 internal static extern CXModule 	clang_Cursor_getModule (CXCursor C);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		 internal static extern CXModule clang_Cursor_getModuleForFile (CXTranslationUnit _, CXFile __);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern CXFile 	clang_Module_getASTFile (CXModule Module);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]

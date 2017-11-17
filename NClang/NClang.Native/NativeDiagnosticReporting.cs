@@ -56,10 +56,13 @@ namespace NClang.Natives
 		 internal static extern CXString clang_getDiagnosticSpelling (CXDiagnostic _);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
-		internal static extern CXString clang_getDiagnosticOption (CXDiagnostic diag, out CXString disable);
+		 internal static extern CXString clang_getDiagnosticOption (CXDiagnostic diag, out CXString disable);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern uint clang_getDiagnosticCategory (CXDiagnostic _);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		 internal static extern CXString clang_getDiagnosticCategoryName (int category);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern CXString clang_getDiagnosticCategoryText (CXDiagnostic _);

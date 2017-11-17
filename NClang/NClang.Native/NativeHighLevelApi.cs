@@ -244,6 +244,8 @@ namespace NClang.Natives
 		public IndexEntityReferenceHandler IndexEntityReference;
 	}
 
+	delegate VisitorResult FieldVisitor (CXCursor C, CXClientData client_data);
+
 	// done
 	static partial class LibClang
 	{
@@ -297,6 +299,18 @@ namespace NClang.Natives
 			out CXTranslationUnit out_TU, TranslationUnitFlags TU_options);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		internal static extern ErrorCode clang_indexSourceFileFullArgv (CXIndexAction _, CXClientData client_data,
+			[MarshalAs (UnmanagedType.LPArray, SizeParamIndex = 3)] IndexerCallbacks [] index_callbacks,
+			uint index_callbacks_size,
+			IndexOptionFlags index_options,
+			string source_filename,
+			[MarshalAs (UnmanagedType.LPArray, SizeParamIndex = 7)] string [] command_line_args, // const char *const *
+			int num_command_line_args,
+			[MarshalAs (UnmanagedType.LPArray, SizeParamIndex = 9)] CXUnsavedFile [] unsaved_files,
+			uint num_unsaved_files,
+			out CXTranslationUnit out_TU, TranslationUnitFlags TU_options);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		internal static extern ErrorCode 	clang_indexTranslationUnit (CXIndexAction _, CXClientData client_data,
 			[MarshalAs (UnmanagedType.LPArray, SizeParamIndex = 3)] IndexerCallbacks [] index_callbacks, uint index_callbacks_size,
 			IndexOptionFlags index_options, CXTranslationUnit __);
@@ -307,5 +321,8 @@ namespace NClang.Natives
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern CXSourceLocation 	clang_indexLoc_getCXSourceLocation (CXIdxLoc loc);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		 internal static extern uint clang_Type_visitFields (CXType T, FieldVisitor visitor, CXClientData client_data);
 	}
 }

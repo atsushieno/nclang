@@ -100,7 +100,7 @@
     <Compile Include="LanguageService\Enums\LinkageKind.cs" />
     <Compile Include="LanguageService\Enums\LoadDiagError.cs" />
     <Compile Include="LanguageService\Enums\NameRefFlags.cs" />
-    <Compile Include="LanguageService\Enums\ObjCPropertyAttributeFlags.cs" />
+    <Compile Include="LanguageService\Enums\ObjCPropertyAttributeKind.cs" />
     <Compile Include="LanguageService\Enums\RefQualifierKind.cs" />
     <Compile Include="LanguageService\Enums\ReparseTranslationUnitFlags.cs" />
     <Compile Include="LanguageService\Enums\ResourceUsageKind.cs" />
@@ -114,7 +114,7 @@
     <Compile Include="NClang.Native\NativeCommentASTIntrospection.cs" />
     <Compile Include="NClang.Native\NativeCompilationDatabase.cs" />
     <Compile Include="NClang.Native\NativeCppASTIntrospection.cs" />
-    <Compile Include="NClang.Native\NativeCrossReferencingAST.cs" />
+    <Compile Include="NClang.Native\NativeNameManglingAPIFunctions.cs" />
     <Compile Include="NClang.Native\NativeCursorManipulations.cs" />
     <Compile Include="NClang.Native\NativeDebuggingFacilities.cs" />
     <Compile Include="NClang.Native\NativeDiagnosticReporting.cs" />
@@ -152,6 +152,13 @@
     <Compile Include="LanguageService\ClangTokenSet.cs" />
     <Compile Include="LanguageService\ClangIndex_Infos.cs" />
     <Compile Include="NClang.Native\Extensions.cs" />
+    <Compile Include="LanguageService\Enums\VisibilityKind.cs" />
+    <Compile Include="LanguageService\Enums\TLSKind.cs" />
+    <Compile Include="LanguageService\Enums\TemplateArgumentKind.cs" />
+    <Compile Include="LanguageService\Enums\TypeLayoutError.cs" />
+    <Compile Include="LanguageService\Enums\StorageClass.cs" />
+    <Compile Include="NClang.Native\NativeCrossReferencingAST.cs" />
+    <Compile Include="LanguageService\Enums\EvalResultKind.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

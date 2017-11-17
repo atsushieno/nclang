@@ -19,10 +19,10 @@ namespace NClang.Natives
 		 internal static extern void clang_CompilationDatabase_dispose (CXCompilationDatabase _);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
-		 internal static extern CXCompileCommand clang_CompilationDatabase_getCompileCommands (CXCompilationDatabase _, string completeFileName);
+		 internal static extern CXCompileCommands clang_CompilationDatabase_getCompileCommands (CXCompilationDatabase _, string completeFileName);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
-		 internal static extern CXCompileCommand clang_CompilationDatabase_getAllCompileCommands (CXCompilationDatabase _);
+		 internal static extern CXCompileCommands clang_CompilationDatabase_getAllCompileCommands (CXCompilationDatabase _);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern void clang_CompileCommands_dispose (CXCompileCommands _);
@@ -31,10 +31,13 @@ namespace NClang.Natives
 		 internal static extern uint clang_CompileCommands_getSize (CXCompileCommands _);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
-		 internal static extern CXCompileCommand clang_CompileCommands_getCommand (CXCompileCommands _, uint i);
+		 internal static extern CXCompileCommand clang_CompileCommands_getCommand (CXCompileCommands _, uint l);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern CXString clang_CompileCommand_getDirectory (CXCompileCommand _);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		internal static extern CXString clang_CompileCommand_getFilename (CXCompileCommand _);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern uint clang_CompileCommand_getNumArgs (CXCompileCommand _);

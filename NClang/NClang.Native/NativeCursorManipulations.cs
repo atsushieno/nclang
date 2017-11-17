@@ -58,6 +58,9 @@ namespace NClang.Natives
 		 internal static extern uint clang_isAttribute (CursorKind _);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		 internal static extern uint clang_Cursor_hasAttrs (CXCursor C);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern uint clang_isInvalid (CursorKind _);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
@@ -73,6 +76,9 @@ namespace NClang.Natives
 		 internal static extern LinkageKind 	clang_getCursorLinkage (CXCursor cursor);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		 internal static extern VisibilityKind	clang_getCursorVisibility (CXCursor cursor);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern AvailabilityKind 	clang_getCursorAvailability (CXCursor cursor);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
@@ -85,6 +91,9 @@ namespace NClang.Natives
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern LanguageKind 	clang_getCursorLanguage (CXCursor cursor);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		 internal static extern TLSKind	clang_getCursorTLSKind (CXCursor cursor);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern CXTranslationUnit 	clang_Cursor_getTranslationUnit (CXCursor _);

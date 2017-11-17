@@ -7,6 +7,21 @@ namespace NClang.Natives
 	static partial class LibClang
 	{
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		 internal static extern uint clang_CXXConstructor_isConvertingConstructor (CXCursor C);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		 internal static extern uint clang_CXXConstructor_isCopyConstructor (CXCursor C);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		 internal static extern uint clang_CXXConstructor_isMoveConstructor (CXCursor C);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		 internal static extern uint clang_CXXField_isMutable (CXCursor C);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		 internal static extern uint clang_CXXMethod_isDefaulted (CXCursor C);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern uint	clang_CXXMethod_isPureVirtual (CXCursor C);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
@@ -16,7 +31,10 @@ namespace NClang.Natives
 		 internal static extern uint 	clang_CXXMethod_isVirtual (CXCursor C);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
-		internal static extern uint 	clang_CXXMethod_isConst (CXCursor C);
+		 internal static extern uint clang_EnumDecl_isScoped (CXCursor C);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		 internal static extern uint 	clang_CXXMethod_isConst (CXCursor C);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern CursorKind 	clang_getTemplateCursorKind (CXCursor C);

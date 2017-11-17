@@ -6,7 +6,7 @@ namespace NClang
 	/// Property attributes for a <see cref="CursorKind.ObjCPropertyDeclaration"/>.
 	/// </summary>
 	[Flags]
-	public enum ObjCPropertyAttributeFlags
+	public enum ObjCPropertyAttributeKind
 	{
 		NoAttr = 0x00,
 		ReadOnly = 0x01,
@@ -20,6 +20,7 @@ namespace NClang
 		Atomic = 0x100,
 		Weak = 0x200,
 		Strong = 0x400,
-		UnsafeUnretained = 0x800
+		UnsafeUnretained = 0x800,
+		Class = 0x1000,
 	}
 }

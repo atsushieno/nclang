@@ -1,6 +1,5 @@
 ﻿using System;
 using NClang;
-using Mono.Options;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -27,7 +26,7 @@ namespace PInvokeGenerator
 			TextWriter output = Console.Out;
 			foreach (var arg in args) {
 				if (arg == "--help" || arg == "-?") {
-					Console.Error.WriteLine ($"[USAGE] {GetType ().Assembly.GetName ().CodeBase}");
+					Console.Error.WriteLine ($"[USAGE] {GetType ().Assembly.GetName ().CodeBase} [options] [inputs]");
 					Console.Error.WriteLine (@"options:
 	--out:[filename]	output source file name.
 	--lib:[library]		library name specified on [DllImport].

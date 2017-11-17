@@ -72,6 +72,9 @@ namespace NClang.Natives
 		 internal static extern uint	clang_Cursor_isVariadic (CXCursor C);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		internal static extern uint clang_Cursor_isExternalSymbol (CXCursor C, out CXString language, out CXString definedIn, out uint isGenerated);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern CXSourceRange 	clang_Cursor_getCommentRange (CXCursor C);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
@@ -79,9 +82,6 @@ namespace NClang.Natives
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		 internal static extern CXString 	clang_Cursor_getBriefCommentText (CXCursor C);
-
-		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
-		 internal static extern CXComment 	clang_Cursor_getParsedComment (CXCursor C);
 	}
 }
 

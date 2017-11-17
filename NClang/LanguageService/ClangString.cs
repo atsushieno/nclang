@@ -9,4 +9,11 @@ namespace NClang
 		internal readonly IntPtr Data;
 		internal uint PrivateFlags;
 	}
+
+	[StructLayout (LayoutKind.Sequential)]
+	public struct ClangStringSet
+	{
+		internal readonly IntPtr Strings;
+		internal uint Count;
+	}
 }

@@ -706,9 +706,9 @@ namespace NClang
 		/// Given a cursor that represents a property declaration, return the
 		/// associated property attributes.
 		/// </summary>
-		public ObjCPropertyAttributeFlags ObjCPropertyAttributes {
+		public ObjCPropertyAttributeKind ObjCPropertyAttributes {
 			get {
-				return (ObjCPropertyAttributeFlags) LibClang.clang_Cursor_getObjCPropertyAttributes (source, 0);
+				return (ObjCPropertyAttributeKind) LibClang.clang_Cursor_getObjCPropertyAttributes (source, 0);
 			}
 		}
 
@@ -761,15 +761,6 @@ namespace NClang
 		/// </summary>
 		public string BriefCommentText {
 			get { return LibClang.clang_Cursor_getBriefCommentText (source).Unwrap (); }
-		}
-
-		/// <summary>
-		/// Given a cursor that represents a documentable entity (e.g.,
-		/// declaration), return the associated parsed comment as a
-		/// <c>CXComment_FullComment</c> AST node.
-		/// </summary>
-		public ClangComment ParsedComment {
-			get { return new ClangComment (LibClang.clang_Cursor_getParsedComment (source)); }
 		}
 
 		// MappingBetweenCursorAndLocation
