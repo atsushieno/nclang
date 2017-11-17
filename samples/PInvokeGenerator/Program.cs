@@ -76,6 +76,9 @@ namespace PInvokeGenerator
 					if (cursor.Kind == CursorKind.FieldDeclaration)
 						current.Fields.Add (new Variable () {
 							Type = ToTypeName (cursor.CursorType),
+							TypeDetails = GetTypeDetails (cursor.CursorType),
+							ArraySize = cursor.CursorType.ArraySize,
+							SizeOf = cursor.CursorType.SizeOf,
 							Name = cursor.Spelling
 						});
 					if (cursor.Kind == CursorKind.StructDeclaration || cursor.Kind == CursorKind.UnionDeclaration || cursor.Kind == CursorKind.EnumDeclaration) {
@@ -101,7 +104,14 @@ namespace PInvokeGenerator
 							SourceFile = cursor.Location.FileLocation.File.FileName,
 							Line = cursor.Location.FileLocation.Line,
 							Column = cursor.Location.FileLocation.Column,
-							Args = Enumerable.Range (0, cursor.ArgumentCount).Select (i => cursor.GetArgument (i)).Select (a => new Variable () { Name = a.Spelling, Type = ToTypeName (a.CursorType) }).ToArray () });
+							Args = Enumerable.Range (0, cursor.ArgumentCount)
+							                 .Select (i => cursor.GetArgument (i))
+							                 .Select (a => new Variable () {
+										Name = a.Spelling,
+										Type = ToTypeName (a.CursorType),
+										TypeDetails = GetTypeDetails (a.CursorType) })
+							                 .ToArray ()
+							});
 					}
 					return ChildVisitResult.Recurse;
 				};
@@ -133,6 +143,14 @@ namespace PInvokeGenerator
 			output.WriteLine ("}");
 			output.WriteLine ();
 
+			if (delegates.Any ()) {
+				output.WriteLine ("class Delegates");
+				output.WriteLine ("{");
+				foreach (var s in delegates)
+					output.WriteLine ("public " + s.DelegateDefinition + ";");
+				output.WriteLine ("}");
+			}
+
 			output.WriteLine (@"
 public struct Pointer<T>
 {
@@ -144,9 +162,38 @@ public struct Pointer<T>
 	{
 		Handle = handle;
 	}
+
+	public override bool Equals (object obj)
+	{
+		return obj is Pointer<T> && this == (Pointer<T>) obj;
+	}
+
+	public override int GetHashCode ()
+	{
+		return (int) Handle;
+	}
+
+	public static bool operator == (Pointer<T> p1, Pointer<T> p2)
+	{
+		return p1.Handle == p2.Handle;
+	}
+
+	public static bool operator != (Pointer<T> p1, Pointer<T> p2)
+	{
+		return p1.Handle != p2.Handle;
+	}
 }
 public struct ArrayOf<T> {}
 public struct ConstArrayOf<T> {}
+public class CTypeDetailsAttribute : Attribute
+{
+	public CTypeDetailsAttribute (string value)
+	{
+		Value = value;
+	}
+
+	public string Value { get; set; }
+}
 ");
 
 			if (Namespace != null)
@@ -191,6 +238,9 @@ public struct ConstArrayOf<T> {}
 		{
 			public string Name;
 			public string Type;
+			public string TypeDetails;
+			public int ArraySize; // array element count
+			public int SizeOf; // sizeof entire struct
 			public string Value;
 		}
 
@@ -213,8 +263,12 @@ public struct ConstArrayOf<T> {}
 					w.WriteLine ("[StructLayout (LayoutKind.Sequential)]");
 					w.WriteLine ("struct {0} // {1} ({2}, {3})", Name, SourceFileName, Line, Column);
 					w.WriteLine ("{");
-					foreach (var m in Fields)
-						w.WriteLine ("\tpublic {0} {1};", m.Type, m.Name);
+					foreach (var m in Fields) {
+						if (m.ArraySize > 0)
+							w.WriteLine ("\t[MarshalAs (UnmanagedType.ByValArray, SizeConst=" + m.ArraySize + ")]");
+						w.WriteLine ("\t{2}public {0} {1};", m.Type, m.Name, m.TypeDetails);
+					}
+
 					w.WriteLine ("}");
 				}
 			}
@@ -231,7 +285,7 @@ public struct ConstArrayOf<T> {}
 				w.WriteLine ("\t// function {0} - {1} ({2}, {3})", Name, SourceFileName, Line, Column);
 				if (Driver.LibraryName != null)
 					w.WriteLine ("\t[DllImport (\"{0}\")]", Driver.LibraryName);
-				w.WriteLine ("\tinternal static extern {0} {1} ({2});", Return, Name, string.Join (", ", Args.Select (a => a.Type + " " + a.Name)));
+				w.WriteLine ("\tinternal static extern {0} {1} ({2});", Return, Name, string.Join (", ", Args.Select (a => a.TypeDetails + a.Type + " " + a.Name)));
 			}
 		}
 
@@ -316,32 +370,62 @@ public struct ConstArrayOf<T> {}
 				// for aliased types to POD they still have IsPODType = true, so we need to ignore them.
 			}
 			if (type.Kind == TypeKind.ConstantArray)
-				return "ConstArrayOf<" + ToTypeName (type.ElementType) + ">";
+				return ToTypeName (type.ElementType) + "[]";
 			if (type.Kind == TypeKind.IncompleteArray)
 				return "ArrayOf<" + ToTypeName (type.ElementType) + ">";
 			if (type.Kind == TypeKind.Pointer) {
 				if (type.PointeeType != null && type.PointeeType.ArgumentTypeCount >= 0) {
 					// function pointer
-					var pt = type.PointeeType;
-					string ret = ToTypeName (pt.ResultType);
-					bool hasArgs = pt.ArgumentTypeCount > 0;
-					string f = ret == "void" ? (hasArgs ? "System.Action<" : "System.Action") : "System.Func<";
-					for (int i = 0; i < pt.ArgumentTypeCount; i++)
-						f += (i > 0 ? ", " : string.Empty) + ToTypeName (pt.GetArgumentType (i));
-					if (ret != "void")
-						f += (pt.ArgumentTypeCount > 0 ? ", " : string.Empty) + ret;
-					if (hasArgs)
-						f += ">";
-					return f;
+					return CreateFunctionPointerDelegateName (type);
 				} else {
 					var t = ToTypeName (type.PointeeType);
-					return t == "void" ? "System.IntPtr" : "Pointer<" + t + ">";
+					return t == "void" ? "System.IntPtr" : "IntPtr";
 				}
 			}
 			if (strip && type.IsConstQualifiedType)
 				return ToTypeName (type, false).Substring (6); // "const "
 			else
 				return type.Spelling.Replace ("struct ", "").Replace ("union ", "").Replace ("enum ", "");
+		}
+
+		class FunctionPointerDelegate
+		{
+			public ClangType Type;
+			public string DelegateDefinition;
+			public string TypeName;
+		}
+
+		List<FunctionPointerDelegate> delegates = new List<FunctionPointerDelegate> ();
+
+		string CreateFunctionPointerDelegateName (ClangType type)
+		{
+			var x = delegates.FirstOrDefault (e => e.Type == type);
+			if (x != null)
+				return x.TypeName;
+			
+			var pt = type.PointeeType;
+			string ret = ToTypeName (pt.ResultType);
+			var d = $"delegate {ret} delegate{delegates.Count} (";
+			bool hasArgs = pt.ArgumentTypeCount > 0;
+			string f = "Delegates.delegate" + delegates.Count;
+			for (int i = 0; i < pt.ArgumentTypeCount; i++) {
+				var tn = ToTypeName (pt.GetArgumentType (i));
+				if (i > 0)
+					d += ", ";
+				d += $"{tn} p{i}";
+			}
+			d += ")";
+			delegates.Add (new FunctionPointerDelegate { Type = type, DelegateDefinition = d, TypeName = f });
+			return f;
+		}
+
+		string GetTypeDetails (ClangType type)
+		{
+			if (type.Kind == TypeKind.Pointer)
+				return "[CTypeDetails (\"Pointer<" + ToTypeName (type.PointeeType) + ">\")]";
+			if (type.Kind == TypeKind.ConstantArray)
+				return "[CTypeDetails (\"ConstArrayOf<" + ToTypeName (type.ElementType) + ">\")] ";
+			return null;
 		}
 	}
 }
