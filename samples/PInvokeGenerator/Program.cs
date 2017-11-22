@@ -15,8 +15,10 @@ namespace PInvokeGenerator
 
 		public static string LibraryName;
 		public static string Namespace;
+		public static List<string> Args = new List<string> ();
 
 		bool InsideUsingDeclaration;
+		List<string> sources = new List<string> ();
 		List<TypeDef> usings = new List<TypeDef> ();
 
 		void Run (string[] args)
@@ -24,29 +26,39 @@ namespace PInvokeGenerator
 			var idx = ClangService.CreateIndex ();
 			var tus = new List<ClangTranslationUnit> ();
 			TextWriter output = Console.Out;
+			Args.Add ("-x");
+			Args.Add ("c++");
+			Args.Add ("--std=c++1y");
 			foreach (var arg in args) {
 				if (arg == "--help" || arg == "-?") {
 					Console.Error.WriteLine ($"[USAGE] {GetType ().Assembly.GetName ().CodeBase} [options] [inputs]");
 					Console.Error.WriteLine (@"options:
 	--out:[filename]	output source file name.
 	--lib:[library]		library name specified on [DllImport].
-	--ns:[namespace]	namespace name that wraps the entire code.");
+	--ns:[namespace]	namespace name that wraps the entire code.
+	--arg:[namespace]	compiler arguments to parse the sources.");
 					return;
-				}
-				else if (arg.StartsWith ("--out:", StringComparison.Ordinal))
+				} else if (arg.StartsWith ("--out:", StringComparison.Ordinal))
 					output = File.CreateText (arg.Substring (6));
 				else if (arg.StartsWith ("--lib:", StringComparison.Ordinal))
 					LibraryName = arg.Substring (6);
 				else if (arg.StartsWith ("--ns:", StringComparison.Ordinal))
 					Namespace = arg.Substring (5);
+				else if (arg.StartsWith ("--arg:", StringComparison.Ordinal))
+					Args.Add (arg.Substring (6));
 				else
-					tus.Add (idx.ParseTranslationUnit (arg, null, null, TranslationUnitFlags.None));
+					sources.Add (arg);
 			}
+			foreach (var source in sources)
+				tus.Add (idx.ParseTranslationUnit (source, Args.ToArray (), null, TranslationUnitFlags.None));
 
 			var members = new List<Locatable> ();
 			Struct current = null;
 
 			foreach (var tu in tus) {
+				for (int i = 0; i < tu.DiagnosticCount; i++)
+					Console.Error.WriteLine ("[diag] " + tu.GetDiagnostic (i).Spelling);
+				
 				Func<ClangCursor,ClangCursor,IntPtr,ChildVisitResult> func = null;
 				func = (cursor, parent, clientData) => {
 					// FIXME: this doesn't work.
