@@ -146,8 +146,10 @@ namespace PInvokeGenerator
 				output.WriteLine ();
 			}
 
-			output.WriteLine ("class Natives");
+			output.WriteLine ("partial class Natives");
 			output.WriteLine ("{");
+			output.WriteLine ("\tconst string LibraryName = \"{0}\";", LibraryName);
+
 			foreach (var o in members.OfType<Function> ()) {
 				o.Write (output);
 				output.WriteLine ();
@@ -266,7 +268,7 @@ public class CTypeDetailsAttribute : Attribute
 			public override void Write (TextWriter w)
 			{
 				if (IsEnum) {
-					w.WriteLine("enum {0} // {1} ({2}, {3})", Name, SourceFileName, Line, Column);
+					w.WriteLine("enum {0} // {1} ({2}, {3})", string.IsNullOrEmpty (Name) ? "_" + new string (Path.GetFileNameWithoutExtension (SourceFileName).TakeWhile (c => char.IsLetterOrDigit (c)).ToArray ()) + "_" + Line + "_" + Column : Name, SourceFileName, Line, Column);
 					w.WriteLine("{");
 					foreach (var m in Fields)
 						w.WriteLine("\t{0} {1}{2},", m.Name, m.Value != null ? " = " : null, m.Value);
@@ -278,7 +280,7 @@ public class CTypeDetailsAttribute : Attribute
 					foreach (var m in Fields) {
 						if (m.ArraySize > 0)
 							w.WriteLine ("\t[MarshalAs (UnmanagedType.ByValArray, SizeConst=" + m.ArraySize + ")]");
-						w.WriteLine ("\t{2}public {0} {1};", m.Type, m.Name, m.TypeDetails);
+						w.WriteLine ("\t{2}public {0} {1};", m.Type, string.IsNullOrEmpty (m.Name) ? "_" + Fields.IndexOf (m) : m.Name, m.TypeDetails);
 					}
 
 					w.WriteLine ("}");
@@ -295,9 +297,8 @@ public class CTypeDetailsAttribute : Attribute
 			public override void Write (TextWriter w)
 			{
 				w.WriteLine ("\t// function {0} - {1} ({2}, {3})", Name, SourceFileName, Line, Column);
-				if (Driver.LibraryName != null)
-					w.WriteLine ("\t[DllImport (\"{0}\")]", Driver.LibraryName);
-				w.WriteLine ("\tinternal static extern {0} {1} ({2});", Return, Name, string.Join (", ", Args.Select (a => a.TypeDetails + a.Type + " " + a.Name)));
+				w.WriteLine ("\t[DllImport (LibraryName)]");
+				w.WriteLine ("\tinternal static extern {0} {1} ({2});", Return, Name, string.Join (", ", Args.Select (a => a.TypeDetails + a.Type + " " + (string.IsNullOrEmpty (a.Name) ? "_" + Array.IndexOf (Args, a) : '@' + a.Name))));
 			}
 		}
 
@@ -366,10 +367,12 @@ public class CTypeDetailsAttribute : Attribute
 					return "ushort";
 				case "long":
 					return "long"; // FIXME: this should be actually platform dependent
+				case "long long":
+					return "/*FIXME: this was long long*/long"; // FIXME: this should be actually platform dependent
 				case "unsigned long":
 					return "ulong"; // FIXME: this should be actually platform dependent
 				case "unsigned long long":
-					return "ulong"; // FIXME: this should be actually platform dependent
+					return "/*FIXME: this was unsigned long long*/ulong"; // FIXME: this should be actually platform dependent
 				case "int":
 					return "int"; // FIXME: this should be actually platform dependent
 				case "unsigned int":
@@ -390,8 +393,7 @@ public class CTypeDetailsAttribute : Attribute
 					// function pointer
 					return CreateFunctionPointerDelegateName (type);
 				} else {
-					var t = ToTypeName (type.PointeeType);
-					return t == "void" ? "System.IntPtr" : "IntPtr";
+					return "System.IntPtr";
 				}
 			}
 			if (strip && type.IsConstQualifiedType)
