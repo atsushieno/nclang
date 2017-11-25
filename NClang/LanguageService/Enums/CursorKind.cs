@@ -863,6 +863,20 @@ namespace NClang
 		MacroExpansion = 502,
 		MacroInstantiation = MacroExpansion,
 		InclusionDirective = 503,
+
+		/// <summary>
+		/// A module import declaration.
+		/// </summary>
+		ModuleImportDecl = 600,
+		TypeAliasTemplateDecl = 601,
+		/// <summary>
+		/// A static_assert or _Static_assert node
+		/// </summary>
+		StaticAssert = 602,
+		/// <summary>
+		/// a friend declaration.
+		/// </summary>
+		FriendDecl = 603,
 		FirstPreprocessing = PreprocessingDirective,
 		LastPreprocessing = InclusionDirective
 	}

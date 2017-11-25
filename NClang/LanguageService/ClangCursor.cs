@@ -52,7 +52,7 @@ namespace NClang
 		/// </summary>
 		public static bool operator == (ClangCursor c1, ClangCursor c2)
 		{
-			return LibClang.clang_equalCursors (c1.source, c2.source) != 0;
+			return (object) c1 == null ? (object) c2 == null : (object) c2 != null && LibClang.clang_equalCursors (c1.source, c2.source) != 0;
 		}
 
 		/// <summary>
@@ -375,6 +375,30 @@ namespace NClang
 		public ClangCursor GetArgument (int index)
 		{
 			return new ClangCursor (LibClang.clang_Cursor_getArgument (source, (uint) index));
+		}
+
+		/// <summary>
+		/// Gets the template argument count.
+		/// </summary>
+		/// <remarks>
+		/// Returns the number of template args of a function decl representing a template specialization.
+		/// If the argument cursor cannot be converted into a template function declaration, -1 is returned.
+		/// For example, for the following declaration and specialization: template&lt;typename T, int kInt, bool kBool&gt; void foo() { ... }
+		/// template&lt;&gt; void foo&lt;float, -7, true&gt;();
+		/// The value 3 would be returned from this call.
+		/// </remarks>
+		public int TemplateArgumentCount {
+			get { return LibClang.clang_Cursor_getNumTemplateArguments (source); }
+		}
+
+		public LinkageKind GetTemplateArgumentKind (int index)
+		{
+			return (LinkageKind) LibClang.clang_Cursor_getTemplateArgumentKind (source, (uint) index);
+		}
+
+		public ClangType GetTemplateArgumentType (int index)
+		{
+			return new ClangType (LibClang.clang_Cursor_getTemplateArgumentType (source, (uint)index));
 		}
 
 		/// <summary>
