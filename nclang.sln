@@ -9,6 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{ABCC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PInvokeGenerator", "samples\PInvokeGenerator\PInvokeGenerator.csproj", "{69B867FF-7605-4E50-B931-9CA24BD90D33}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CApiGenerator", "samples\CApiGenerator\CApiGenerator.csproj", "{B60DB5D3-C4EB-4B4B-9B19-EEB841DEDC8E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,9 +29,14 @@ Global
 		{69B867FF-7605-4E50-B931-9CA24BD90D33}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69B867FF-7605-4E50-B931-9CA24BD90D33}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{69B867FF-7605-4E50-B931-9CA24BD90D33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B60DB5D3-C4EB-4B4B-9B19-EEB841DEDC8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B60DB5D3-C4EB-4B4B-9B19-EEB841DEDC8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B60DB5D3-C4EB-4B4B-9B19-EEB841DEDC8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B60DB5D3-C4EB-4B4B-9B19-EEB841DEDC8E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{69B867FF-7605-4E50-B931-9CA24BD90D33} = {ABCC83D3-B687-4546-9DAB-BF2256E850D8}
+		{B60DB5D3-C4EB-4B4B-9B19-EEB841DEDC8E} = {ABCC83D3-B687-4546-9DAB-BF2256E850D8}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = samples\PInvokeGenerator\PInvokeGenerator.csproj
