@@ -3,6 +3,7 @@ using NClang;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace PInvokeGenerator
 {
@@ -20,6 +21,7 @@ namespace PInvokeGenerator
 		bool InsideUsingDeclaration;
 		List<string> sources = new List<string> ();
 		List<TypeDef> usings = new List<TypeDef> ();
+		public List<Regex> fileMatches = new List<Regex> ();
 
 		void Run (string[] args)
 		{
@@ -36,6 +38,7 @@ namespace PInvokeGenerator
 	--out:[filename]	output source file name.
 	--lib:[library]		library name specified on [DllImport].
 	--ns:[namespace]	namespace name that wraps the entire code.
+	--match:[regex]		when specified, process only matching files.
 	--arg:[namespace]	compiler arguments to parse the sources.");
 					return;
 				} else if (arg.StartsWith ("--out:", StringComparison.Ordinal))
@@ -46,6 +49,8 @@ namespace PInvokeGenerator
 					Namespace = arg.Substring (5);
 				else if (arg.StartsWith ("--arg:", StringComparison.Ordinal))
 					Args.Add (arg.Substring (6));
+				else if (arg.StartsWith ("--match:", StringComparison.Ordinal))
+					fileMatches.Add (new Regex (arg.Substring (8)));
 				else
 					sources.Add (arg);
 			}
@@ -61,6 +66,10 @@ namespace PInvokeGenerator
 				
 				Func<ClangCursor,ClangCursor,IntPtr,ChildVisitResult> func = null;
 				func = (cursor, parent, clientData) => {
+					// skip ignored file.
+					if (fileMatches.Any () && !fileMatches.Any (fm => fm.IsMatch (cursor.Location.FileLocation.File.FileName)))
+						return ChildVisitResult.Continue;
+
 					// FIXME: this doesn't work.
 					if (cursor.Kind == CursorKind.InclusionDirective) {
 						Console.Error.WriteLine ("Include File " + cursor.IncludedFile);
