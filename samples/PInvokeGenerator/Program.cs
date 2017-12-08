@@ -21,13 +21,15 @@ namespace PInvokeGenerator
 		bool InsideUsingDeclaration;
 		List<string> sources = new List<string> ();
 		List<TypeDef> usings = new List<TypeDef> ();
-		public List<Regex> fileMatches = new List<Regex> ();
 
 		void Run (string[] args)
 		{
 			var idx = ClangService.CreateIndex ();
 			var tus = new List<ClangTranslationUnit> ();
 			TextWriter output = Console.Out;
+			List<Regex> fileMatches = new List<Regex> ();
+			bool onlyExplicit = false;
+
 			Args.Add ("-x");
 			Args.Add ("c++");
 			Args.Add ("--std=c++1y");
@@ -51,14 +53,17 @@ namespace PInvokeGenerator
 					Args.Add (arg.Substring (6));
 				else if (arg.StartsWith ("--match:", StringComparison.Ordinal))
 					fileMatches.Add (new Regex (arg.Substring (8)));
+				else if (arg == "--only-explicit")
+					onlyExplicit = true;
 				else
 					sources.Add (arg);
 			}
 			foreach (var source in sources)
-				tus.Add (idx.ParseTranslationUnit (source, Args.ToArray (), null, TranslationUnitFlags.None));
+				tus.Add (idx.ParseTranslationUnit (source, Args.ToArray (), null, TranslationUnitFlags.SkipFunctionBodies));
 
 			var members = new List<Locatable> ();
 			Struct current = null;
+			string current_typedef_name = null;
 
 			foreach (var tu in tus) {
 				for (int i = 0; i < tu.DiagnosticCount; i++)
@@ -67,6 +72,8 @@ namespace PInvokeGenerator
 				Func<ClangCursor,ClangCursor,IntPtr,ChildVisitResult> func = null;
 				func = (cursor, parent, clientData) => {
 					// skip ignored file.
+					if (onlyExplicit && !sources.Contains (cursor.Location.FileLocation.File.FileName))
+						return ChildVisitResult.Continue;
 					if (fileMatches.Any () && !fileMatches.Any (fm => fm.IsMatch (cursor.Location.FileLocation.File.FileName)))
 						return ChildVisitResult.Continue;
 
@@ -81,9 +88,19 @@ namespace PInvokeGenerator
 							InsideUsingDeclaration = true;
 							if (usings.All (u => u.Alias != alias)) {
 								var actual = ToTypeName (cursor.TypeDefDeclUnderlyingType);
-								usings.Add (new TypeDef () { Alias = alias, Actual = actual });
+								if (cursor.TypeDefDeclUnderlyingType.ArraySize < 0)
+									usings.Add (new TypeDef () { Alias = alias, Actual = actual });
+								else
+									usings.Add (new TypeDef () { Alias = alias, Actual = $"System.IntPtr/*{actual}*/" }); // array
 							}
+
+							current_typedef_name = alias;
+							foreach (var child in cursor.GetChildren ())
+								func (child, cursor, clientData);
+							current_typedef_name = null;
+
 							InsideUsingDeclaration = false;
+							return ChildVisitResult.Continue;
 						}
 					}
 					if (cursor.Kind == CursorKind.EnumConstantDeclaration)
@@ -104,19 +121,20 @@ namespace PInvokeGenerator
 						});
 					if (cursor.Kind == CursorKind.StructDeclaration || cursor.Kind == CursorKind.UnionDeclaration || cursor.Kind == CursorKind.EnumDeclaration) {
 						current = new Struct () {
-							Name = cursor.DisplayName,
+							Name = current_typedef_name ?? cursor.DisplayName,
 							SourceFile = cursor.Location.FileLocation.File.FileName,
 							Line = cursor.Location.FileLocation.Line,
 							Column = cursor.Location.FileLocation.Column,
 							IsUnion = cursor.Kind == CursorKind.UnionDeclaration,
 							IsEnum = cursor.Kind == CursorKind.EnumDeclaration,
 						};
-						if (members.All (m => m.Line != current.Line || m.Column != current.Column)) {
-							var dup = members.OfType<Struct> ().Where (m => m.Name == current.Name).ToArray ();
-							foreach (var d in dup)
-								members.Remove (d);
-							members.Add (current);
-						}
+						var dup = members.OfType<Struct> ().Where (m => m.Line == current.Line && m.Column == current.Column && m.SourceFile == current.SourceFile).ToArray ();
+						foreach (var d in dup)
+							members.Remove (d);
+						members.Add (current);
+						foreach (var child in cursor.GetChildren ())
+							func (child, cursor, clientData);
+						return ChildVisitResult.Continue;
 					}
 					if (cursor.Kind == CursorKind.FunctionDeclaration) {
 						members.Add (new Function () {
@@ -289,7 +307,7 @@ public class CTypeDetailsAttribute : Attribute
 					foreach (var m in Fields) {
 						if (m.ArraySize > 0)
 							w.WriteLine ("\t[MarshalAs (UnmanagedType.ByValArray, SizeConst=" + m.ArraySize + ")]");
-						w.WriteLine ("\t{2}public {0} {1};", m.Type, string.IsNullOrEmpty (m.Name) ? "_" + Fields.IndexOf (m) : m.Name, m.TypeDetails);
+						w.WriteLine ("\t{2}public {0} @{1};", m.Type, string.IsNullOrEmpty (m.Name) ? "_" + Fields.IndexOf (m) : m.Name, m.TypeDetails);
 					}
 
 					w.WriteLine ("}");
