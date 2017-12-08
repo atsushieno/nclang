@@ -65,6 +65,12 @@ namespace PInvokeGenerator
 			Struct current = null;
 			string current_typedef_name = null;
 
+			Action<ClangCursor> removeDuplicates = c => {
+				var dup = members.Where (m => m.Line == c.Location.FileLocation.Line && m.Column == c.Location.FileLocation.Column && m.SourceFile == c.Location.FileLocation.File.FileName).ToArray ();
+				foreach (var d in dup)
+					members.Remove (d);
+			};
+
 			foreach (var tu in tus) {
 				for (int i = 0; i < tu.DiagnosticCount; i++)
 					Console.Error.WriteLine ("[diag] " + tu.GetDiagnostic (i).Spelling);
@@ -103,15 +109,17 @@ namespace PInvokeGenerator
 							return ChildVisitResult.Continue;
 						}
 					}
-					if (cursor.Kind == CursorKind.EnumConstantDeclaration)
-						current.Fields.Add (new Variable ()
-						{
+					if (cursor.Kind == CursorKind.EnumConstantDeclaration) {
+						removeDuplicates (cursor);
+						current.Fields.Add (new Variable () {
 							Type = ToTypeName (cursor.CursorType),
 							Name = cursor.Spelling,
 							// FIXME: this is HACK.
-							Value = (cursor.EnumConstantDeclValue != 0 ? (decimal) cursor.EnumConstantDeclValue : (decimal) cursor.EnumConstantDeclUnsignedValue).ToString(),
+							Value = (cursor.EnumConstantDeclValue != 0 ? (decimal)cursor.EnumConstantDeclValue : (decimal)cursor.EnumConstantDeclUnsignedValue).ToString (),
 						});
-					if (cursor.Kind == CursorKind.FieldDeclaration)
+					}
+					if (cursor.Kind == CursorKind.FieldDeclaration) {
+						removeDuplicates (cursor);
 						current.Fields.Add (new Variable () {
 							Type = ToTypeName (cursor.CursorType),
 							TypeDetails = GetTypeDetails (cursor.CursorType),
@@ -119,7 +127,9 @@ namespace PInvokeGenerator
 							SizeOf = cursor.CursorType.SizeOf,
 							Name = cursor.Spelling
 						});
+					}
 					if (cursor.Kind == CursorKind.StructDeclaration || cursor.Kind == CursorKind.UnionDeclaration || cursor.Kind == CursorKind.EnumDeclaration) {
+						removeDuplicates (cursor);
 						current = new Struct () {
 							Name = current_typedef_name ?? cursor.DisplayName,
 							SourceFile = cursor.Location.FileLocation.File.FileName,
@@ -128,15 +138,13 @@ namespace PInvokeGenerator
 							IsUnion = cursor.Kind == CursorKind.UnionDeclaration,
 							IsEnum = cursor.Kind == CursorKind.EnumDeclaration,
 						};
-						var dup = members.OfType<Struct> ().Where (m => m.Line == current.Line && m.Column == current.Column && m.SourceFile == current.SourceFile).ToArray ();
-						foreach (var d in dup)
-							members.Remove (d);
 						members.Add (current);
 						foreach (var child in cursor.GetChildren ())
 							func (child, cursor, clientData);
 						return ChildVisitResult.Continue;
 					}
 					if (cursor.Kind == CursorKind.FunctionDeclaration) {
+						removeDuplicates (cursor);
 						members.Add (new Function () {
 							Name = cursor.Spelling,
 							Return = ToTypeName (cursor.ResultType),
