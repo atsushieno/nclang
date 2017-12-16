@@ -64,6 +64,7 @@ namespace PInvokeGenerator
 			var members = new List<Named> ();
 			Struct current = null;
 			string current_typedef_name = null;
+			int anonymous_type_count = 0;
 
 			Action<ClangCursor> removeDuplicates = c => {
 				var dup = members.Where (m => m.Name == c.Spelling || m.Line == c.Location.FileLocation.Line && m.Column == c.Location.FileLocation.Column && m.SourceFile == c.Location.FileLocation.File.FileName).ToArray ();
@@ -120,8 +121,13 @@ namespace PInvokeGenerator
 					}
 					if (cursor.Kind == CursorKind.FieldDeclaration) {
 						removeDuplicates (cursor);
+						var typeCursor = cursor.CursorType.TypeDeclaration;
+						var type = !string.IsNullOrEmpty (typeCursor.DisplayName) ?
+								  ToTypeName (cursor.CursorType) :
+						                  members.FirstOrDefault (m => m.Line == typeCursor.Location.FileLocation.Line && m.Column == typeCursor.Location.FileLocation.Column && m.SourceFile == typeCursor.Location.FileLocation.File.FileName)?.Name ??
+						                  ToTypeName (cursor.CursorType);
 						current.Fields.Add (new Variable () {
-							Type = ToTypeName (cursor.CursorType),
+							Type = type,
 							TypeDetails = GetTypeDetails (cursor.CursorType),
 							ArraySize = cursor.CursorType.ArraySize,
 							SizeOf = cursor.CursorType.SizeOf,
@@ -132,7 +138,8 @@ namespace PInvokeGenerator
 						removeDuplicates (cursor);
 						var parentType = current;
 						current = new Struct () {
-							Name = current_typedef_name ?? cursor.DisplayName,
+							Name = current_typedef_name != null && parentType == null ? current_typedef_name :
+								string.IsNullOrEmpty (cursor.DisplayName) ? "anonymous_type_" + (anonymous_type_count++) : cursor.DisplayName,
 							SourceFile = cursor.Location.FileLocation.File.FileName,
 							Line = cursor.Location.FileLocation.Line,
 							Column = cursor.Location.FileLocation.Column,
