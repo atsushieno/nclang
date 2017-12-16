@@ -61,12 +61,12 @@ namespace PInvokeGenerator
 			foreach (var source in sources)
 				tus.Add (idx.ParseTranslationUnit (source, Args.ToArray (), null, TranslationUnitFlags.SkipFunctionBodies));
 
-			var members = new List<Locatable> ();
+			var members = new List<Named> ();
 			Struct current = null;
 			string current_typedef_name = null;
 
 			Action<ClangCursor> removeDuplicates = c => {
-				var dup = members.Where (m => m.Line == c.Location.FileLocation.Line && m.Column == c.Location.FileLocation.Column && m.SourceFile == c.Location.FileLocation.File.FileName).ToArray ();
+				var dup = members.Where (m => m.Name == c.Spelling || m.Line == c.Location.FileLocation.Line && m.Column == c.Location.FileLocation.Column && m.SourceFile == c.Location.FileLocation.File.FileName).ToArray ();
 				foreach (var d in dup)
 					members.Remove (d);
 			};
@@ -130,6 +130,7 @@ namespace PInvokeGenerator
 					}
 					if (cursor.Kind == CursorKind.StructDeclaration || cursor.Kind == CursorKind.UnionDeclaration || cursor.Kind == CursorKind.EnumDeclaration) {
 						removeDuplicates (cursor);
+						var parentType = current;
 						current = new Struct () {
 							Name = current_typedef_name ?? cursor.DisplayName,
 							SourceFile = cursor.Location.FileLocation.File.FileName,
@@ -141,6 +142,7 @@ namespace PInvokeGenerator
 						members.Add (current);
 						foreach (var child in cursor.GetChildren ())
 							func (child, cursor, clientData);
+						current = parentType;
 						return ChildVisitResult.Continue;
 					}
 					if (cursor.Kind == CursorKind.FunctionDeclaration) {
@@ -270,11 +272,12 @@ public class CTypeDetailsAttribute : Attribute
 			public string Actual;
 		}
 
-		abstract class Locatable
+		abstract class Named
 		{
 			public string SourceFile;
 			public int Line;
 			public int Column;
+			public string Name;
 
 			public string SourceFileName {
 				get { return SourceFile == null ? null : Path.GetFileName (SourceFile); }
@@ -293,11 +296,10 @@ public class CTypeDetailsAttribute : Attribute
 			public string Value;
 		}
 
-		class Struct : Locatable
+		class Struct : Named
 		{
 			public bool IsUnion;
 			public bool IsEnum;
-			public string Name;
 			public List<Variable> Fields = new List<Variable> ();
 
 			public override void Write (TextWriter w)
@@ -309,12 +311,17 @@ public class CTypeDetailsAttribute : Attribute
 						w.WriteLine("\t{0} {1}{2},", m.Name, m.Value != null ? " = " : null, m.Value);
 					w.WriteLine("}");
 				} else {
-					w.WriteLine ("[StructLayout (LayoutKind.Sequential)]");
+					if (IsUnion)
+						w.WriteLine ("[StructLayout (LayoutKind.Explicit)]");
+					else
+						w.WriteLine ("[StructLayout (LayoutKind.Sequential)]");
 					w.WriteLine ("struct {0} // {1} ({2}, {3})", Name, SourceFileName, Line, Column);
 					w.WriteLine ("{");
 					foreach (var m in Fields) {
 						if (m.ArraySize > 0)
 							w.WriteLine ("\t[MarshalAs (UnmanagedType.ByValArray, SizeConst=" + m.ArraySize + ")]");
+						if (IsUnion)
+							w.WriteLine ("\t[FieldOffset (0)]");
 						w.WriteLine ("\t{2}public {0} @{1};", m.Type, string.IsNullOrEmpty (m.Name) ? "_" + Fields.IndexOf (m) : m.Name, m.TypeDetails);
 					}
 
@@ -323,9 +330,8 @@ public class CTypeDetailsAttribute : Attribute
 			}
 		}
 
-		class Function : Locatable
+		class Function : Named
 		{
-			public string Name;
 			public string Return;
 			public Variable [] Args;
 
