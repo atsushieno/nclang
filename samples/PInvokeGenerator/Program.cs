@@ -95,7 +95,9 @@ namespace PInvokeGenerator
 							InsideUsingDeclaration = true;
 							if (usings.All (u => u.Alias != alias)) {
 								var actual = ToTypeName (cursor.TypeDefDeclUnderlyingType);
-								if (cursor.TypeDefDeclUnderlyingType.ArraySize < 0)
+								if (cursor.TypeDefDeclUnderlyingType.Kind == TypeKind.Enum)
+									TextWriter.Null.WriteLine ("Enum not being aliased."); // do nothing
+								else if (cursor.TypeDefDeclUnderlyingType.ArraySize < 0)
 									usings.Add (new TypeDef () { Alias = alias, Actual = actual });
 								else
 									usings.Add (new TypeDef () { Alias = alias, Actual = $"System.IntPtr/*{actual}*/" }); // array
@@ -402,33 +404,32 @@ public class CTypeDetailsAttribute : Attribute
 		string ToTypeName_ (ClangType type, bool strip = true)
 		{
 			if (type.IsPODType) {
-				switch (type.Spelling) {
-				case "unsigned char":
-					return "byte";
-				case "char":
-					return "byte"; // we most likely don't need sbyte
-				case "signed char":
-					return "sbyte"; // probably explicit signed specification means something
-				case "short":
-					return "short";
-				case "unsigned short":
-					return "ushort";
-				case "long":
-					return "long"; // FIXME: this should be actually platform dependent
-				case "long long":
-					return "/*FIXME: this was long long*/long"; // FIXME: this should be actually platform dependent
-				case "unsigned long":
-					return "ulong"; // FIXME: this should be actually platform dependent
-				case "unsigned long long":
-					return "/*FIXME: this was unsigned long long*/ulong"; // FIXME: this should be actually platform dependent
-				case "int":
+				switch (type.Kind) {
+				case TypeKind.Int:
 					return "int"; // FIXME: this should be actually platform dependent
-				case "unsigned int":
+				case TypeKind.UInt:
 					return "uint"; // FIXME: this should be actually platform dependent
-				case "float":
+				case TypeKind.Float:
 					return "float";
-				case "double":
+				case TypeKind.Double:
 					return "double";
+				case TypeKind.UChar:
+				case TypeKind.CharU:
+					return "byte";
+				case TypeKind.CharS:
+					return "sbyte"; // probably explicit signed specification means something
+				case TypeKind.Short:
+					return "short";
+				case TypeKind.UShort:
+					return "ushort";
+				case TypeKind.Long:
+					return "long"; // FIXME: this should be actually platform dependent
+				case TypeKind.ULong:
+					return "ulong"; // FIXME: this should be actually platform dependent
+				case TypeKind.LongLong:
+					return "/*FIXME: this was long long*/long"; // FIXME: this should be actually platform dependent
+				case TypeKind.ULongLong:
+					return "/*FIXME: this was unsigned long long*/ulong"; // FIXME: this should be actually platform dependent
 				}
 				// for aliased types to POD they still have IsPODType = true, so we need to ignore them.
 			}
