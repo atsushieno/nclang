@@ -9,7 +9,7 @@ namespace PInvokeGenerator
 {
 	class Driver
 	{
-		public static void Main (string[] args)
+		public static void Main (string [] args)
 		{
 			new Driver ().Run (args);
 		}
@@ -22,7 +22,7 @@ namespace PInvokeGenerator
 		List<string> sources = new List<string> ();
 		List<TypeDef> usings = new List<TypeDef> ();
 
-		void Run (string[] args)
+		void Run (string [] args)
 		{
 			var idx = ClangService.CreateIndex ();
 			var tus = new List<ClangTranslationUnit> ();
@@ -67,16 +67,16 @@ namespace PInvokeGenerator
 			int anonymous_type_count = 0;
 
 			Action<ClangCursor> removeDuplicates = c => {
-				var dup = members.Where (m => m.Name == c.Spelling || m.Line == c.Location.FileLocation.Line && m.Column == c.Location.FileLocation.Column && m.SourceFile == c.Location.FileLocation.File.FileName).ToArray ();
-				foreach (var d in dup)
+				var dups = members.Where (m => m.Name == c.Spelling || m.Line == c.Location.FileLocation.Line && m.Column == c.Location.FileLocation.Column && m.SourceFile == c.Location.FileLocation.File.FileName).ToArray ();
+				foreach (var d in dups)
 					members.Remove (d);
 			};
 
 			foreach (var tu in tus) {
 				for (int i = 0; i < tu.DiagnosticCount; i++)
-					Console.Error.WriteLine ("[diag] " + tu.GetDiagnostic (i).Spelling);
-				
-				Func<ClangCursor,ClangCursor,IntPtr,ChildVisitResult> func = null;
+					Console.Error.WriteLine ($"[diag] {tu.GetDiagnostic (i).Location}: {tu.GetDiagnostic (i).Spelling}");
+
+				Func<ClangCursor, ClangCursor, IntPtr, ChildVisitResult> func = null;
 				func = (cursor, parent, clientData) => {
 					// skip ignored file.
 					if (onlyExplicit && !sources.Contains (cursor.Location.FileLocation.File.FileName))
@@ -95,20 +95,20 @@ namespace PInvokeGenerator
 							InsideUsingDeclaration = true;
 							if (usings.All (u => u.Alias != alias)) {
 								var actual = ToTypeName (cursor.TypeDefDeclUnderlyingType);
-								if (cursor.TypeDefDeclUnderlyingType.Kind == TypeKind.Enum)
-									TextWriter.Null.WriteLine ("Enum not being aliased."); // do nothing
-								else if (cursor.TypeDefDeclUnderlyingType.ArraySize < 0)
-									usings.Add (new TypeDef () { Alias = alias, Actual = actual });
-								else
-									usings.Add (new TypeDef () { Alias = alias, Actual = $"System.IntPtr/*{actual}*/" }); // array
+								var td = new TypeDef {
+									Alias = alias,
+									Actual = cursor.TypeDefDeclUnderlyingType.ArraySize < 0 ? actual : $"System.IntPtr/*{actual}[]*/",
+									Location = cursor.Location,
+								};
+								usings.Add (td);
 							}
+							InsideUsingDeclaration = false;
 
 							current_typedef_name = alias;
 							foreach (var child in cursor.GetChildren ())
 								func (child, cursor, clientData);
 							current_typedef_name = null;
 
-							InsideUsingDeclaration = false;
 							return ChildVisitResult.Continue;
 						}
 					}
@@ -120,14 +120,15 @@ namespace PInvokeGenerator
 							// FIXME: this is HACK.
 							Value = (cursor.EnumConstantDeclValue != 0 ? (decimal)cursor.EnumConstantDeclValue : (decimal)cursor.EnumConstantDeclUnsignedValue).ToString (),
 						});
+						return ChildVisitResult.Continue;
 					}
 					if (cursor.Kind == CursorKind.FieldDeclaration) {
 						removeDuplicates (cursor);
 						var typeCursor = cursor.CursorType.TypeDeclaration;
 						var type = !string.IsNullOrEmpty (typeCursor.DisplayName) ?
 								  ToTypeName (cursor.CursorType) :
-						                  members.FirstOrDefault (m => m.Line == typeCursor.Location.FileLocation.Line && m.Column == typeCursor.Location.FileLocation.Column && m.SourceFile == typeCursor.Location.FileLocation.File.FileName)?.Name ??
-						                  ToTypeName (cursor.CursorType);
+								  members.FirstOrDefault (m => m.Line == typeCursor.Location.FileLocation.Line && m.Column == typeCursor.Location.FileLocation.Column && m.SourceFile == typeCursor.Location.FileLocation.File.FileName)?.Name ??
+								  ToTypeName (cursor.CursorType);
 						current.Fields.Add (new Variable () {
 							Type = type,
 							TypeDetails = GetTypeDetails (cursor.CursorType),
@@ -135,6 +136,7 @@ namespace PInvokeGenerator
 							SizeOf = cursor.CursorType.SizeOf,
 							Name = cursor.Spelling
 						});
+						return ChildVisitResult.Continue;
 					}
 					if (cursor.Kind == CursorKind.StructDeclaration || cursor.Kind == CursorKind.UnionDeclaration || cursor.Kind == CursorKind.EnumDeclaration) {
 						removeDuplicates (cursor);
@@ -142,9 +144,7 @@ namespace PInvokeGenerator
 						current = new Struct () {
 							Name = current_typedef_name != null && parentType == null ? current_typedef_name :
 								string.IsNullOrEmpty (cursor.DisplayName) ? "anonymous_type_" + (anonymous_type_count++) : cursor.DisplayName,
-							SourceFile = cursor.Location.FileLocation.File.FileName,
-							Line = cursor.Location.FileLocation.Line,
-							Column = cursor.Location.FileLocation.Column,
+							Location = cursor.Location,
 							IsUnion = cursor.Kind == CursorKind.UnionDeclaration,
 							IsEnum = cursor.Kind == CursorKind.EnumDeclaration,
 						};
@@ -156,20 +156,27 @@ namespace PInvokeGenerator
 					}
 					if (cursor.Kind == CursorKind.FunctionDeclaration) {
 						removeDuplicates (cursor);
+						var fargs = Enumerable.Range (0, cursor.ArgumentCount)
+								     .Select (i => cursor.GetArgument (i));
+
+						// function with va_list isn't supported in P/Invoke.
+						if (fargs.Any (a => a.CursorType.Spelling == "va_list")) {
+							Console.Error.WriteLine ($"Cannot bind {cursor.DisplayName} because it contains va_list.");
+							return ChildVisitResult.Continue;
+						}
+						
 						members.Add (new Function () {
 							Name = cursor.Spelling,
 							Return = ToTypeName (cursor.ResultType),
-							SourceFile = cursor.Location.FileLocation.File.FileName,
-							Line = cursor.Location.FileLocation.Line,
-							Column = cursor.Location.FileLocation.Column,
-							Args = Enumerable.Range (0, cursor.ArgumentCount)
-							                 .Select (i => cursor.GetArgument (i))
-							                 .Select (a => new Variable () {
-										Name = a.Spelling,
-										Type = ToTypeName (a.CursorType),
-										TypeDetails = GetTypeDetails (a.CursorType) })
-							                 .ToArray ()
-							});
+							Location = cursor.Location,
+							Args = fargs.Select (a => new Variable () {
+								Name = a.Spelling,
+								Type = ToTypeName (a.CursorType),
+								TypeDetails = GetTypeDetails (a.CursorType)
+								})
+							            .ToArray ()
+						});
+						return ChildVisitResult.Continue;
 					}
 					return ChildVisitResult.Recurse;
 				};
@@ -179,9 +186,24 @@ namespace PInvokeGenerator
 			output.WriteLine ("// This source file is generated by nclang PInvokeGenerator.");
 			output.WriteLine ("using System;");
 			output.WriteLine ("using System.Runtime.InteropServices;");
-			foreach (var u in usings.Distinct (new KeyComparer ()))
-				if (u.Alias != u.Actual)
-					output.WriteLine ("using {0} = {1};", u.Alias, u.Actual);
+			foreach (var u in usings.Distinct (new KeyComparer ())) {
+				// FIXME: hacky matching
+				var mbr = members.FirstOrDefault (m => u.Actual.EndsWith (m.Name, StringComparison.Ordinal));
+				if (mbr != null)
+					mbr.Name = u.Alias;
+				else {
+					// FIXME: this does not seem to work
+					var del = delegates.FirstOrDefault (d => u.Actual.EndsWith (d.TypeNameForDeclaration, StringComparison.Ordinal));
+					if (del != null) {
+						del.TypeNameForDeclaration = u.Alias;
+						del.TypeNameForReference = "Delegates." + u.Alias;
+						output.WriteLine ("using {0} = {1}; // {2} ({3},{4})", u.Actual.Substring (Namespace.Length + 1), WithNamespace (del.TypeNameForReference), u.SourceFileName, u.Line, u.Column);
+					}
+				}
+			}
+			// some code references function pointer types without "Delegates.", so workaround that with hacky "Delegates." addition.
+			foreach (var del in delegates)
+				output.WriteLine ("using {0} = {1};", del.TypeNameForDeclaration, WithNamespace (del.TypeNameForReference));
 			output.WriteLine ();
 
 			if (Namespace != null)
@@ -275,21 +297,34 @@ public class CTypeDetailsAttribute : Attribute
 			}
 		}
 
-		struct TypeDef
+		class TypeDef : Named
 		{
 			public string Alias;
 			public string Actual;
+
+			public override void Write (TextWriter w)
+			{
+				throw new NotSupportedException ();
+			}
 		}
 
 		abstract class Named
 		{
-			public string SourceFile;
-			public int Line;
-			public int Column;
+			public string SourceFile { get; private set; }
+			public int Line { get; private set; }
+			public int Column { get; private set; }
 			public string Name;
 
 			public string SourceFileName {
 				get { return SourceFile == null ? null : Path.GetFileName (SourceFile); }
+			}
+
+			public ClangSourceLocation Location {
+				set {
+					SourceFile = value.FileLocation.File.FileName;
+					Line = value.FileLocation.Line;
+					Column = value.FileLocation.Column;
+				}
 			}
 
 			public abstract void Write (TextWriter w);
@@ -395,7 +430,7 @@ public class CTypeDetailsAttribute : Attribute
 			var ret = ToTypeName_ (type, strip);
 			if (!InsideUsingDeclaration)
 				return ret;
-			var alias = usings.FirstOrDefault (u => u.Alias == ret).Actual;
+			var alias = usings.FirstOrDefault (u => u.Alias == ret)?.Actual;
 			if (alias != null)
 				return alias;
 			return ToNonKeywordTypeName (ret);
@@ -412,12 +447,14 @@ public class CTypeDetailsAttribute : Attribute
 				case TypeKind.Float:
 					return "float";
 				case TypeKind.Double:
+				case TypeKind.LongDouble: // FIXME: this should be actually platform dependent
 					return "double";
 				case TypeKind.UChar:
 				case TypeKind.CharU:
-					return "byte";
 				case TypeKind.CharS:
-					return "sbyte"; // probably explicit signed specification means something
+					return "byte"; // The sign most unlikely matters.
+				case TypeKind.SChar:
+					return "sbyte";
 				case TypeKind.Short:
 					return "short";
 				case TypeKind.UShort:
@@ -427,9 +464,9 @@ public class CTypeDetailsAttribute : Attribute
 				case TypeKind.ULong:
 					return "ulong"; // FIXME: this should be actually platform dependent
 				case TypeKind.LongLong:
-					return "/*FIXME: this was long long*/long"; // FIXME: this should be actually platform dependent
+					return "long"; // FIXME: this should be actually platform dependent
 				case TypeKind.ULongLong:
-					return "/*FIXME: this was unsigned long long*/ulong"; // FIXME: this should be actually platform dependent
+					return "ulong"; // FIXME: this should be actually platform dependent
 				}
 				// for aliased types to POD they still have IsPODType = true, so we need to ignore them.
 			}
@@ -451,11 +488,23 @@ public class CTypeDetailsAttribute : Attribute
 				return type.Spelling.Replace ("struct ", "").Replace ("union ", "").Replace ("enum ", "");
 		}
 
-		class FunctionPointerDelegate
+		class FunctionPointerDelegate : Named
 		{
 			public ClangType Type;
-			public string DelegateDefinition;
-			public string TypeName;
+			public string ReturnType;
+			public string Arguments;
+			public string DelegateDefinition {
+				get {
+					return $"delegate {ReturnType} {TypeNameForDeclaration} ({Arguments})";
+				}
+			}
+			public string TypeNameForDeclaration;
+			public string TypeNameForReference;
+
+			public override void Write (TextWriter w)
+			{
+				throw new NotSupportedException ();
+			}
 		}
 
 		List<FunctionPointerDelegate> delegates = new List<FunctionPointerDelegate> ();
@@ -464,21 +513,26 @@ public class CTypeDetailsAttribute : Attribute
 		{
 			var x = delegates.FirstOrDefault (e => e.Type == type);
 			if (x != null)
-				return x.TypeName;
+				return x.TypeNameForReference;
 			
 			var pt = type.PointeeType;
 			string ret = ToTypeName (pt.ResultType);
-			var d = $"delegate {ret} delegate{delegates.Count} (";
 			bool hasArgs = pt.ArgumentTypeCount > 0;
-			string f = "Delegates.delegate" + delegates.Count;
+			string args = "";
+			string f = "delegate" + delegates.Count.ToString (System.Globalization.CultureInfo.InvariantCulture);
 			for (int i = 0; i < pt.ArgumentTypeCount; i++) {
 				var tn = ToTypeName (pt.GetArgumentType (i));
 				if (i > 0)
-					d += ", ";
-				d += $"{tn} p{i}";
+					args += ", ";
+				args += $"{tn} p{i}";
+				if (tn == "va_list") {
+					Console.Error.WriteLine ($"Cannot bind {type.Spelling} because its arguments contain va_list.");
+					// give up and return void*
+					return "System.IntPtr";
+				}
 			}
-			d += ")";
-			delegates.Add (new FunctionPointerDelegate { Type = type, DelegateDefinition = d, TypeName = f });
+			// FIXME: we need to acquire location (impossible with current code structure)
+			delegates.Add (new FunctionPointerDelegate { Type = type, ReturnType = ret, Arguments = args, TypeNameForDeclaration = f, TypeNameForReference = "Delegates." + f, });
 			return f;
 		}
 
