@@ -58,8 +58,12 @@ namespace PInvokeGenerator
 				else
 					sources.Add (arg);
 			}
-			foreach (var source in sources)
-				tus.Add (idx.ParseTranslationUnit (source, Args.ToArray (), null, TranslationUnitFlags.SkipFunctionBodies));
+			foreach (var source in sources) {
+				ClangTranslationUnit tu;
+				var err = idx.ParseTranslationUnit (source, Args.ToArray (), null, TranslationUnitFlags.SkipFunctionBodies, out tu);
+				if (err == ErrorCode.Success)
+					tus.Add (tu);
+			}
 
 			var members = new List<Named> ();
 			Struct current = null;

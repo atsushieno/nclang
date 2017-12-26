@@ -171,10 +171,10 @@ namespace NClang
         /// <returns>An <seealso cref="ErrorCode"/>.</returns>
         public ErrorCode ParseTranslationUnit(string sourceFilename, string [] commandLineArgs, ClangUnsavedFile [] unsavedFiles, TranslationUnitFlags options, out ClangTranslationUnit translationUnit)
         {
-            var files = unsavedFiles.Select(u => new CXUnsavedFile(u.FileName, u.Contents)).ToArray();
+            var files = (unsavedFiles ?? new ClangUnsavedFile [0]).Select(u => new CXUnsavedFile(u.FileName, u.Contents)).ToArray();
             IntPtr tuptr;
             ErrorCode error = LibClang.clang_parseTranslationUnit2(Handle, sourceFilename, commandLineArgs, commandLineArgs.Length, files, (uint)files.Length, options, out tuptr);
-            translationUnit = tuptr != IntPtr.Zero ? new ClangTranslationUnit(tuptr) : null;
+            translationUnit = error == ErrorCode.Success ? new ClangTranslationUnit(tuptr) : null;
             return error;
         }
 
