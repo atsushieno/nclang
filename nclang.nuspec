@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>name.atsushieno.nclang</id>
+    <version>1.0.1</version>
+    <authors>Atsushi Eno</authors>
+    <owners>Atsushi Eno</owners>
+    <licenseUrl>https://github.com/atsushieno/nclang/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/atsushieno/nclang/</projectUrl>
+    <title>nclang</title>
+    <summary>C# bindings for Clang 4.0 API for Mono and .NET Framework</summary>
+    <description>C# bindings for Clang 4.0 API for Mono and .NET Framework</description>
+    <releaseNotes>See github commit logs.</releaseNotes>
+    <copyright>(C) 2014-2018 Atsushi Eno</copyright> 
+    <tags>clang interop mono</tags>
+    <dependencies>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="README.md" target="README.md" />
+    <file src="LICENSE" target="LICENSE" />
+    <file src="NClang/bin/Debug/NClang.dll" target="lib/net461" />
+    <file src="NClang/bin/Debug/NClang.pdb" target="lib/net461" />
+    <file src="samples/PInvokeGenerator/bin/Debug/PInvokeGenerator.exe" target="tools/" />
+    <file src="samples/PInvokeGenerator/bin/Debug/PInvokeGenerator.pdb" target="tools/" />
+    <file src="samples/PInvokeGenerator/bin/Debug/NClang.dll" target="tools/" />
+    <file src="samples/PInvokeGenerator/bin/Debug/NClang.pdb" target="tools/" />
+  </files>
+</package>
+

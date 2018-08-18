@@ -91,7 +91,7 @@ namespace CApiGenerator
 		}
 
 		const string sep = ", ";
-		string nssep => string.IsNullOrEmpty (Namespace) ? string.Empty : ".";
+		internal string nssep => string.IsNullOrEmpty (Namespace) ? string.Empty : ".";
 
 		public override void Write (TextWriter w)
 		{

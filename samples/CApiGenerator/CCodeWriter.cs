@@ -18,11 +18,11 @@ namespace CApiGenerator
 
 			output.WriteLine ("extern \"C\" {");
 
-			// decls.
+			// forward decls.
 			foreach (var o in members.OfType<ClassDeclaration> ()) {
 				if (!opts.ShouldGenerateCodeFor (o))
 					continue; // skip unmatched file
-				o.Write (output);
+				output.WriteLine ($"class {o.CTypeName ()} : {o.Namespace}{o.nssep}{o.Name} // {o.SourceFileName} ({o.Line}, {o.Column})");
 				output.WriteLine ();
 			}
 
