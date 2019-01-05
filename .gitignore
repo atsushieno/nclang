@@ -3,6 +3,8 @@
 [Bb]in
 *.user
 *.suo
+.vs/
+.vscode/
 
 #NuGet
 packages/
