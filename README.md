@@ -1,3 +1,8 @@
+# Annoying CI settings noise on top of README (skip this section if you are a human being.)
+
+https://atsushieno.visualstudio.com/nclang
+
+
 # What is NClang?
 
 NClang is a C# binding to LibClang. LibClang is a language service for C, C++ and Objective-C. A language service is a service (mostly as a library) that provides functionality to support writing programs in certain languages, such as a database for user program and its included files, or code completion engine that works against unsaved sources (text strings).
