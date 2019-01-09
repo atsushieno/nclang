@@ -4,8 +4,32 @@
         <OutputType>Library</OutputType>
         <RootNamespace>NClang</RootNamespace>
         <AssemblyName>NClang</AssemblyName>
+        <AssemblyTitle>C# bindings for Clang 4.0 API for Mono and .NET Framework</AssemblyTitle>
         <DebugType>full</DebugType>
         <DebugSymbols>true</DebugSymbols>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+        <PackageId>name.atsushieno.nclang</PackageId>
+        <PackageVersion>1.0.1</PackageVersion>
+        <Authors>Atsushi Eno</Authors>
+        <Title>nclang</Title>
+        <Description>C# bindings for Clang 4.0 API for Mono and .NET Framework</Description>
+        <Copyright>(C) 2014-2018 Atsushi Eno</Copyright>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/atsushieno/nclang.git</PackageProjectUrl>
+        <PackageTags>clang;interop;mono</PackageTags>
+        <PackageReleaseNotes>See github commit logs.</PackageReleaseNotes>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/atsushieno/nclang.git</RepositoryUrl>
     </PropertyGroup>
+    <ItemGroup>
+        <Content Include="..\LICENSE" Link="LICENSE">
+            <Pack>true</Pack>
+            <PackagePath>\</PackagePath>
+        </Content>
+        <Content Include="..\README.md" Link="README.md">
+            <Pack>true</Pack>
+            <PackagePath>\</PackagePath>
+        </Content>
+    </ItemGroup>
 </Project>
