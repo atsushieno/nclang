@@ -5,6 +5,7 @@
 *.suo
 .vs/
 .vscode/
+.idea/
 
 #NuGet
 packages/

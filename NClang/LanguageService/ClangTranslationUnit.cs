@@ -74,6 +74,16 @@ namespace NClang
 			return LibClang.clang_getFile (Handle, filename).Wrap ();
 		}
 
+		public byte [] GetFileContents (ClangFile file)
+		{
+			ulong size;
+			var ptr = LibClang.clang_getFileContents (Handle, file.Handle, out size);
+			var ret = new byte [size];
+			if (size > int.MaxValue)
+				throw new InvalidOperationException ("The returned file content size was more than Int32.MaxValue, which is unusual.");
+			Marshal.Copy (ret, 0, ptr, (int) size);
+			return ret;
+		}
 
 		public bool IsMultipleIncludeGuarded (ClangFile file)
 		{

@@ -17,6 +17,10 @@ namespace NClang
 			get { return LibClang.clang_CompileCommand_getDirectory (Handle).Unwrap (); }
 		}
 
+		public string Filename {
+			get { return LibClang.clang_CompileCommand_getFilename (Handle).Unwrap (); }
+		}
+
 		public int ArgumentCount {
 			get { return (int)LibClang.clang_CompileCommand_getNumArgs (Handle); }
 		}

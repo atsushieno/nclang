@@ -8,6 +8,11 @@ namespace NClang
 {
 	public class ClangFile : ClangObject
 	{
+		public static bool Equals (ClangFile file1, ClangFile file2)
+		{
+			return LibClang.clang_File_isEqual (file1.Handle, file2.Handle) != 0;
+		}
+
 		internal ClangFile (CXFile handle)
 			: base (handle)
 		{
@@ -36,6 +41,11 @@ namespace NClang
 		public override string ToString ()
 		{
 			return FileName;
+		}
+
+		public string TryGetRealPathName ()
+		{
+			return LibClang.clang_File_tryGetRealPathName (Handle).Unwrap ();
 		}
 	}
 }

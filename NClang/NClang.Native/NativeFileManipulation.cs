@@ -48,7 +48,13 @@ namespace NClang.Natives
 		 internal static extern CXFile clang_getFile (CXTranslationUnit tu, string fileName);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		 internal static extern IntPtr clang_getFileContents (CXTranslationUnit tu, CXFile file, [MarshalAs (UnmanagedType.SysUInt)] out ulong size);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
 		internal static extern int clang_File_isEqual (CXFile file1, CXFile file2);
+
+		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
+		internal static extern CXString clang_File_tryGetRealPathName (CXFile file);
 	}
 }
 

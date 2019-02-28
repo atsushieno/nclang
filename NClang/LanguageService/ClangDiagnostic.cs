@@ -7,6 +7,11 @@ namespace NClang
 {
 	public class ClangDiagnostic : ClangObject, IDisposable
 	{
+		public static string GetCategoryName (int category)
+		{
+			return LibClang.clang_getDiagnosticCategoryName (category).Unwrap ();
+		}
+		
 		public struct CommandLineOptions
 		{
 			public CommandLineOptions (string enable, string disable)

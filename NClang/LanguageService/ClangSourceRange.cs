@@ -1,10 +1,16 @@
 using System;
+using System.Runtime.CompilerServices;
 using NClang.Natives;
 
 namespace NClang
 {
 	public struct ClangSourceRange
 	{
+		public static ClangSourceRange GetRange (ClangSourceLocation begin, ClangSourceLocation end)
+		{
+			return new ClangSourceRange (LibClang.clang_getRange (begin.Source, end.Source));
+		}
+		
 		readonly CXSourceRange source;
 
 		internal ClangSourceRange (CXSourceRange source)

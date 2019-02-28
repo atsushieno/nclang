@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 
 using CXTranslationUnit = System.IntPtr; // CXTranslationUnitImpl*
 using CXFile = System.IntPtr;
+using CXSourceRangeListPtr = System.IntPtr;
 
 using CXString = NClang.ClangString;
 
@@ -94,13 +95,13 @@ namespace NClang.Natives
 		 internal static extern CXSourceLocation clang_getRangeEnd (CXSourceRange range);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
-		 internal static extern IntPtr clang_getSkippedRanges (CXTranslationUnit tu, CXFile file); // CXSourceRangeList*
+		 internal static extern CXSourceRangeListPtr clang_getSkippedRanges (CXTranslationUnit tu, CXFile file);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
-		 internal static extern IntPtr clang_getAllSkippedRanges (CXTranslationUnit tu); // CXSourceRangeList*
+		 internal static extern CXSourceRangeListPtr clang_getAllSkippedRanges (CXTranslationUnit tu);
 
 		[DllImport (LibraryName, CallingConvention = LibraryCallingConvention)]
-		internal static extern void clang_disposeSourceRangeList (IntPtr ranges); // CXSourceRangeList*
+		internal static extern void clang_disposeSourceRangeList (CXSourceRangeListPtr ranges);
 	}
 }
 
