@@ -1,7 +1,6 @@
 # Annoying CI settings noise on top of README (skip this section if you are a human being.)
 
-https://atsushieno.visualstudio.com/nclang
-
+[![Build Status](https://atsushieno.visualstudio.com/nclang/_apis/build/status/nclang-CI?branchName=master)](https://atsushieno.visualstudio.com/nclang/_build/latest?definitionId=4&branchName=master)
 
 # What is NClang?
 
