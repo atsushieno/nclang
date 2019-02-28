@@ -7,7 +7,7 @@ namespace NClang.Natives
 {
 	static partial class LibClang
 	{
-        public const string LibraryName = "libclang-4.0";
+        public const string LibraryName = "libclang-7";
         public const System.Runtime.InteropServices.CallingConvention LibraryCallingConvention = System.Runtime.InteropServices.CallingConvention.Cdecl;
 
 		public static ClangFile Wrap (this IntPtr cxFile)
