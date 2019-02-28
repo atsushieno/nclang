@@ -24,7 +24,7 @@ namespace NClang.Tests
 			ClangTestHelpers.WithTranslationUnit ((idx, tu) => {
 				// 38 is before "return" in foo
 				using (var res = tu.CodeCompleteAt (filename, 1, 38, null, CodeCompleteFlags.None)) {
-					Assert.AreEqual (36, res.ResultCount, "ResultCount");
+					Assert.AreEqual (37, res.ResultCount, "ResultCount");
 					Assert.AreEqual ("", res.ContainerUSR, "ContainerUSR");
 					Assert.AreEqual (CompletionContext.AnyType | CompletionContext.AnyValue | CompletionContext.ObjCInterface, res.Contexts, "Contexts");
 					var valid = new List<string> ();
@@ -53,9 +53,9 @@ namespace NClang.Tests
 			ClangTestHelpers.WithTranslationUnit ((idx, tu) => {
 				// 45 is after "return " in foo
 				using (var res = tu.CodeCompleteAt (filename, 1, 45, null, CodeCompleteFlags.None)) {
-					Assert.AreEqual (7, res.ResultCount, "ResultCount");
+					Assert.AreEqual (37, res.ResultCount, "ResultCount");
 					Assert.AreEqual ("", res.ContainerUSR, "ContainerUSR");
-					Assert.AreEqual (CompletionContext.AnyValue, res.Contexts, "Contexts");
+					Assert.AreEqual (CompletionContext.AnyType | CompletionContext.AnyValue | CompletionContext.ObjCInterface, res.Contexts, "Contexts");
 					var valid = new List<string> ();
 					foreach (var r in res.Results.Where (r => r.CursorKind != CursorKind.NotImplemented))
 						valid.Add (string.Join (" ", r.CompletionString.Chunks.Select (c => c.Text)));
