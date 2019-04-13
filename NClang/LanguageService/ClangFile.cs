@@ -1,8 +1,10 @@
 using System;
 using NClang.Natives;
 using System.Linq;
-
+using System.Runtime.InteropServices;
 using CXFile = System.IntPtr;
+
+using LibClang = NClang.Natives.Natives;
 
 namespace NClang
 {
@@ -30,11 +32,11 @@ namespace NClang
 
 		public ClangFileUniqueId FileUniqueId {
 			get {
-				CXFileUniqueID uid;
-				var ret = LibClang.clang_getFileUniqueID (Handle, out uid);
+				Pointer<CXFileUniqueID> uid = default (Pointer<CXFileUniqueID>);
+				var ret = LibClang.clang_getFileUniqueID (Handle, uid);
 				if (ret != 0)
 					throw new ClangServiceException (string.Format ("Failed to acquire file unique ID for \"{0}\" - error code {1}", FileName, ret));
-				return new ClangFileUniqueId (uid);
+				return new ClangFileUniqueId (Marshal.PtrToStructure<CXFileUniqueID> (uid));
 			}
 		}
 

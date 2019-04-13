@@ -4,6 +4,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
+using LibClang = NClang.Natives.Natives;
+
 namespace NClang
 {
 	
@@ -35,8 +37,9 @@ namespace NClang
 		public IEnumerable<ClangCursor> Annotate ()
 		{
 			IntPtr cursors = IntPtr.Zero;
-			LibClang.clang_annotateTokens (tu, tokens, (uint) count, ref cursors);
-			return Enumerable.Range (0, count).Select (i => new ClangCursor ((CXCursor)Marshal.PtrToStructure (cursors + cxcursor_size * i, typeof(CXCursor))));
+			LibClang.clang_annotateTokens (tu, tokens, (uint) count, cursors);
+			var cRet = Marshal.ReadIntPtr (cursors); 
+			return Enumerable.Range (0, count).Select (i => new ClangCursor ((CXCursor)Marshal.PtrToStructure (cRet + cxcursor_size * i, typeof(CXCursor))));
 		}
 	}
 

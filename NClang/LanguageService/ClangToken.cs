@@ -4,6 +4,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
+using LibClang = NClang.Natives.Natives;
+
 namespace NClang
 {
 	
@@ -19,7 +21,7 @@ namespace NClang
 		}
 
 		public TokenKind Kind {
-			get { return LibClang.clang_getTokenKind (source); }
+			get { return (TokenKind) LibClang.clang_getTokenKind (source); }
 		}
 
 		public string Spelling {

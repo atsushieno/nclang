@@ -1,3 +1,5 @@
+#if MANUAL
+
 using System;
 using System.Runtime.InteropServices;
 
@@ -326,3 +328,5 @@ namespace NClang.Natives
 		 internal static extern uint clang_Type_visitFields (CXType T, FieldVisitor visitor, CXClientData client_data);
 	}
 }
+
+#endif

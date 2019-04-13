@@ -66,7 +66,7 @@ int bar () { return 3; } int foo () { return 5; } int main () { return foo () * 
 
 						Assert.IsNotNull (ent, "EntityInfo." + col);
 						Assert.AreEqual (0, ent.AttributeCount, "EntityInfo.AttributeCount." + col);
-						Assert.AreEqual (IndexEntityCxxTemplateKind.NonTemplate, ent.CxxTemplateKind, "EntityInfo.CxxTemplateKind." + col);
+						Assert.AreEqual (IndexEntityCxxTemplateKind.NonTemplate, ent.TemplateKind, "EntityInfo.CxxTemplateKind." + col);
 						Assert.AreEqual (IndexEntityLanguage.C, ent.EntityLanguage, "EntityInfo.EntityLanguage." + col);
 						Assert.AreEqual (IndexEntityKind.Function, ent.Kind, "EntityInfo.Kind." + col);
 

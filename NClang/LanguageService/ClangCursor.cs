@@ -10,6 +10,8 @@ using CXString = NClang.ClangString;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
+using LibClang = NClang.Natives.Natives;
+
 namespace NClang
 {
 	/// <summary>
@@ -171,28 +173,28 @@ namespace NClang
 		/// taking the current target platform into account.
 		/// </summary>
 		public AvailabilityKind AvailabilityKind {
-			get { return LibClang.clang_getCursorAvailability (source); }
+			get { return (AvailabilityKind) LibClang.clang_getCursorAvailability (source); }
 		}
 
 		/// <summary>
 		/// Retrieve the kind of the given cursor.
 		/// </summary>
 		public CursorKind Kind {
-			get { return LibClang.clang_getCursorKind (source); }
+			get { return (CursorKind) LibClang.clang_getCursorKind (source); }
 		}
 
 		/// <summary>
 		/// Determine the "language" of the entity referred to by a given cursor.
 		/// </summary>
 		public LanguageKind Language {
-			get { return LibClang.clang_getCursorLanguage (source); }
+			get { return (LanguageKind) LibClang.clang_getCursorLanguage (source); }
 		}
 
 		/// <summary>
 		/// Determine the linkage of the entity referred to by a given cursor.
 		/// </summary>
 		public LinkageKind Linkage {
-			get { return LibClang.clang_getCursorLinkage (source); }
+			get { return (LinkageKind) LibClang.clang_getCursorLinkage (source); }
 		}
 
 		/// <summary>
@@ -200,7 +202,7 @@ namespace NClang
 		/// </summary>
 		public ClangTranslationUnit TranslationUnit {
 			get {
-				var ret = LibClang.clang_Cursor_getTranslationUnit (source);
+				IntPtr ret = LibClang.clang_Cursor_getTranslationUnit (source);
 				return ret == IntPtr.Zero ? null : new ClangTranslationUnit (ret);
 			}
 		}
@@ -228,17 +230,18 @@ namespace NClang
 		public ClangPlatformAvailability [] GetPlatformAvailability (out bool isAlwaysDeprecated, out string deprecatedMessage,
 		                                                             out bool isAlwaysUnavailable, out string unavailableMessage)
 		{
-			int ad, au;
-			CXString dm, um;
+			IntPtr ad = IntPtr.Zero, au = IntPtr.Zero; // Pointer<int>
+			IntPtr dm = IntPtr.Zero, um = IntPtr.Zero; // Pointer<CXString>
 			IntPtr dummy = IntPtr.Zero;
-			var n = LibClang.clang_getCursorPlatformAvailability (source, out ad, out dm, out au, out um, ref dummy, 0);
+			var n = LibClang.clang_getCursorPlatformAvailability (source, ad, dm, au, um, dummy, 0);
 			var size = Marshal.SizeOf (typeof (CXPlatformAvailability));
 			var ptr = Marshal.AllocHGlobal (size * n);
-			LibClang.clang_getCursorPlatformAvailability (source, out ad, out dm, out au, out um, ref ptr, n);
-			isAlwaysDeprecated = ad != 0;
-			isAlwaysUnavailable = au != 0;
-			deprecatedMessage = dm.Unwrap ();
-			unavailableMessage = um.Unwrap ();
+			LibClang.clang_getCursorPlatformAvailability (source, ad, dm, au, um, ptr, n);
+			isAlwaysDeprecated = Marshal.ReadInt32 (ad) != 0;
+			isAlwaysUnavailable = Marshal.ReadInt32 (au) != 0;
+
+			deprecatedMessage = Marshal.PtrToStringAnsi (Marshal.ReadIntPtr (dm));
+			unavailableMessage = Marshal.PtrToStringAnsi (Marshal.ReadIntPtr (um));
 			var ret = new ClangPlatformAvailability [n];
 			for (int i = 0; i < n; i++)
 				ret [i] = new ClangPlatformAvailability (ptr + size * i);
@@ -277,12 +280,14 @@ namespace NClang
 		/// </remarks>
 		public IEnumerable<ClangCursor> OverridenCursors {
 			get {
-				IntPtr ptr;
-				uint n = 0;
-				LibClang.clang_getOverriddenCursors (source, out ptr, ref n);
+				IntPtr ptrPtr = IntPtr.Zero;
+				Pointer<uint> nPtr = IntPtr.Zero;
+				LibClang.clang_getOverriddenCursors (source, ptrPtr, nPtr);
+				uint n = (uint) Marshal.ReadInt32 (nPtr);
 				var ptrs = new IntPtr [n];
 				for (int i = 0; i < n; i++)
-					LibClang.clang_getOverriddenCursors (source, out ptrs [i], ref n);
+					LibClang.clang_getOverriddenCursors (source, ptrs [i], nPtr);
+
 				return Enumerable.Range (0, (int) n).Select (i => new ClangCursor ((CXCursor) Marshal.PtrToStructure (ptrs [i], typeof (CXCursor))));
 			}
 		}
@@ -443,7 +448,7 @@ namespace NClang
 		/// access specifier, the specifier itself is returned.
 		/// </remarks>
 		public CXXAccessSpecifier CxxAccessSpecifier {
-			get { return LibClang.clang_getCXXAccessSpecifier (source); }
+			get { return (CXXAccessSpecifier) LibClang.clang_getCXXAccessSpecifier (source); }
 		}
 
 		/// <summary>
@@ -514,10 +519,10 @@ namespace NClang
 			Exception managedError = null;
 			var ret = LibClang.clang_visitChildren (source, (cursor, parent, z) => {
 				try {
-					return visitor (new ClangCursor (cursor), new ClangCursor (parent), clientData);
+					return (CXChildVisitResult) visitor (new ClangCursor (cursor), new ClangCursor (parent), clientData);
 				} catch (Exception ex) {
 					managedError = ex;
-					return ChildVisitResult.Break;
+					return CXChildVisitResult.CXChildVisit_Break;
 				}
 			}, IntPtr.Zero);
 			if (managedError != null)
@@ -878,7 +883,7 @@ namespace NClang
 		/// <c>CursorKind.NoDeclarationFound</c>.
 		/// </value>
 		public CursorKind TemplateCursorKind {
-			get { return LibClang.clang_getTemplateCursorKind (source); }
+			get { return (CursorKind) LibClang.clang_getTemplateCursorKind (source); }
 		}
 
 		/// <summary>
@@ -929,7 +934,7 @@ namespace NClang
 		/// </returns>
 		public ClangSourceRange GetCursorReferenceNameRange (NameRefFlags nameFlags, int pieceIndex)
 		{
-			return new ClangSourceRange (LibClang.clang_getCursorReferenceNameRange (source, nameFlags, (uint) pieceIndex));
+			return new ClangSourceRange (LibClang.clang_getCursorReferenceNameRange (source, (uint) nameFlags, (uint) pieceIndex));
 		}
 
 		// InformationForAttributes
@@ -963,7 +968,7 @@ namespace NClang
 		/// <returns>One of the FindResult enumerators.</returns>
 		public FindResult FindReferenceInFile (ClangFile file, Func<object,ClangCursor,ClangSourceRange,VisitorResult> visitor)
 		{
-			return LibClang.clang_findReferencesInFile (source, file.Handle, new CXCursorAndRangeVisitor ((ctx, cursor, range) => visitor (ctx, new ClangCursor (cursor), new ClangSourceRange (range))));
+			return (FindResult) LibClang.clang_findReferencesInFile (source, file.Handle, new CXCursorAndRangeVisitor () { visit = (ctx, cursor, range) => (CXVisitorResult) visitor (ctx, new ClangCursor (cursor), new ClangSourceRange (range))});
 		}
 	}
 }

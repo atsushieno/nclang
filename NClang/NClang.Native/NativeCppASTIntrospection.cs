@@ -1,3 +1,5 @@
+#if MANUAL
+
 using System;
 using System.Runtime.InteropServices;
 
@@ -46,3 +48,5 @@ namespace NClang.Natives
 		internal static extern CXSourceRange 	clang_getCursorReferenceNameRange (CXCursor C, NameRefFlags NameFlags, uint PieceIndex);
 	}
 }
+
+#endif

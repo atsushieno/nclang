@@ -2,6 +2,8 @@ using System;
 using System.Runtime.InteropServices;
 using NClang.Natives;
 
+using LibClang = NClang.Natives.Natives;
+
 namespace NClang
 {
 
@@ -20,21 +22,21 @@ namespace NClang
 		{
 			var ret = new IndexerCallbacks ();
 			if (AbortQuery != null)
-				ret.AbortQuery = (clientData, reserved) => AbortQuery (clientData) ? 1 : 0;
+				ret.abortQuery = (clientData, reserved) => AbortQuery (clientData) ? 1 : 0;
 			if (Diagnostic != null)
-				ret.Diagnostic = (clientData, ds, reserved) => Diagnostic (clientData, new ClangDiagnosticSet (ds));
+				ret.diagnostic = (clientData, ds, reserved) => Diagnostic (clientData, new ClangDiagnosticSet (ds));
 			if (EnteredMainFile != null)
-				ret.EnteredMainFile = (clientData, f, reserved) => EnteredMainFile (clientData, new ClangFile (f)).Address;
+				ret.enteredMainFile = (clientData, f, reserved) => EnteredMainFile (clientData, new ClangFile (f)).Address;
 			if (PreprocessIncludedFile != null)
-				ret.PpIncludedFile = (IntPtr clientData, IntPtr includedFile) => PreprocessIncludedFile (clientData, new ClangIndex.IncludedFileInfo (includedFile)).Address;
+				ret.ppIncludedFile = (clientData, includedFile) => PreprocessIncludedFile (clientData, new ClangIndex.IncludedFileInfo (includedFile)).Address;
 			if (ImportedAstFile != null)
-				ret.ImportedASTFile = (IntPtr clientData, IntPtr importedAstFile) => ImportedAstFile (clientData, new ClangIndex.ImportedAstFileInfo (importedAstFile)).Address;
+				ret.importedASTFile = (clientData, importedAstFile) => ImportedAstFile (clientData, new ClangIndex.ImportedAstFileInfo (importedAstFile)).Address;
 			if (StartedTranslationUnit != null)
-				ret.StartedTranslationUnit = (clientData, reserved) => StartedTranslationUnit (clientData).Address;
+				ret.startedTranslationUnit = (clientData, reserved) => StartedTranslationUnit (clientData).Address;
 			if (IndexDeclaration != null)
-				ret.IndexDeclaration = (IntPtr clientData, IntPtr declInfo) => IndexDeclaration (clientData, new ClangIndex.DeclarationInfo (declInfo));
+				ret.indexDeclaration = (clientData, declInfo) => IndexDeclaration (clientData, new ClangIndex.DeclarationInfo (declInfo));
 			if (IndexEntityReference != null)
-				ret.IndexEntityReference = (IntPtr clientData, IntPtr entRefInfo) => IndexEntityReference (clientData, new ClangIndex.EntityReferenceInfo (entRefInfo));
+				ret.indexEntityReference = (clientData, entRefInfo) => IndexEntityReference (clientData, new ClangIndex.EntityReferenceInfo (entRefInfo));
 
 			return ret;
 		}

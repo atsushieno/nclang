@@ -1,7 +1,8 @@
 using System;
+using System.Runtime.InteropServices;
 using NClang.Natives;
 
-using CXString = NClang.ClangString;
+using LibClang = NClang.Natives.Natives;
 
 namespace NClang
 {
@@ -92,7 +93,7 @@ namespace NClang
 
 		public override int GetHashCode ()
 		{
-			return (int) source.IntData;
+			return (int) source.int_data;
 		}
 
 		public bool IsInSystemHeader {
@@ -103,48 +104,48 @@ namespace NClang
 			get { return LibClang.clang_Location_isFromMainFile (source) != 0; }
 		}
 
+		T Extract<M,N,T> (CXSourceLocation source, Action<CXSourceLocation, Pointer<N>, Pointer<uint>, Pointer<uint>, Pointer<uint>> func, Func<IntPtr,M> conv, Func<M,int,int,int,T> gen)
+		{
+			IntPtr f = IntPtr.Zero;
+			IntPtr l = IntPtr.Zero, c = IntPtr.Zero, o = IntPtr.Zero; // of uint
+			func (source, f, l, c, o);
+			return gen (conv (Marshal.ReadIntPtr (f)), Marshal.ReadInt32 (l), Marshal.ReadInt32 (c), Marshal.ReadInt32 (o));
+		}
+
 		public PhysicalLocation ExpansionLocation {
-			get {
-				IntPtr f;
-				uint l, c, o;
-				LibClang.clang_getExpansionLocation (source, out f, out l, out c, out o);
-				return new PhysicalLocation (f.Wrap (), (int) l, (int) c, (int) o);
+			get
+			{
+				IntPtr dummy = IntPtr.Zero;
+				return Extract<ClangFile,IntPtr,PhysicalLocation> (source, LibClang.clang_getExpansionLocation, f => f.Wrap (),
+					(f, l, c, o) => new PhysicalLocation (f, l, c, o));
 			}
 		}
 
 		public LogicalLocation PresumedLocation {
 			get {
-				CXString f;
-				uint l, c;
-				LibClang.clang_getPresumedLocation (source, out f, out l, out c);
-				return new LogicalLocation (f.Unwrap (), (int) l, (int) c);
+				return Extract<string,CXString,LogicalLocation> (source, (x,y,z,a,b) => LibClang.clang_getPresumedLocation (x, y,z,a), f => Marshal.PtrToStructure<CXString> (f).Unwrap (),
+					(f, l, c, o) => new LogicalLocation (f, l, c));
 			}
 		}
 
 		public PhysicalLocation InstantiationLocation {
 			get {
-				IntPtr f;
-				uint l, c, o;
-				LibClang.clang_getInstantiationLocation (source, out f, out l, out c, out o);
-				return new PhysicalLocation (f.Wrap (), (int) l, (int) c, (int) o);
+				return Extract<ClangFile,IntPtr,PhysicalLocation> (source, LibClang.clang_getInstantiationLocation, f => f.Wrap (),
+					(f, l, c, o) => new PhysicalLocation (f, l, c, o));
 			}
 		}
 
 		public PhysicalLocation SpellingLocation {
 			get {
-				IntPtr f;
-				uint l, c, o;
-				LibClang.clang_getSpellingLocation (source, out f, out l, out c, out o);
-				return new PhysicalLocation (f.Wrap (), (int) l, (int) c, (int) o);
+				return Extract<ClangFile,IntPtr,PhysicalLocation> (source, LibClang.clang_getSpellingLocation, f => f.Wrap (),
+					(f, l, c, o) => new PhysicalLocation (f, l, c, o));
 			}
 		}
 
 		public PhysicalLocation FileLocation {
 			get {
-				IntPtr f;
-				uint l, c, o;
-				LibClang.clang_getFileLocation (source, out f, out l, out c, out o);
-				return new PhysicalLocation (f.Wrap (), (int) l, (int) c, (int) o);
+				return Extract<ClangFile,IntPtr,PhysicalLocation> (source, LibClang.clang_getFileLocation, f => f.Wrap (),
+					(f, l, c, o) => new PhysicalLocation (f, l, c, o));
 			}
 		}
 

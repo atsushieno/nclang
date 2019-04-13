@@ -1,3 +1,5 @@
+#if MANUAL
+
 using System;
 
 using CXCompilationDatabase = System.IntPtr; // void*
@@ -56,3 +58,4 @@ namespace NClang.Natives
 	}
 }
 
+#endif

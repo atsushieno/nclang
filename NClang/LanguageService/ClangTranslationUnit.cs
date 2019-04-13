@@ -3,6 +3,10 @@ using NClang.Natives;
 using System.Linq;
 using System.Runtime.InteropServices;
 
+using LibClang = NClang.Natives.Natives;
+
+using size_t = System.IntPtr;
+
 namespace NClang
 {
 	
@@ -21,11 +25,11 @@ namespace NClang
 		}
 
 		public ReparseTranslationUnitFlags DefaultReparseOptions {
-			get { return LibClang.clang_defaultReparseOptions (Handle); }
+			get { return (ReparseTranslationUnitFlags) LibClang.clang_defaultReparseOptions (Handle); }
 		}
 
 		public SaveTranslationUnitFlags DefaultSaveOptions {
-			get { return LibClang.clang_defaultSaveOptions (Handle); }
+			get { return (SaveTranslationUnitFlags) LibClang.clang_defaultSaveOptions (Handle); }
 		}
 
 		public override bool Equals (object obj)
@@ -54,15 +58,15 @@ namespace NClang
 
 		public void Save (string filename, SaveTranslationUnitFlags options)
 		{
-			var ret = LibClang.clang_saveTranslationUnit (Handle, filename, options);
+			var ret = (SaveError) LibClang.clang_saveTranslationUnit (Handle, filename, (uint) options);
 			if (ret != SaveError.None)
 				throw new InvalidOperationException ("Failed to save translation unit: " + ret);
 		}
 
 		public void Reparse (ClangUnsavedFile [] unsavedFiles, ReparseTranslationUnitFlags options)
 		{
-			var cx = unsavedFiles.Select (o => new CXUnsavedFile (o.FileName, o.Contents)).ToArray ();
-			var ret = LibClang.clang_reparseTranslationUnit (Handle, (uint) unsavedFiles.Length, cx, options);
+			var cx = unsavedFiles.Select (o => new CXUnsavedFile {Filename = o.FileName, Contents = o.Contents}).ToArray ();
+			var ret = (ErrorCode) LibClang.clang_reparseTranslationUnit (Handle, (uint) unsavedFiles.Length, cx, (uint) options);
 			if (ret != ErrorCode.Success)
 				throw new InvalidOperationException ("Failed to reparse translation unit: " + ret);
 		}
@@ -76,8 +80,9 @@ namespace NClang
 
 		public byte [] GetFileContents (ClangFile file)
 		{
-			ulong size;
-			var ptr = LibClang.clang_getFileContents (Handle, file.Handle, out size);
+			Pointer<size_t> sizePtr = default (Pointer<size_t>); // size_t
+			var ptr = LibClang.clang_getFileContents (Handle, file.Handle, sizePtr);
+			var size = (uint) Marshal.ReadInt64 (sizePtr);
 			var ret = new byte [size];
 			if (size > int.MaxValue)
 				throw new InvalidOperationException ("The returned file content size was more than Int32.MaxValue, which is unusual.");
@@ -100,7 +105,7 @@ namespace NClang
 		public ClangCodeCompleteResults CodeCompleteAt (string completeFilename, int completeLine, int completeColumn, ClangUnsavedFile [] unsavedFiles, CodeCompleteFlags options)
 		{
 			var cx = unsavedFiles.ToNative ();
-			return new ClangCodeCompleteResults (LibClang.clang_codeCompleteAt (Handle, completeFilename, (uint) completeLine, (uint) completeColumn, cx, (uint) cx.Length, options));
+			return new ClangCodeCompleteResults (LibClang.clang_codeCompleteAt (Handle, completeFilename, (uint) completeLine, (uint) completeColumn, cx, (uint) cx.Length, (uint) options));
 		}
 
 		public ClangSourceLocation GetLocation (ClangFile file, int line, int column)
@@ -145,7 +150,7 @@ namespace NClang
 
 		public void GetInclusions (Action<ClangFile,ClangSourceLocation[],IntPtr> visitor, IntPtr clientData)
 		{
-			CXInclusionVisitor v = (file, locations, len, cd) => visitor (new ClangFile (file), Enumerable.Range (0, (int) len).Select (i => new ClangSourceLocation ((CXSourceLocation)Marshal.PtrToStructure (locations + loc_size * i, typeof(CXSourceLocation)))).ToArray (), cd);
+			Delegates.CXInclusionVisitor v = (file, locations, len, cd) => visitor (new ClangFile (file), Enumerable.Range (0, (int) len).Select (i => new ClangSourceLocation ((CXSourceLocation)Marshal.PtrToStructure ((IntPtr) locations + loc_size * i, typeof(CXSourceLocation)))).ToArray (), cd);
 			LibClang.clang_getInclusions (Handle, v, clientData);
 		}
 
@@ -179,17 +184,19 @@ namespace NClang
 
 		public ClangTokenSet Tokenize (ClangSourceRange range)
 		{
-			IntPtr tokens;
-			uint count;
-			LibClang.clang_tokenize (Handle, range.Source, out tokens, out count);
-			return new ClangTokenSet (Handle, tokens, (int) count);
+			IntPtr tokensPtr = default (IntPtr);
+			IntPtr countPtr = default (IntPtr);
+			LibClang.clang_tokenize (Handle, range.Source, tokensPtr, countPtr);
+			var tokens = Marshal.ReadIntPtr (tokensPtr);
+			var count = Marshal.ReadInt32 (countPtr);
+			return new ClangTokenSet (Handle, tokens, count);
 		}
 
 		// HighLevelAPI
 
 		public FindResult FindIncludesInFile (ClangFile file, Func<ClangCursor,ClangSourceRange,VisitorResult> visitor)
 		{
-			return LibClang.clang_findIncludesInFile (Handle, file.Handle, new CXCursorAndRangeVisitor ((ctx, cursor, range) => visitor (new ClangCursor (cursor), new ClangSourceRange (range))));
+			return (FindResult) LibClang.clang_findIncludesInFile (Handle, file.Handle, new CXCursorAndRangeVisitor { visit = ((ctx, cursor, range) => (CXVisitorResult) visitor (new ClangCursor (cursor), new ClangSourceRange (range)))} );
 		}
 	}
 }

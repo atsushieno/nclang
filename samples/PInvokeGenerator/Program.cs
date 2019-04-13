@@ -386,7 +386,7 @@ namespace PInvokeGenerator
 						w.WriteLine ("[StructLayout (LayoutKind.Explicit)]");
 					else
 						w.WriteLine ("[StructLayout (LayoutKind.Sequential)]");
-					w.WriteLine ("{4} struct {0} // {1} ({2}, {3})", Name, SourceFileName, Line, Column, typeScope);
+					w.WriteLine ("{4} partial struct {0} // {1} ({2}, {3})", Name, SourceFileName, Line, Column, typeScope);
 					w.WriteLine ("{");
 					foreach (var m in Fields) {
 						if (m.ArraySize > 0)
@@ -505,7 +505,8 @@ namespace PInvokeGenerator
 				if (type.PointeeType != null && type.PointeeType.ArgumentTypeCount >= 0) {
 					// function pointer
 					return CreateFunctionPointerDelegateName (type);
-				} else {
+				}
+				else {
 					var pointee = ToTypeName (type.PointeeType);
 					switch (pointee) {
 					case "byte":

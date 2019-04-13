@@ -1,3 +1,5 @@
+#if MANUAL
+
 using System;
 using System.Runtime.InteropServices;
 
@@ -43,3 +45,5 @@ namespace NClang.Natives
 		internal static extern void 	clang_disposeTokens (CXTranslationUnit TU, IntPtr Tokens, uint NumTokens);
 	}
 }
+
+#endif

@@ -1,3 +1,5 @@
+#if MANUAL
+
 using System;
 using System.Runtime.InteropServices;
 
@@ -80,3 +82,5 @@ namespace NClang.Natives
 		 internal static extern CXString clang_getDiagnosticFixIt (CXDiagnostic diagnostic, uint dixIt, out CXSourceRange ReplacementRange);
 	}
 }
+
+#endif

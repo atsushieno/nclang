@@ -2,6 +2,8 @@ using System;
 using System.Runtime.CompilerServices;
 using NClang.Natives;
 
+using LibClang = NClang.Natives.Natives;
+
 namespace NClang
 {
 	public struct ClangSourceRange
@@ -18,9 +20,9 @@ namespace NClang
 			this.source = source;
 		}
 
-		public ClangSourceRange (int begin, int end)
+		public ClangSourceRange (uint begin, uint end)
 		{
-			this.source = new CXSourceRange (begin, end);
+			this.source = new CXSourceRange { begin_int_data = begin, end_int_data = end};
 		}
 
 		internal CXSourceRange Source {
@@ -49,7 +51,7 @@ namespace NClang
 
 		public override int GetHashCode ()
 		{
-			return (int) ((source.BeginIntData << 16) + source.EndIntData);
+			return (int) ((source.begin_int_data << 16) + source.end_int_data);
 		}
 
 		public bool IsNull {

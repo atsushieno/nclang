@@ -1,3 +1,5 @@
+#if MANUAL
+
 using System;
 using System.Runtime.InteropServices;
 
@@ -126,3 +128,5 @@ namespace NClang.Natives
 		 internal static extern CXFile 	clang_getIncludedFile (CXCursor cursor);
 	}
 }
+
+#endif

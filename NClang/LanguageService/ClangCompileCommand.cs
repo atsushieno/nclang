@@ -3,6 +3,8 @@ using NClang.Natives;
 
 using CXString = NClang.ClangString;
 
+using LibClang = NClang.Natives.Natives;
+
 namespace NClang
 {
 	public class ClangCompileCommand : ClangObject

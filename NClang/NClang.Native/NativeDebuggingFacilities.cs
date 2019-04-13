@@ -1,3 +1,5 @@
+#if MANUAL
+
 using System;
 using System.Runtime.InteropServices;
 
@@ -26,3 +28,4 @@ namespace NClang.Natives
 	}
 }
 		
+#endif

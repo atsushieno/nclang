@@ -4,6 +4,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
+using LibClang = NClang.Natives.Natives;
+
 namespace NClang
 {
 	
@@ -20,7 +22,7 @@ namespace NClang
 		CXCompletionResult source;
 
 		public CursorKind CursorKind {
-			get { return source.CursorKind; }
+			get { return (CursorKind) source.CursorKind; }
 		}
 
 		public ClangCompletionString CompletionString {

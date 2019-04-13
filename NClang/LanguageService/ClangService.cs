@@ -1,14 +1,15 @@
 using System;
+using System.Runtime.InteropServices;
 using NClang.Natives;
 
-using CXString = NClang.ClangString;
+using LibClang = NClang.Natives.Natives;
 
 namespace NClang
 {
 	public static class ClangService
 	{
 		public static CodeCompleteFlags DefaultCodeCompleteOptions {
-			get { return LibClang.clang_defaultCodeCompleteOptions (); }
+			get { return (CodeCompleteFlags) LibClang.clang_defaultCodeCompleteOptions (); }
 		}
 
 		public static void ToggleCrashRecovery (bool isEnabled)
@@ -23,47 +24,47 @@ namespace NClang
 
 		public static bool IsAttribute (CursorKind kind)
 		{
-			return LibClang.clang_isAttribute (kind) != 0;
+			return LibClang.clang_isAttribute ((CXCursorKind) kind) != 0;
 		}
 
 		public static bool IsDeclaration (CursorKind kind)
 		{
-			return LibClang.clang_isDeclaration (kind) != 0;
+			return LibClang.clang_isDeclaration ((CXCursorKind) kind) != 0;
 		}
 
 		public static bool IsExpression (CursorKind kind)
 		{
-			return LibClang.clang_isExpression (kind) != 0;
+			return LibClang.clang_isExpression ((CXCursorKind) kind) != 0;
 		}
 
 		public static bool IsInvalid (CursorKind kind)
 		{
-			return LibClang.clang_isInvalid (kind) != 0;
+			return LibClang.clang_isInvalid ((CXCursorKind) kind) != 0;
 		}
 
 		public static bool IsPreprocessing (CursorKind kind)
 		{
-			return LibClang.clang_isPreprocessing (kind) != 0;
+			return LibClang.clang_isPreprocessing ((CXCursorKind) kind) != 0;
 		}
 
 		public static bool IsReference (CursorKind kind)
 		{
-			return LibClang.clang_isReference (kind) != 0;
+			return LibClang.clang_isReference ((CXCursorKind) kind) != 0;
 		}
 
 		public static bool IsStatement (CursorKind kind)
 		{
-			return LibClang.clang_isStatement (kind) != 0;
+			return LibClang.clang_isStatement ((CXCursorKind) kind) != 0;
 		}
 
 		public static bool IsTranslationUnit (CursorKind kind)
 		{
-			return LibClang.clang_isTranslationUnit (kind) != 0;
+			return LibClang.clang_isTranslationUnit ((CXCursorKind) kind) != 0;
 		}
 
 		public static bool IsUnexposed (CursorKind kind)
 		{
-			return LibClang.clang_isUnexposed (kind) != 0;
+			return LibClang.clang_isUnexposed ((CXCursorKind) kind) != 0;
 		}
 
 		public static ClangCursorSet CreateCursorSet ()
@@ -77,7 +78,7 @@ namespace NClang
 		}
 
 		public static DiagnosticDisplayOptions DefaultDiagnosticDisplayOptions {
-			get { return LibClang.clang_defaultDiagnosticDisplayOptions (); }
+			get { return (DiagnosticDisplayOptions) LibClang.clang_defaultDiagnosticDisplayOptions (); }
 		}
 
 		public static string ClangVersion {
@@ -95,7 +96,7 @@ namespace NClang
 		}
 
 		public static TranslationUnitFlags DefaultEditingTranslationUnitOptions {
-			get { return LibClang.clang_defaultEditingTranslationUnitOptions (); }
+			get { return (TranslationUnitFlags) LibClang.clang_defaultEditingTranslationUnitOptions (); }
 		}
 
 		public static ClangIndex CreateIndex (bool excludeDeclarationsFromPch = false, bool displayDiagnostics = false)
@@ -105,8 +106,9 @@ namespace NClang
 
 		public static ClangCompilationDatabase CreateDatabaseFromDirectory (string buildDir)
 		{
-			CompilationDatabaseError error;
-			var ret = LibClang.clang_CompilationDatabase_fromDirectory (buildDir, out error);
+			var e = IntPtr.Zero;
+			var ret = LibClang.clang_CompilationDatabase_fromDirectory (buildDir, e);
+			var error = (CompilationDatabaseError) Marshal.ReadInt32 (e);
 			if (error != CompilationDatabaseError.NoError)
 				throw new ClangServiceException (string.Format ("Failed to create compilation database from directory '{0}': {1}", buildDir, error));
 			return new ClangCompilationDatabase (ret);
@@ -128,11 +130,17 @@ namespace NClang
 
 		public static ClangDiagnosticSet LoadDiagnostics (string file)
 		{
-			LoadDiagError error;
-			CXString errorString;
-			var ret = LibClang.clang_loadDiagnostics (file, out error, out errorString);
-			if (error != LoadDiagError.None)
-				throw new ClangServiceException (string.Format ("Failed to load diagnostics from '{0}'. Error {1}: {2}", file, error, errorString.Unwrap ()));
+			IntPtr e = IntPtr.Zero;
+			IntPtr errorString = IntPtr.Zero;
+			var ret = LibClang.clang_loadDiagnostics (file, e, errorString);
+			var error = (LoadDiagError) Marshal.ReadInt32 (e);
+			if (error != LoadDiagError.None) {
+				
+				throw new ClangServiceException (string.Format (
+					"Failed to load diagnostics from '{0}'. Error {1}: {2}", file, error,
+					Marshal.PtrToStructure<CXString> (Marshal.ReadIntPtr (errorString)).Unwrap ()));
+			}
+
 			return new ClangDiagnosticSet (ret);
 		}
 
@@ -140,7 +148,7 @@ namespace NClang
 
 		public static bool IsEntityObjCContainerKind (IndexEntityKind kind)
 		{
-			return LibClang.clang_index_isEntityObjCContainerKind (kind) != 0;
+			return LibClang.clang_index_isEntityObjCContainerKind ((CXIdxEntityKind) kind) != 0;
 		}
 
 		public static class Strings
@@ -148,42 +156,22 @@ namespace NClang
 
 			public static string ConstructUSRObjCClass (string className)
 			{
-				return ConstructUSRObjCClassNative (className).Unwrap ();
-			}
-
-			public static ClangString ConstructUSRObjCClassNative (string className)
-			{
-				return LibClang.clang_constructUSR_ObjCClass (className);
+				return LibClang.clang_constructUSR_ObjCClass (className).Unwrap ();
 			}
 
 			public static string ConstructUSRObjCCategory (string className, string categoryName)
 			{
-				return ConstructUSRObjCCategoryNative (className, categoryName).Unwrap ();
-			}
-
-			public static ClangString ConstructUSRObjCCategoryNative (string className, string categoryName)
-			{
-				return LibClang.clang_constructUSR_ObjCCategory (className, categoryName);
+				return LibClang.clang_constructUSR_ObjCCategory (className, categoryName).Unwrap ();
 			}
 
 			public static string ConstructUSRObjCProtocol (string protocolName)
 			{
-				return ConstructUSRObjCProtocolNative (protocolName).Unwrap ();
-			}
-
-			public static ClangString ConstructUSRObjCProtocolNative (string protocolName)
-			{
-				return LibClang.clang_constructUSR_ObjCProtocol (protocolName);
+				return LibClang.clang_constructUSR_ObjCProtocol (protocolName).Unwrap ();
 			}
 
 			public static string ConstructUSRObjCIvar (string name, ClangString classUSR)
 			{
-				return ConstructUSRObjCIvarNative (name, classUSR).Unwrap ();
-			}
-
-			public static ClangString ConstructUSRObjCIvarNative (string name, ClangString classUSR)
-			{
-				return LibClang.clang_constructUSR_ObjCIvar (name, classUSR);
+				return LibClang.clang_constructUSR_ObjCIvar (name, classUSR).Unwrap ();
 			}
 		}
 	}	

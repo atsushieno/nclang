@@ -1,8 +1,8 @@
 using System;
+using System.Runtime.InteropServices;
 using NClang.Natives;
 
-using CXString = NClang.ClangString;
-using System.Collections.Generic;
+using LibClang = NClang.Natives.Natives;
 
 namespace NClang
 {
@@ -42,9 +42,9 @@ namespace NClang
 
 		public FileNameMap GetFileNames (int index)
 		{
-			ClangString original, transformed;
-			LibClang.clang_remap_getFilenames (Handle, (uint) index, out original, out transformed);
-			return new FileNameMap (original.Unwrap (), transformed.Unwrap ());
+			Pointer<CXString> original = IntPtr.Zero, transformed = IntPtr.Zero;
+			LibClang.clang_remap_getFilenames (Handle, (uint) index, original, transformed);
+			return new FileNameMap (Marshal.PtrToStructure<CXString> (Marshal.ReadIntPtr (original)).Unwrap (), Marshal.PtrToStructure<CXString> (Marshal.ReadIntPtr (transformed)).Unwrap ());
 		}
 	}	
 }

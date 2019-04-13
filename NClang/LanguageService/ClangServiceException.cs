@@ -4,6 +4,8 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using NClang.Natives;
 
+using LibClang = NClang.Natives.Natives;
+
 namespace NClang
 {
 	

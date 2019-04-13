@@ -3,6 +3,8 @@ using NClang.Natives;
 using System.Linq;
 using System.Runtime.InteropServices;
 
+using LibClang = NClang.Natives.Natives;
+
 namespace NClang
 {
 	public class ClangVersion
@@ -23,7 +25,7 @@ namespace NClang
 		}
 
 		public int SubMinor {
-			get { return source.SubMinor; }
+			get { return source.Subminor; }
 		}
 	}
 }

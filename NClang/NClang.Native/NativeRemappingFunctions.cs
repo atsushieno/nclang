@@ -1,3 +1,5 @@
+#if MANUAL
+
 using System;
 using System.Runtime.InteropServices;
 
@@ -28,3 +30,5 @@ namespace NClang.Natives
 		 internal static extern void 	clang_remap_dispose (CXRemapping _);
 	}
 }
+
+#endif

@@ -4,6 +4,8 @@ using NClang.Natives;
 using System.Collections.Generic;
 using System.Linq;
 
+using LibClang = NClang.Natives.Natives;
+
 namespace NClang
 {
 	public partial class ClangIndex
@@ -36,51 +38,51 @@ namespace NClang
 			}
 
 			public EntityInfo EntityInfo {
-				get { return new EntityInfo (Info.EntityInfo); }
+				get { return new EntityInfo (Info.entityInfo); }
 			}
 
 			public ClangCursor Cursor {
-				get { return new ClangCursor (Info.Cursor); }
+				get { return new ClangCursor (Info.cursor); }
 			}
 
 			public Location Location {
-				get { return new Location (Info.Loc); }
+				get { return new Location (Info.loc); }
 			}
 
 			public ClangIndex.ContainerInfo SemanticContainer {
-				get { return new ClangIndex.ContainerInfo (Info.SemanticContainer); }
+				get { return new ClangIndex.ContainerInfo (Info.semanticContainer); }
 			}
 
 			public ClangIndex.ContainerInfo LexicalContainer {
-				get { return new ClangIndex.ContainerInfo (Info.LexicalContainer); }
+				get { return new ClangIndex.ContainerInfo (Info.lexicalContainer); }
 			}
 
 			public bool IsRedeclaration {
-				get { return Info.IsRedeclaration != 0; }
+				get { return Info.isRedeclaration != 0; }
 			}
 
 			public bool IsDefinition {
-				get { return Info.IsDefinition != 0; }
+				get { return Info.isDefinition != 0; }
 			}
 
 			public bool IsContainer {
-				get { return Info.IsContainer != 0; }
+				get { return Info.isContainer != 0; }
 			}
 
 			public ClangIndex.ContainerInfo DeclarationAsContainer {
-				get { return Info.DeclAsContainer != IntPtr.Zero ? new ClangIndex.ContainerInfo (Info.DeclAsContainer) : null; }
+				get { return (IntPtr) Info.declAsContainer != IntPtr.Zero ? new ClangIndex.ContainerInfo (Info.declAsContainer) : null; }
 			}
 
 			public bool IsImplicit {
-				get { return Info.IsImplicit != 0; }
+				get { return Info.isImplicit != 0; }
 			}
 
 			public IEnumerable<AttributeInfo> Attributes {
-				get { return Enumerable.Range (0, (int) Info.NumAttributes).Select (i => new AttributeInfo (Info.Attributes + Marshal.SizeOf (typeof(IntPtr)) * i)); }
+				get { return Enumerable.Range (0, (int) Info.numAttributes).Select (i => new AttributeInfo ((IntPtr) Info.attributes + Marshal.SizeOf (typeof(IntPtr)) * i)); }
 			}
 
 			public IndexDeclInfoFlags Flags {
-				get { return Info.Flags; }
+				get { return (IndexDeclInfoFlags) Info.flags; }
 			}
 
 			public ObjCContainerDeclarationInfo ObjCContainerDeclaration {
@@ -122,7 +124,7 @@ namespace NClang
 			}
 
 			public ClangCursor Cursor {
-				get { return new ClangCursor (Info.Cursor); }
+				get { return new ClangCursor (Info.cursor); }
 			}
 
 			public IntPtr ClientContainer {
@@ -145,15 +147,15 @@ namespace NClang
 			}
 
 			public IndexAttributeKind Kind {
-				get { return Info.Kind; }
+				get { return (IndexAttributeKind) Info.kind; }
 			}
 
 			public ClangCursor Cursor {
-				get { return new ClangCursor (Info.Cursor); }
+				get { return new ClangCursor (Info.cursor); }
 			}
 
 			public Location Location {
-				get { return new Location (Info.Loc); }
+				get { return new Location (Info.loc); }
 			}
 
 			public IBOutletCollectionAttributeInfo ObjCOutletCollectionAttribute {
@@ -175,19 +177,19 @@ namespace NClang
 			}
 
 			public IndexEntityKind Kind {
-				get { return Info.Kind; }
+				get { return (IndexEntityKind) Info.kind; }
 			}
 
-			public IndexEntityCxxTemplateKind CxxTemplateKind {
-				get { return Info.CxxTemplateKind; }
+			public IndexEntityCxxTemplateKind TemplateKind {
+				get { return (IndexEntityCxxTemplateKind) Info.templateKind; }
 			}
 
 			public IndexEntityLanguage EntityLanguage {
-				get { return Info.Lang; }
+				get { return (IndexEntityLanguage) Info.lang; }
 			}
 
 			public string Name {
-				get { return Info.Name; }
+				get { return Info.name; }
 			}
 
 			public string USR {
@@ -195,16 +197,16 @@ namespace NClang
 			}
 
 			public int AttributeCount {
-				get { return (int) Info.NumAttributes; }
+				get { return (int) Info.numAttributes; }
 			}
 
 			public IntPtr Attributes {
-				get { return Info.Attributes; }
+				get { return Info.attributes; }
 			}
 
 			public AttributeInfo GetAttribute (int index)
 			{
-				return new AttributeInfo (Info.Attributes + Marshal.SizeOf (typeof(IntPtr)) * index);
+				return new AttributeInfo ((IntPtr) Info.attributes + Marshal.SizeOf (typeof(IntPtr)) * index);
 			}
 
 			public IntPtr ClientEntity {
@@ -227,23 +229,23 @@ namespace NClang
 			}
 
 			public IndexEntityRefKind Kind {
-				get { return Info.Kind; }
+				get { return (IndexEntityRefKind) Info.kind; }
 			}
 
 			public ClangCursor Cursor {
-				get { return new ClangCursor (Info.Cursor); }
+				get { return new ClangCursor (Info.cursor); }
 			}
 
 			public Location Location {
-				get { return new Location (Info.Loc); }
+				get { return new Location (Info.loc); }
 			}
 
 			public EntityInfo Parent {
-				get { return new EntityInfo (Info.ParentEntity); }
+				get { return new EntityInfo (Info.parentEntity); }
 			}
 
 			public ClangIndex.ContainerInfo Container {
-				get { return new ClangIndex.ContainerInfo (Info.Container); }
+				get { return new ClangIndex.ContainerInfo (Info.container); }
 			}
 		}
 
@@ -261,19 +263,19 @@ namespace NClang
 			}
 
 			public AttributeInfo AttrInfo {
-				get { return new AttributeInfo (Info.AttrInfo); }
+				get { return new AttributeInfo (Info.attrInfo); }
 			}
 
 			public EntityInfo ObjCClass {
-				get { return new EntityInfo (Info.ObjcClass); }
+				get { return new EntityInfo (Info.objcClass); }
 			}
 
 			public ClangCursor ClassCursor {
-				get { return new ClangCursor (Info.ClassCursor); }
+				get { return new ClangCursor (Info.classCursor); }
 			}
 
 			public Location ClassLocation {
-				get { return new Location (Info.ClassLoc); }
+				get { return new Location (Info.classLoc); }
 			}
 		}
 
@@ -291,16 +293,16 @@ namespace NClang
 			}
 
 			public ClangFile File {
-				get { return new ClangFile (Info.File); }
+				get { return new ClangFile (Info.file); }
 			}
 			public ClangModule Module {
-				get { return new ClangModule (Info.Module); }
+				get { return new ClangModule (Info.module); }
 			}
 			public Location Location {
-				get { return new Location (Info.Loc); }
+				get { return new Location (Info.loc); }
 			}
 			public bool IsImplicit {
-				get { return Info.IsImplicit != 0; }
+				get { return Info.isImplicit != 0; }
 			}
 		}
 
@@ -336,10 +338,10 @@ namespace NClang
 
 			public ClangSourceLocation.IndexFileLocation FileLocation {
 				get {
-					IntPtr idx, f;
-					uint l, c, o;
-					LibClang.clang_indexLoc_getFileLocation (source, out idx, out f, out l, out c, out o);
-					return new ClangSourceLocation.IndexFileLocation (idx, new ClangFile (f), (int) l, (int) c, (int) o);
+					IntPtr idx = IntPtr.Zero, f = IntPtr.Zero;
+					IntPtr l = IntPtr.Zero, c = IntPtr.Zero, o = IntPtr.Zero;
+					LibClang.clang_indexLoc_getFileLocation (source, idx, f, l, c, o);
+					return new ClangSourceLocation.IndexFileLocation (Marshal.ReadIntPtr (idx), new ClangFile (Marshal.ReadIntPtr (f)), Marshal.ReadInt32 (l), Marshal.ReadInt32 (c), Marshal.ReadInt32 (o));
 				}
 			}
 
@@ -370,11 +372,11 @@ namespace NClang
 			}
 
 			public DeclarationInfo Declaration {
-				get { return new DeclarationInfo (Info.DeclInfo); }
+				get { return new DeclarationInfo (Info.declInfo); }
 			}
 
 			public IndexObjCContainerKind Kind {
-				get { return Info.Kind; }
+				get { return (IndexObjCContainerKind) Info.kind; }
 			}
 		}
 
@@ -392,15 +394,15 @@ namespace NClang
 			}
 
 			public ObjCContainerDeclarationInfo Container {
-				get { return new ObjCContainerDeclarationInfo (Info.ContainerInfo); }
+				get { return new ObjCContainerDeclarationInfo (Info.containerInfo); }
 			}
 
 			public BaseClassInfo Super {
-				get { return Info.SuperInfo != IntPtr.Zero ? new BaseClassInfo (Info.SuperInfo) : null; }
+				get { return (IntPtr) Info.superInfo != IntPtr.Zero ? new BaseClassInfo (Info.superInfo) : null; }
 			}
 
 			public ObjCProtocolReferenceListDeclarationInfo Protocols {
-				get { return new ObjCProtocolReferenceListDeclarationInfo (Info.Protocols); }
+				get { return new ObjCProtocolReferenceListDeclarationInfo (Info.protocols); }
 			}
 		}
 
@@ -418,15 +420,15 @@ namespace NClang
 			}
 
 			public EntityInfo EntityInfo {
-				get { return Info.Base != IntPtr.Zero ? new EntityInfo (Info.Base) : null; }
+				get { return (IntPtr) Info.@base != IntPtr.Zero ? new EntityInfo (Info.@base) : null; }
 			}
 
 			public ClangCursor Cursor {
-				get { return new ClangCursor (Info.Cursor); }
+				get { return new ClangCursor (Info.cursor); }
 			}
 
 			public Location Location {
-				get { return new Location (Info.Loc); }
+				get { return new Location (Info.loc); }
 			}
 		}
 
@@ -444,23 +446,23 @@ namespace NClang
 			}
 
 			public ObjCContainerDeclarationInfo Container {
-				get { return new ObjCContainerDeclarationInfo (Info.ContainerInfo); }
+				get { return new ObjCContainerDeclarationInfo (Info.containerInfo); }
 			}
 
 			public EntityInfo Class {
-				get { return new EntityInfo (Info.ObjcClass); }
+				get { return new EntityInfo (Info.objcClass); }
 			}
 
 			public ClangCursor ClassCursor {
-				get { return new ClangCursor (Info.ClassCursor); }
+				get { return new ClangCursor (Info.classCursor); }
 			}
 
 			public Location ClassLocation {
-				get { return new Location (Info.ClassLoc); }
+				get { return new Location (Info.classLoc); }
 			}
 
 			public ObjCProtocolReferenceListDeclarationInfo Protocols {
-				get { return new ObjCProtocolReferenceListDeclarationInfo (Info.Protocols); }
+				get { return new ObjCProtocolReferenceListDeclarationInfo (Info.protocols); }
 			}
 		}
 
@@ -478,15 +480,15 @@ namespace NClang
 			}
 
 			public EntityInfo EntityInfo {
-				get { return new EntityInfo (Info.Protocol); }
+				get { return new EntityInfo (Info.protocol); }
 			}
 
 			public ClangCursor Cursor {
-				get { return new ClangCursor (Info.Cursor); }
+				get { return new ClangCursor (Info.cursor); }
 			}
 
 			public Location Location {
-				get { return new Location (Info.Loc); }
+				get { return new Location (Info.loc); }
 			}
 		}
 
@@ -504,7 +506,7 @@ namespace NClang
 			}
 
 			public int Count {
-				get { return (int) Info.NumProtocols; }
+				get { return (int) Info.numProtocols; }
 			}
 
 			public IEnumerable<ObjCProtocolReferenceInfo> Items {
@@ -513,7 +515,7 @@ namespace NClang
 
 			public ObjCProtocolReferenceInfo Get (int index)
 			{
-				return new ObjCProtocolReferenceInfo (Info.Protocols + (index * Marshal.SizeOf (typeof(CXIdxObjCProtocolRefInfo))));
+				return new ObjCProtocolReferenceInfo ((IntPtr) Info.protocols + (index * Marshal.SizeOf (typeof(CXIdxObjCProtocolRefInfo))));
 			}
 		}
 
@@ -531,11 +533,11 @@ namespace NClang
 			}
 
 			public EntityInfo Getter {
-				get { return Info.Getter != IntPtr.Zero ? new EntityInfo (Info.Getter) : null; }
+				get { return (IntPtr) Info.getter != IntPtr.Zero ? new EntityInfo (Info.getter) : null; }
 			}
 
 			public EntityInfo Setter {
-				get { return Info.Setter != IntPtr.Zero ? new EntityInfo (Info.Setter) : null; }
+				get { return (IntPtr) Info.setter != IntPtr.Zero ? new EntityInfo (Info.setter) : null; }
 			}
 		}
 

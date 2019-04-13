@@ -3,11 +3,13 @@ using NClang.Natives;
 using System.Linq;
 using System.Runtime.InteropServices;
 
+using LibClang = NClang.Natives.Natives;
+
 namespace NClang
 {
 	public class ClangDiagnostic : ClangObject, IDisposable
 	{
-		public static string GetCategoryName (int category)
+		public static string GetCategoryName (uint category)
 		{
 			return LibClang.clang_getDiagnosticCategoryName (category).Unwrap ();
 		}
@@ -66,11 +68,11 @@ namespace NClang
 
 		public string Format (DiagnosticDisplayOptions options)
 		{
-			return LibClang.clang_formatDiagnostic (Handle, options).Unwrap ();
+			return LibClang.clang_formatDiagnostic (Handle, (uint) options).Unwrap ();
 		}
 
 		public DiagnosticSeverity Severity {
-			get { return LibClang.clang_getDiagnosticSeverity (Handle); }
+			get { return (DiagnosticSeverity) LibClang.clang_getDiagnosticSeverity (Handle); }
 		}
 
 		public ClangSourceLocation Location {
@@ -82,10 +84,12 @@ namespace NClang
 		}
 
 		public CommandLineOptions Options {
-			get {
-				ClangString d;
-				var e = LibClang.clang_getDiagnosticOption (Handle, out d);
-				return new CommandLineOptions (e.Unwrap (), d.Unwrap ());
+			get
+			{
+				Pointer<CXString> d = default (Pointer<CXString>);
+				var e = LibClang.clang_getDiagnosticOption (Handle, d);
+				var ptr = Marshal.ReadIntPtr (d);
+				return new CommandLineOptions (e.Unwrap (), Marshal.PtrToStringAnsi (ptr));
 			}
 		}
 
@@ -113,9 +117,9 @@ namespace NClang
 
 		public FixIt GetFixIt (int index)
 		{
-			CXSourceRange range;
-			var ret = LibClang.clang_getDiagnosticFixIt (Handle, (uint) index, out range).Unwrap ();
-			return new FixIt (new ClangSourceRange (range), ret);
+			Pointer<CXSourceRange> range = default (Pointer<CXSourceRange>);
+			var ret = LibClang.clang_getDiagnosticFixIt (Handle, (uint) index, range).Unwrap ();
+			return new FixIt (new ClangSourceRange (Marshal.PtrToStructure<CXSourceRange> (range)), ret);
 		}
 	}
 }

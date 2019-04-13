@@ -3,6 +3,8 @@ using NClang.Natives;
 
 using CXString = NClang.ClangString;
 
+using LibClang = NClang.Natives.Natives;
+
 namespace NClang
 {
 	public class ClangCompilationDatabase : ClangObject, IDisposable
@@ -27,5 +29,4 @@ namespace NClang
 			return new ClangCompileCommands (LibClang.clang_CompilationDatabase_getCompileCommands (Handle, completeFileName));
 		}
 	}
-	
 }

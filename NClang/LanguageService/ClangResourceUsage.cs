@@ -3,6 +3,8 @@ using NClang.Natives;
 using System.Linq;
 using System.Runtime.InteropServices;
 
+using LibClang = NClang.Natives.Natives;
+
 namespace NClang
 {
 
@@ -12,8 +14,8 @@ namespace NClang
 		{
 			internal Entry (CXTUResourceUsageEntry entry)
 			{
-				this.Kind = entry.Kind;
-				this.Amount = entry.Amount;
+				this.Kind = (ResourceUsageKind) entry.kind;
+				this.Amount = entry.amount;
 			}
 
 			public ResourceUsageKind Kind { get; private set; }
@@ -28,12 +30,12 @@ namespace NClang
 		}
 
 		public int Count {
-			get { return (int) source.NumEntries; }
+			get { return (int) source.numEntries; }
 		}
 
 		public Entry GetEntry (int i)
 		{
-			return new Entry ((CXTUResourceUsageEntry)Marshal.PtrToStructure (source.Entries + Marshal.SizeOf (typeof(CXTUResourceUsageEntry)) * i, typeof(CXTUResourceUsageEntry)));
+			return new Entry ((CXTUResourceUsageEntry)Marshal.PtrToStructure ((IntPtr) source.entries + Marshal.SizeOf (typeof(CXTUResourceUsageEntry)) * i, typeof(CXTUResourceUsageEntry)));
 		}
 
 		public void Dispose ()

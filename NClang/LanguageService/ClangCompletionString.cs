@@ -6,6 +6,8 @@ using System.Collections.Generic;
 
 using CXCompletionString = System.IntPtr;
 
+using LibClang = NClang.Natives.Natives;
+
 namespace NClang
 {
 	
@@ -23,7 +25,7 @@ namespace NClang
 			}
 
 			public CompletionChunkKind Kind {
-				get { return LibClang.clang_getCompletionChunkKind (source, index); }
+				get { return (CompletionChunkKind) LibClang.clang_getCompletionChunkKind (source, index); }
 			}
 
 			public string Text {
@@ -57,7 +59,7 @@ namespace NClang
 		}
 
 		public AvailabilityKind Availability {
-			get { return LibClang.clang_getCompletionAvailability (source); }
+			get { return (AvailabilityKind) LibClang.clang_getCompletionAvailability (source); }
 		}
 
 		public int AnnotationCount {

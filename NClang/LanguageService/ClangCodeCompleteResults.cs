@@ -4,21 +4,23 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
+using LibClang = NClang.Natives.Natives; 
+
 namespace NClang
 {
 	
 	public class ClangCodeCompleteResults : ClangObject, IDisposable
 	{
 		static readonly int result_size = Marshal.SizeOf (typeof(CXCompletionResult));
-		CXCodeCompletionResults? source;
+		CXCodeCompleteResults? source;
 
 		public ClangCodeCompleteResults (IntPtr handle)
 			: base (handle)
 		{
 		}
 
-		CXCodeCompletionResults Source {
-			get { return (CXCodeCompletionResults)(source ?? (source = (CXCodeCompletionResults)Marshal.PtrToStructure (Handle, typeof(CXCodeCompletionResults)))); }
+		CXCodeCompleteResults Source {
+			get { return (CXCodeCompleteResults)(source ?? (source = (CXCodeCompleteResults)Marshal.PtrToStructure (Handle, typeof(CXCodeCompleteResults)))); }
 		}
 
 		public int ResultCount {
@@ -27,13 +29,13 @@ namespace NClang
 
         public void Sort()
         {
-            LibClang.clang_sortCodeCompletionResults(Source.Results, Source.NumResults);
+		LibClang.clang_sortCodeCompletionResults(Source.Results, Source.NumResults);
         }
 
         public IEnumerable<ClangCompletionResult> Results {
 			get {
 				for (int i = 0; i < Source.NumResults; i++)
-					yield return new ClangCompletionResult (Source.Results + result_size * i);
+					yield return new ClangCompletionResult ((IntPtr) Source.Results + result_size * i);
 			}
 		}
 
@@ -57,17 +59,17 @@ namespace NClang
 
 		public CursorKind GetContainerKind (out bool isComplete)
 		{
-			uint ic;
-			var ret = LibClang.clang_codeCompleteGetContainerKind (Handle, out ic);
-			isComplete = ic != 0;
-			return ret;
+			Pointer<uint> ic = default (Pointer<uint>);
+			var ret = LibClang.clang_codeCompleteGetContainerKind (Handle, ic);
+			isComplete = Marshal.ReadInt32 (ic.Handle) != 0;
+			return (CursorKind) ret;
 		}
 
 		public string ContainerUSR {
 			get { return ContainerUSRNative.Unwrap (); }
 		}
 
-		public ClangString ContainerUSRNative {
+		CXString ContainerUSRNative {
 			get { return LibClang.clang_codeCompleteGetContainerUSR (Handle); }
 		}
 

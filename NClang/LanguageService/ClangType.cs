@@ -3,6 +3,8 @@ using NClang.Natives;
 using SystemLongLong = System.Int64;
 using SystemULongLong = System.UInt64;
 
+using LibClang = NClang.Natives.Natives;
+
 namespace NClang
 {
 	public class ClangType
@@ -11,7 +13,7 @@ namespace NClang
 
 		public string GetTypeKindSpelling (TypeKind kind)
 		{
-			return LibClang.clang_getTypeKindSpelling (kind).Unwrap ();
+			return LibClang.clang_getTypeKindSpelling ((CXTypeKind) kind).Unwrap ();
 		}
 
 		// Instance members
@@ -24,7 +26,7 @@ namespace NClang
 		}
 
 		public TypeKind Kind {
-			get { return source.Kind; }
+			get { return (TypeKind) source.kind; }
 		}
 
 		// TypeInformationForCXCursor
@@ -83,7 +85,7 @@ namespace NClang
 		}
 
 		public CallingConvention FunctionTypeCallingConvention {
-			get { return LibClang.clang_getFunctionTypeCallingConv (source); }
+			get { return (CallingConvention) LibClang.clang_getFunctionTypeCallingConv (source); }
 		}
 
 		public ClangType ResultType {
@@ -173,7 +175,7 @@ namespace NClang
 		}
 
 		public RefQualifierKind RefQualifier {
-			get { return LibClang.clang_Type_getCXXRefQualifier (source); }
+			get { return (RefQualifierKind) LibClang.clang_Type_getCXXRefQualifier (source); }
 		}
 	}
 }

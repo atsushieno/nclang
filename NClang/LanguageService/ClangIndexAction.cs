@@ -3,6 +3,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using NClang.Natives;
 
+using LibClang = NClang.Natives.Natives;
+
 namespace NClang
 {
     /// <summary>
@@ -60,13 +62,14 @@ namespace NClang
 			if (indexCallbacks == null)
 				throw new ArgumentNullException ("indexCallbacks");
 
-			var cbs = indexCallbacks.Select (ic => ic.ToNative ()).ToArray ();
-			IntPtr tu;
+			var cbs = indexCallbacks.Select (ic => ic.ToNative ());
+			var cbptrs = cbs.Select (cb => Marshal.GetFunctionPointerForDelegate (cb)).ToArray ();
+			IntPtr tuPtr = IntPtr.Zero;
 			var uf = unsavedFiles.ToNative ();
-			var ret = LibClang.clang_indexSourceFile (Handle, clientData, cbs, (uint) cbs.Length, options, sourceFileName, commandLineArgs, commandLineArgs.Length, uf, (uint) uf.Length, out tu, translationUnitOptions);
+			var ret = LibClang.clang_indexSourceFile (Handle, clientData, cbptrs.FirstOrDefault (), (uint) cbptrs.Length, (uint) options, sourceFileName, commandLineArgs, commandLineArgs.Length, uf, (uint) uf.Length, tuPtr, (uint) translationUnitOptions);
 			if (ret != 0)
 				throw new ClangServiceException ("Faied to index source file");
-			return new ClangTranslationUnit (tu);
+			return new ClangTranslationUnit (Marshal.ReadIntPtr (tuPtr));
 		}
 
         /// <summary>
@@ -95,7 +98,7 @@ namespace NClang
 				throw new ArgumentNullException ("translationUnit");
 
 			var cbs = indexCallbacks.Select (ic => ic.ToNative ()).ToArray ();
-			var ret = LibClang.clang_indexTranslationUnit (Handle, clientData, cbs, (uint) (cbs.Length * Marshal.SizeOf (typeof(IndexerCallbacks))), options, translationUnit.Handle);
+			var ret = LibClang.clang_indexTranslationUnit (Handle, clientData, cbs, (uint) (cbs.Length * Marshal.SizeOf (typeof(IndexerCallbacks))), (uint) options, translationUnit.Handle);
 			if (ret != 0)
 				throw new ClangServiceException (string.Format ("Faied to index translation unit: {0} Reason: {1}", translationUnit.TranslationUnitSpelling, ret));
 		}

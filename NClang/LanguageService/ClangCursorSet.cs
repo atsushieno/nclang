@@ -1,6 +1,8 @@
 using System;
 using NClang.Natives;
 
+using LibClang = NClang.Natives.Natives;
+
 namespace NClang
 {
 	public class ClangCursorSet : ClangObject, IDisposable

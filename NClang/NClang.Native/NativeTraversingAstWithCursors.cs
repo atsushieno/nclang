@@ -1,3 +1,5 @@
+#if MANUAL
+
 using System;
 using System.Runtime.InteropServices;
 
@@ -15,3 +17,5 @@ namespace NClang.Natives
 		internal static extern ChildVisitResult clang_visitChildren (CXCursor parent, CXCursorVisitor visitor, CXClientData client_data);
 	}
 }
+
+#endif

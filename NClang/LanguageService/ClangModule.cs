@@ -2,6 +2,8 @@ using System;
 using System.Runtime.InteropServices;
 using NClang.Natives;
 
+using LibClang = NClang.Natives.Natives;
+
 namespace NClang
 {
 

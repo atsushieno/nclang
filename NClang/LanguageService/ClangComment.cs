@@ -8,6 +8,8 @@ using SystemULongLong = System.UInt64;
 
 using CXString = NClang.ClangString;
 
+using LibClang = NClang.Natives.Natives; 
+
 namespace NClang
 {
 	public class ClangComment
@@ -22,7 +24,7 @@ namespace NClang
 		// CommentASTIntrospection
 
 		public CommentKind Kind {
-			get { return LibClang.clang_Comment_getKind (source); }
+			get { return (CommentKind) LibClang.clang_Comment_getKind (source); }
 		}
 
 		public int ChildCount {
@@ -51,7 +53,7 @@ namespace NClang
 		}
 
 		public CommentInlineCommandRenderKind InlineCommandRenderKind {
-			get { return LibClang.clang_InlineCommandComment_getRenderKind (source); }
+			get { return (CommentInlineCommandRenderKind) LibClang.clang_InlineCommandComment_getRenderKind (source); }
 		}
 
 		public int InlineCommandArgumentCunt {
@@ -119,7 +121,7 @@ namespace NClang
 		}
 
 		public CommentParamPassDirection ParameterCommandDirection {
-			get { return LibClang.clang_ParamCommandComment_getDirection (source); }
+			get { return (CommentParamPassDirection) LibClang.clang_ParamCommandComment_getDirection (source); }
 		}
 
 		public string TypeParameterCommandParameterName {

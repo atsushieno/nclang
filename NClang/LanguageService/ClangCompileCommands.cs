@@ -5,6 +5,8 @@ using CXString = NClang.ClangString;
 using System.Collections.Generic;
 using System.Linq;
 
+using LibClang = NClang.Natives.Natives;
+
 namespace NClang
 {
 	public class ClangCompileCommands : ClangObject, IDisposable

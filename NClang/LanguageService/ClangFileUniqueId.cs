@@ -6,6 +6,8 @@ using CXFile = System.IntPtr;
 using SystemLongLong = System.Int64;
 using SystemULongLong = System.UInt64;
 
+using LibClang = NClang.Natives.Natives;
+
 namespace NClang
 {
 	public struct ClangFileUniqueId
@@ -14,9 +16,9 @@ namespace NClang
 
 		internal ClangFileUniqueId (CXFileUniqueID id)
 		{
-			v1 = id.Data1;
-			v2 = id.Data2;
-			v3 = id.Data3;
+			v1 = id.data[0];
+			v2 = id.data[1];
+			v3 = id.data[2];
 		}
 
 		public override bool Equals (object obj)
