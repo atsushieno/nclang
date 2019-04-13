@@ -116,11 +116,22 @@ namespace NClang
 			return gen (m, Marshal.ReadInt32 (lp), Marshal.ReadInt32 (cp), Marshal.ReadInt32 (op));
 		}
 
+		delegate void Extractor (CXSourceLocation loc, out IntPtr file, out uint l, out uint c, out uint o);
+
+		unsafe T Extract2<M,N,T> (CXSourceLocation source, Extractor func, Func<IntPtr,M> conv, Func<M,int,int,int,T> gen)
+		{
+			IntPtr fp;
+			uint l = 0, c = 0, o = 0;
+			func (source, out fp, out l,  out c, out o);
+			var m = conv (fp);
+			return gen (m, (int) l, (int) c, (int) o);
+		}
+
 		public PhysicalLocation ExpansionLocation {
 			get
 			{
 				IntPtr dummy = IntPtr.Zero;
-				return Extract<ClangFile,IntPtr,PhysicalLocation> (source, LibClang.clang_getExpansionLocation, f => f.Wrap (),
+				return Extract2<ClangFile,IntPtr,PhysicalLocation> (source, LibClang.clang_getExpansionLocation, f => f.Wrap (),
 					(f, l, c, o) => new PhysicalLocation (f, l, c, o));
 			}
 		}
@@ -134,22 +145,29 @@ namespace NClang
 
 		public PhysicalLocation InstantiationLocation {
 			get {
-				return Extract<ClangFile,IntPtr,PhysicalLocation> (source, LibClang.clang_getInstantiationLocation, f => f.Wrap (),
+				return Extract2<ClangFile,IntPtr,PhysicalLocation> (source, LibClang.clang_getInstantiationLocation, f => f.Wrap (),
 					(f, l, c, o) => new PhysicalLocation (f, l, c, o));
 			}
 		}
 
 		public PhysicalLocation SpellingLocation {
 			get {
-				return Extract<ClangFile,IntPtr,PhysicalLocation> (source, LibClang.clang_getSpellingLocation, f => f.Wrap (),
+				return Extract2<ClangFile,IntPtr,PhysicalLocation> (source, LibClang.clang_getSpellingLocation, f => f.Wrap (),
 					(f, l, c, o) => new PhysicalLocation (f, l, c, o));
 			}
 		}
 
 		public PhysicalLocation FileLocation {
 			get {
-				return Extract<ClangFile,IntPtr,PhysicalLocation> (source, LibClang.clang_getFileLocation, f => f.Wrap (),
+				/*
+				return Extract2<ClangFile,IntPtr,PhysicalLocation> (source, LibClang.clang_getFileLocation, f => f.Wrap (),
 					(f, l, c, o) => new PhysicalLocation (f, l, c, o));
+					*/
+				IntPtr f;
+				uint l, c, o;
+				LibClang.clang_getFileLocation (source, out f, out l, out c, out o);
+				return new PhysicalLocation (f.Wrap (), (int) l, (int) c, (int) o);
+				
 			}
 		}
 

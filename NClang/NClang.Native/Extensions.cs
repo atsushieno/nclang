@@ -3,8 +3,10 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using NClang.Natives;
 
+using CXFile = System.IntPtr;
 using CXIndex = System.IntPtr;
 using CXTranslationUnit = System.IntPtr;
+using CXSourceLocation = System.IntPtr;
 
 namespace NClang
 {
@@ -79,6 +81,30 @@ namespace NClang
 			{
 				return new CXString () {data = src.Data, private_flags = src.PrivateFlags};
 			}
+		}
+
+		partial class Natives
+		{
+			// function clang_getExpansionLocation - Index.h (565, 21)
+			[DllImport (LibraryName)]
+			internal static extern void clang_getExpansionLocation (CXSourceLocation @location, out CXFile file, out uint line, out uint column, out uint offset);
+
+			// function clang_getPresumedLocation - Index.h (611, 21)
+			[DllImport (LibraryName)]
+			internal static extern void clang_getPresumedLocation (CXSourceLocation @location, out CXString file, out uint line, out uint column);
+
+			// function clang_getInstantiationLocation - Index.h (624, 21)
+			[DllImport (LibraryName)]
+			internal static extern void clang_getInstantiationLocation (CXSourceLocation @location,
+				out CXFile file, out uint line, out uint column, out uint offset);
+
+			// function clang_getSpellingLocation - Index.h (652, 21)
+			[DllImport (LibraryName)]
+			internal static extern void clang_getSpellingLocation (CXSourceLocation @location, out CXFile file, out uint line, out uint column, out uint offset);
+
+			// function clang_getFileLocation - Index.h (681, 21)
+			[DllImport (LibraryName)]
+			internal static extern void clang_getFileLocation (CXSourceLocation @location, out CXFile file, out uint line, out uint column, out uint offset);
 		}
 
 		partial struct CXUnsavedFile
