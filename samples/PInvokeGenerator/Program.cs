@@ -21,6 +21,7 @@ namespace PInvokeGenerator
 		bool InsideUsingDeclaration;
 		List<string> sources = new List<string> ();
 		List<TypeDef> usings = new List<TypeDef> ();
+		bool PreferStringOverByteArray;
 
 		void Run (string [] args)
 		{
@@ -61,6 +62,8 @@ namespace PInvokeGenerator
 					skipStandardCTypes = true;
 				else if (arg == "--expose-types")
 					type_scope = "public";
+				else if (arg == "--prefer-string-over-byte-array")
+					PreferStringOverByteArray = true;
 				else
 					sources.Add (arg);
 			}
@@ -505,6 +508,10 @@ namespace PInvokeGenerator
 				} else {
 					var pointee = ToTypeName (type.PointeeType);
 					switch (pointee) {
+					case "byte":
+						if (PreferStringOverByteArray)
+							return "string";
+						goto default;
 					case "void":
 						return "System.IntPtr"; // mere pointer
 					case "void *":
