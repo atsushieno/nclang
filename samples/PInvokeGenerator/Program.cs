@@ -202,7 +202,7 @@ namespace PInvokeGenerator
 			}
 
 			foreach (var u in usings.Distinct (new KeyComparer ())) {
-				if (u.Managed == "System.IntPtr" || u.Managed.StartsWith ("NClang.Pointer<")) {
+				if (u.Managed == "System.IntPtr" || u.Managed.StartsWith (Namespace + ".Pointer<")) {
 					// FIXME: maybe it's hacky, but do no further existence checks.
 					output.WriteLine ($"using {u.Alias} = {u.Managed};");
 					continue;
