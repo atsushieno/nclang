@@ -517,7 +517,8 @@ namespace PInvokeGenerator
 					case "void *":
 						return "System.IntPtr"; // pointer to pointer
 					default:
-						return "Pointer<" + ToTypeName (type.PointeeType) + ">";
+						return "System.IntPtr"; // complex pointer, yet P/Invoke does not accept generic types...
+						//return "Pointer<" + ToTypeName (type.PointeeType) + ">";
 					}
 				}
 			}
