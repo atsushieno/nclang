@@ -6,7 +6,7 @@ using LibClang = NClang.Natives.Natives;
 
 namespace NClang
 {
-	public class ClangRemapping : ClangObject, IDisposable
+	public class ClangRemapping : ClangDisposable
 	{
 		public struct FileNameMap
 		{
@@ -31,9 +31,10 @@ namespace NClang
 		{
 		}
 
-		public void Dispose ()
+		public override void Dispose ()
 		{
 			LibClang.clang_remap_dispose (Handle);
+			base.Dispose ();
 		}
 
 		public int FileCount {

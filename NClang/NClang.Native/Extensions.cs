@@ -1,10 +1,35 @@
 using System;
+using System.Linq;
+using System.Runtime.InteropServices;
 using NClang.Natives;
 
 namespace NClang
 {
 	static class Extensions
 	{
+		public static IntPtr [] ToHGlobalAllocatedArray (this string [] srcArr)
+		{
+			return srcArr.Select (s => Marshal.StringToHGlobalAnsi (s)).ToArray ();
+
+		}
+
+		public static IntPtr ToHGlobalNativeArray<T> (this T [] srcArr)
+		{
+			var arr = Marshal.AllocHGlobal (Marshal.SizeOf<T> () * srcArr.Length);
+			for (int i = 0; i < srcArr.Length; i++)
+				Marshal.StructureToPtr (srcArr [i], arr + i * Marshal.SizeOf<T> (), false);
+			return arr;
+		}
+
+		public static IntPtr ToHGlobalNativeArray (this IntPtr [] srcArr)
+		{
+			var arr = Marshal.AllocHGlobal (Marshal.SizeOf<IntPtr> () * srcArr.Length);
+			
+			for (int i = 0; i < srcArr.Length; i++)
+				Marshal.WriteIntPtr (arr + i * Marshal.SizeOf<IntPtr> (), srcArr [i]);
+			return arr;
+		}
+		
 		public static ClangType ToManaged (this CXType type)
 		{
 			return type.kind != CXTypeKind.CXType_Invalid ? new ClangType (type) : null;

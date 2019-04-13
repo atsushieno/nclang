@@ -123,7 +123,10 @@ namespace NClang
 
 		public static ClangRemapping GetRemappingsFromList (string [] filePaths)
 		{
-			return new ClangRemapping (LibClang.clang_getRemappingsFromFileList (filePaths, (uint) filePaths.Length));
+			var fps = new NativeArrayHolder(filePaths.ToHGlobalAllocatedArray ());
+			var ret = new ClangRemapping (LibClang.clang_getRemappingsFromFileList (fps.NativeArray, (uint) filePaths.Length));
+			ret.AddToFreeList (fps);
+			return ret;
 		}
 
 		// DiagnosticReporting

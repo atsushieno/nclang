@@ -104,7 +104,7 @@ namespace NClang
 			get { return LibClang.clang_Location_isFromMainFile (source) != 0; }
 		}
 
-		T Extract<M,N,T> (CXSourceLocation source, Action<CXSourceLocation, Pointer<N>, Pointer<uint>, Pointer<uint>, Pointer<uint>> func, Func<IntPtr,M> conv, Func<M,int,int,int,T> gen)
+		T Extract<M,N,T> (CXSourceLocation source, Action<CXSourceLocation, IntPtr, IntPtr, IntPtr, IntPtr> func, Func<IntPtr,M> conv, Func<M,int,int,int,T> gen)
 		{
 			IntPtr f = IntPtr.Zero;
 			IntPtr l = IntPtr.Zero, c = IntPtr.Zero, o = IntPtr.Zero; // of uint

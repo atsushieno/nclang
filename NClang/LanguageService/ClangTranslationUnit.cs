@@ -1,8 +1,9 @@
 using System;
+using System.Collections.Generic;
 using NClang.Natives;
 using System.Linq;
 using System.Runtime.InteropServices;
-
+using System.Text;
 using LibClang = NClang.Natives.Natives;
 
 using size_t = System.IntPtr;
@@ -10,18 +11,21 @@ using size_t = System.IntPtr;
 namespace NClang
 {
 	
-	public class ClangTranslationUnit : ClangObject, IDisposable
+	public class ClangTranslationUnit : ClangDisposable
 	{
 		// TranslationUnitManipulation
 
-		internal ClangTranslationUnit (IntPtr handle)
+		internal ClangTranslationUnit (IntPtr handle, params IntPtr [] additionalDisposables)
 			: base (handle)
 		{
+			foreach (var ptr in additionalDisposables)
+				AddToFreeList (ptr);
 		}
 
-		public void Dispose ()
+		public override void Dispose ()
 		{
 			LibClang.clang_disposeTranslationUnit (Handle);
+			base.Dispose ();
 		}
 
 		public ReparseTranslationUnitFlags DefaultReparseOptions {
@@ -65,8 +69,9 @@ namespace NClang
 
 		public void Reparse (ClangUnsavedFile [] unsavedFiles, ReparseTranslationUnitFlags options)
 		{
-			var cx = unsavedFiles.Select (o => new CXUnsavedFile {Filename = o.FileName, Contents = o.Contents}).ToArray ();
+			var cx = unsavedFiles.Select (o => new CXUnsavedFile {Filename = o.FileName, Contents = o.Contents}).ToArray ().ToHGlobalNativeArray ();
 			var ret = (ErrorCode) LibClang.clang_reparseTranslationUnit (Handle, (uint) unsavedFiles.Length, cx, (uint) options);
+			Marshal.FreeHGlobal (cx);
 			if (ret != ErrorCode.Success)
 				throw new InvalidOperationException ("Failed to reparse translation unit: " + ret);
 		}
@@ -81,6 +86,9 @@ namespace NClang
 		public byte [] GetFileContents (ClangFile file)
 		{
 			Pointer<size_t> sizePtr = default (Pointer<size_t>); // size_t
+			// FIXME: it is based on wrong assumption that file contents must be valid UTF8 stream (or in any encodings). File content can be mere binary data.
+			return Encoding.UTF8.GetBytes (LibClang.clang_getFileContents (Handle, file.Handle, sizePtr));
+			/*
 			var ptr = LibClang.clang_getFileContents (Handle, file.Handle, sizePtr);
 			var size = (uint) Marshal.ReadInt64 (sizePtr);
 			var ret = new byte [size];
@@ -88,6 +96,7 @@ namespace NClang
 				throw new InvalidOperationException ("The returned file content size was more than Int32.MaxValue, which is unusual.");
 			Marshal.Copy (ret, 0, ptr, (int) size);
 			return ret;
+			*/
 		}
 
 		public bool IsMultipleIncludeGuarded (ClangFile file)
@@ -104,8 +113,10 @@ namespace NClang
 		// CodeCompletion
 		public ClangCodeCompleteResults CodeCompleteAt (string completeFilename, int completeLine, int completeColumn, ClangUnsavedFile [] unsavedFiles, CodeCompleteFlags options)
 		{
-			var cx = unsavedFiles.ToNative ();
-			return new ClangCodeCompleteResults (LibClang.clang_codeCompleteAt (Handle, completeFilename, (uint) completeLine, (uint) completeColumn, cx, (uint) cx.Length, (uint) options));
+			var cx = unsavedFiles.ToNative ().ToHGlobalNativeArray ();
+			var ret = new ClangCodeCompleteResults (LibClang.clang_codeCompleteAt (Handle, completeFilename, (uint) completeLine, (uint) completeColumn, cx, (uint) unsavedFiles.Length, (uint) options));
+			ret.AddToFreeList (cx);
+			return ret;
 		}
 
 		public ClangSourceLocation GetLocation (ClangFile file, int line, int column)

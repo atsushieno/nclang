@@ -3,19 +3,19 @@ using System;
 using System.Runtime.InteropServices;
 using time_t = System.IntPtr;
 using size_t = System.IntPtr;
-using CXVirtualFileOverlay = NClang.Natives.Pointer<NClang.Natives.CXVirtualFileOverlayImpl>;
-using CXModuleMapDescriptor = NClang.Natives.Pointer<NClang.Natives.CXModuleMapDescriptorImpl>;
+using CXVirtualFileOverlay = System.IntPtr;
+using CXModuleMapDescriptor = System.IntPtr;
 using CXCompilationDatabase = System.IntPtr;
 using CXCompileCommands = System.IntPtr;
 using CXCompileCommand = System.IntPtr;
 using CXIndex = System.IntPtr;
-using CXTargetInfo = NClang.Natives.Pointer<NClang.Natives.CXTargetInfoImpl>;
-using CXTranslationUnit = NClang.Natives.Pointer<NClang.Natives.CXTranslationUnitImpl>;
+using CXTargetInfo = System.IntPtr;
+using CXTranslationUnit = System.IntPtr;
 using CXClientData = System.IntPtr;
 using CXFile = System.IntPtr;
 using CXDiagnostic = System.IntPtr;
 using CXDiagnosticSet = System.IntPtr;
-using CXCursorSet = NClang.Natives.Pointer<NClang.Natives.CXCursorSetImpl>;
+using CXCursorSet = System.IntPtr;
 using delegate0 = NClang.Natives.Delegates.CXCursorVisitor; // Index.h (3983,35)
 using CXPrintingPolicy = System.IntPtr;
 using CXModule = System.IntPtr;
@@ -118,7 +118,7 @@ internal partial struct CXString // CXString.h (38, 9)
 [StructLayout (LayoutKind.Sequential)]
 internal struct CXStringSet // CXString.h (43, 9)
 {
-	[CTypeDetails ("Pointer<CXString>")]internal Pointer<CXString> @Strings;
+	[CTypeDetails ("Pointer<CXString>")]internal System.IntPtr @Strings;
 	internal uint @Count;
 }
 
@@ -215,7 +215,7 @@ internal struct CXSourceRange // Index.h (469, 9)
 internal struct CXSourceRangeList // Index.h (702, 9)
 {
 	internal uint @count;
-	[CTypeDetails ("Pointer<CXSourceRange>")]internal Pointer<CXSourceRange> @ranges;
+	[CTypeDetails ("Pointer<CXSourceRange>")]internal System.IntPtr @ranges;
 }
 
 internal enum CXDiagnosticSeverity // Index.h (747, 6)
@@ -314,7 +314,7 @@ internal struct CXTUResourceUsage // Index.h (1647, 16)
 {
 	[CTypeDetails ("Pointer<void>")]internal System.IntPtr @data;
 	internal uint @numEntries;
-	[CTypeDetails ("Pointer<CXTUResourceUsageEntry>")]internal Pointer<CXTUResourceUsageEntry> @entries;
+	[CTypeDetails ("Pointer<CXTUResourceUsageEntry>")]internal System.IntPtr @entries;
 }
 
 internal enum CXCursorKind // Index.h (1705, 6)
@@ -923,7 +923,7 @@ internal enum CXCompletionChunkKind // Index.h (4941, 6)
 [StructLayout (LayoutKind.Sequential)]
 internal struct CXCodeCompleteResults // Index.h (5252, 9)
 {
-	[CTypeDetails ("Pointer<CXCompletionResult>")]internal Pointer<CXCompletionResult> @Results;
+	[CTypeDetails ("Pointer<CXCompletionResult>")]internal System.IntPtr @Results;
 	internal uint @NumResults;
 }
 
@@ -1096,7 +1096,7 @@ internal struct CXIdxEntityInfo // Index.h (6099, 9)
 	[CTypeDetails ("Pointer<byte>")]internal string @name;
 	[CTypeDetails ("Pointer<byte>")]internal string @USR;
 	internal CXCursor @cursor;
-	[CTypeDetails ("Pointer<Pointer<CXIdxAttrInfo>>")]internal Pointer<Pointer<CXIdxAttrInfo>> @attributes;
+	[CTypeDetails ("Pointer<System.IntPtr>")]internal System.IntPtr @attributes;
 	internal uint @numAttributes;
 }
 
@@ -1109,8 +1109,8 @@ internal struct CXIdxContainerInfo // Index.h (6110, 9)
 [StructLayout (LayoutKind.Sequential)]
 internal struct CXIdxIBOutletCollectionAttrInfo // Index.h (6114, 9)
 {
-	[CTypeDetails ("Pointer<CXIdxAttrInfo>")]internal Pointer<CXIdxAttrInfo> @attrInfo;
-	[CTypeDetails ("Pointer<CXIdxEntityInfo>")]internal Pointer<CXIdxEntityInfo> @objcClass;
+	[CTypeDetails ("Pointer<CXIdxAttrInfo>")]internal System.IntPtr @attrInfo;
+	[CTypeDetails ("Pointer<CXIdxEntityInfo>")]internal System.IntPtr @objcClass;
 	internal CXCursor @classCursor;
 	internal CXIdxLoc @classLoc;
 }
@@ -1123,17 +1123,17 @@ internal enum CXIdxDeclInfoFlags // Index.h (6121, 9)
 [StructLayout (LayoutKind.Sequential)]
 internal struct CXIdxDeclInfo // Index.h (6125, 9)
 {
-	[CTypeDetails ("Pointer<CXIdxEntityInfo>")]internal Pointer<CXIdxEntityInfo> @entityInfo;
+	[CTypeDetails ("Pointer<CXIdxEntityInfo>")]internal System.IntPtr @entityInfo;
 	internal CXCursor @cursor;
 	internal CXIdxLoc @loc;
-	[CTypeDetails ("Pointer<CXIdxContainerInfo>")]internal Pointer<CXIdxContainerInfo> @semanticContainer;
-	[CTypeDetails ("Pointer<CXIdxContainerInfo>")]internal Pointer<CXIdxContainerInfo> @lexicalContainer;
+	[CTypeDetails ("Pointer<CXIdxContainerInfo>")]internal System.IntPtr @semanticContainer;
+	[CTypeDetails ("Pointer<CXIdxContainerInfo>")]internal System.IntPtr @lexicalContainer;
 	internal int @isRedeclaration;
 	internal int @isDefinition;
 	internal int @isContainer;
-	[CTypeDetails ("Pointer<CXIdxContainerInfo>")]internal Pointer<CXIdxContainerInfo> @declAsContainer;
+	[CTypeDetails ("Pointer<CXIdxContainerInfo>")]internal System.IntPtr @declAsContainer;
 	internal int @isImplicit;
-	[CTypeDetails ("Pointer<Pointer<CXIdxAttrInfo>>")]internal Pointer<Pointer<CXIdxAttrInfo>> @attributes;
+	[CTypeDetails ("Pointer<System.IntPtr>")]internal System.IntPtr @attributes;
 	internal uint @numAttributes;
 	internal uint @flags;
 }
@@ -1148,14 +1148,14 @@ internal enum CXIdxObjCContainerKind // Index.h (6151, 9)
 [StructLayout (LayoutKind.Sequential)]
 internal struct CXIdxObjCContainerDeclInfo // Index.h (6157, 9)
 {
-	[CTypeDetails ("Pointer<CXIdxDeclInfo>")]internal Pointer<CXIdxDeclInfo> @declInfo;
+	[CTypeDetails ("Pointer<CXIdxDeclInfo>")]internal System.IntPtr @declInfo;
 	internal CXIdxObjCContainerKind @kind;
 }
 
 [StructLayout (LayoutKind.Sequential)]
 internal struct CXIdxBaseClassInfo // Index.h (6162, 9)
 {
-	[CTypeDetails ("Pointer<CXIdxEntityInfo>")]internal Pointer<CXIdxEntityInfo> @base;
+	[CTypeDetails ("Pointer<CXIdxEntityInfo>")]internal System.IntPtr @base;
 	internal CXCursor @cursor;
 	internal CXIdxLoc @loc;
 }
@@ -1163,7 +1163,7 @@ internal struct CXIdxBaseClassInfo // Index.h (6162, 9)
 [StructLayout (LayoutKind.Sequential)]
 internal struct CXIdxObjCProtocolRefInfo // Index.h (6168, 9)
 {
-	[CTypeDetails ("Pointer<CXIdxEntityInfo>")]internal Pointer<CXIdxEntityInfo> @protocol;
+	[CTypeDetails ("Pointer<CXIdxEntityInfo>")]internal System.IntPtr @protocol;
 	internal CXCursor @cursor;
 	internal CXIdxLoc @loc;
 }
@@ -1171,41 +1171,41 @@ internal struct CXIdxObjCProtocolRefInfo // Index.h (6168, 9)
 [StructLayout (LayoutKind.Sequential)]
 internal struct CXIdxObjCProtocolRefListInfo // Index.h (6174, 9)
 {
-	[CTypeDetails ("Pointer<Pointer<CXIdxObjCProtocolRefInfo>>")]internal Pointer<Pointer<CXIdxObjCProtocolRefInfo>> @protocols;
+	[CTypeDetails ("Pointer<System.IntPtr>")]internal System.IntPtr @protocols;
 	internal uint @numProtocols;
 }
 
 [StructLayout (LayoutKind.Sequential)]
 internal struct CXIdxObjCInterfaceDeclInfo // Index.h (6179, 9)
 {
-	[CTypeDetails ("Pointer<CXIdxObjCContainerDeclInfo>")]internal Pointer<CXIdxObjCContainerDeclInfo> @containerInfo;
-	[CTypeDetails ("Pointer<CXIdxBaseClassInfo>")]internal Pointer<CXIdxBaseClassInfo> @superInfo;
-	[CTypeDetails ("Pointer<CXIdxObjCProtocolRefListInfo>")]internal Pointer<CXIdxObjCProtocolRefListInfo> @protocols;
+	[CTypeDetails ("Pointer<CXIdxObjCContainerDeclInfo>")]internal System.IntPtr @containerInfo;
+	[CTypeDetails ("Pointer<CXIdxBaseClassInfo>")]internal System.IntPtr @superInfo;
+	[CTypeDetails ("Pointer<CXIdxObjCProtocolRefListInfo>")]internal System.IntPtr @protocols;
 }
 
 [StructLayout (LayoutKind.Sequential)]
 internal struct CXIdxObjCCategoryDeclInfo // Index.h (6185, 9)
 {
-	[CTypeDetails ("Pointer<CXIdxObjCContainerDeclInfo>")]internal Pointer<CXIdxObjCContainerDeclInfo> @containerInfo;
-	[CTypeDetails ("Pointer<CXIdxEntityInfo>")]internal Pointer<CXIdxEntityInfo> @objcClass;
+	[CTypeDetails ("Pointer<CXIdxObjCContainerDeclInfo>")]internal System.IntPtr @containerInfo;
+	[CTypeDetails ("Pointer<CXIdxEntityInfo>")]internal System.IntPtr @objcClass;
 	internal CXCursor @classCursor;
 	internal CXIdxLoc @classLoc;
-	[CTypeDetails ("Pointer<CXIdxObjCProtocolRefListInfo>")]internal Pointer<CXIdxObjCProtocolRefListInfo> @protocols;
+	[CTypeDetails ("Pointer<CXIdxObjCProtocolRefListInfo>")]internal System.IntPtr @protocols;
 }
 
 [StructLayout (LayoutKind.Sequential)]
 internal struct CXIdxObjCPropertyDeclInfo // Index.h (6193, 9)
 {
-	[CTypeDetails ("Pointer<CXIdxDeclInfo>")]internal Pointer<CXIdxDeclInfo> @declInfo;
-	[CTypeDetails ("Pointer<CXIdxEntityInfo>")]internal Pointer<CXIdxEntityInfo> @getter;
-	[CTypeDetails ("Pointer<CXIdxEntityInfo>")]internal Pointer<CXIdxEntityInfo> @setter;
+	[CTypeDetails ("Pointer<CXIdxDeclInfo>")]internal System.IntPtr @declInfo;
+	[CTypeDetails ("Pointer<CXIdxEntityInfo>")]internal System.IntPtr @getter;
+	[CTypeDetails ("Pointer<CXIdxEntityInfo>")]internal System.IntPtr @setter;
 }
 
 [StructLayout (LayoutKind.Sequential)]
 internal struct CXIdxCXXClassDeclInfo // Index.h (6199, 9)
 {
-	[CTypeDetails ("Pointer<CXIdxDeclInfo>")]internal Pointer<CXIdxDeclInfo> @declInfo;
-	[CTypeDetails ("Pointer<Pointer<CXIdxBaseClassInfo>>")]internal Pointer<Pointer<CXIdxBaseClassInfo>> @bases;
+	[CTypeDetails ("Pointer<CXIdxDeclInfo>")]internal System.IntPtr @declInfo;
+	[CTypeDetails ("Pointer<System.IntPtr>")]internal System.IntPtr @bases;
 	internal uint @numBases;
 }
 
@@ -1235,9 +1235,9 @@ internal struct CXIdxEntityRefInfo // Index.h (6245, 9)
 	internal CXIdxEntityRefKind @kind;
 	internal CXCursor @cursor;
 	internal CXIdxLoc @loc;
-	[CTypeDetails ("Pointer<CXIdxEntityInfo>")]internal Pointer<CXIdxEntityInfo> @referencedEntity;
-	[CTypeDetails ("Pointer<CXIdxEntityInfo>")]internal Pointer<CXIdxEntityInfo> @parentEntity;
-	[CTypeDetails ("Pointer<CXIdxContainerInfo>")]internal Pointer<CXIdxContainerInfo> @container;
+	[CTypeDetails ("Pointer<CXIdxEntityInfo>")]internal System.IntPtr @referencedEntity;
+	[CTypeDetails ("Pointer<CXIdxEntityInfo>")]internal System.IntPtr @parentEntity;
+	[CTypeDetails ("Pointer<CXIdxContainerInfo>")]internal System.IntPtr @container;
 	internal CXSymbolRole @role;
 }
 
@@ -1266,10 +1266,10 @@ internal enum CXIndexOptFlags // Index.h (6403, 9)
 
 internal partial class Natives
 {
-	const string LibraryName = "clang";
+	const string LibraryName = "clang-7";
 	// function clang_CompilationDatabase_fromDirectory - CXCompilationDatabase.h (80, 1)
 	[DllImport (LibraryName)]
-	internal static extern CXCompilationDatabase clang_CompilationDatabase_fromDirectory ([CTypeDetails ("Pointer<byte>")]string @BuildDir, [CTypeDetails ("Pointer<CXCompilationDatabase_Error>")]Pointer<CXCompilationDatabase_Error> @ErrorCode);
+	internal static extern CXCompilationDatabase clang_CompilationDatabase_fromDirectory ([CTypeDetails ("Pointer<byte>")]string @BuildDir, [CTypeDetails ("Pointer<CXCompilationDatabase_Error>")]System.IntPtr @ErrorCode);
 
 	// function clang_CompilationDatabase_dispose - CXCompilationDatabase.h (87, 1)
 	[DllImport (LibraryName)]
@@ -1469,7 +1469,7 @@ internal partial class Natives
 
 	// function clang_disposeStringSet - CXString.h (61, 21)
 	[DllImport (LibraryName)]
-	internal static extern void clang_disposeStringSet ([CTypeDetails ("Pointer<CXStringSet>")]Pointer<CXStringSet> @set);
+	internal static extern void clang_disposeStringSet ([CTypeDetails ("Pointer<CXStringSet>")]System.IntPtr @set);
 
 	// function clang_getBuildSessionTimestamp - BuildSystem.h (34, 35)
 	[DllImport (LibraryName)]
@@ -1489,7 +1489,7 @@ internal partial class Natives
 
 	// function clang_VirtualFileOverlay_writeToBuffer - BuildSystem.h (81, 1)
 	[DllImport (LibraryName)]
-	internal static extern CXErrorCode clang_VirtualFileOverlay_writeToBuffer (CXVirtualFileOverlay _0, uint @options, [CTypeDetails ("Pointer<string>")]Pointer<string> @out_buffer_ptr, [CTypeDetails ("Pointer<uint>")]Pointer<uint> @out_buffer_size);
+	internal static extern CXErrorCode clang_VirtualFileOverlay_writeToBuffer (CXVirtualFileOverlay _0, uint @options, [CTypeDetails ("Pointer<string>")]System.IntPtr @out_buffer_ptr, [CTypeDetails ("Pointer<uint>")]System.IntPtr @out_buffer_size);
 
 	// function clang_free - BuildSystem.h (91, 21)
 	[DllImport (LibraryName)]
@@ -1513,7 +1513,7 @@ internal partial class Natives
 
 	// function clang_ModuleMapDescriptor_writeToBuffer - BuildSystem.h (138, 1)
 	[DllImport (LibraryName)]
-	internal static extern CXErrorCode clang_ModuleMapDescriptor_writeToBuffer (CXModuleMapDescriptor _0, uint @options, [CTypeDetails ("Pointer<string>")]Pointer<string> @out_buffer_ptr, [CTypeDetails ("Pointer<uint>")]Pointer<uint> @out_buffer_size);
+	internal static extern CXErrorCode clang_ModuleMapDescriptor_writeToBuffer (CXModuleMapDescriptor _0, uint @options, [CTypeDetails ("Pointer<string>")]System.IntPtr @out_buffer_ptr, [CTypeDetails ("Pointer<uint>")]System.IntPtr @out_buffer_size);
 
 	// function clang_ModuleMapDescriptor_dispose - BuildSystem.h (145, 21)
 	[DllImport (LibraryName)]
@@ -1549,7 +1549,7 @@ internal partial class Natives
 
 	// function clang_getFileUniqueID - Index.h (383, 20)
 	[DllImport (LibraryName)]
-	internal static extern int clang_getFileUniqueID (CXFile @file, [CTypeDetails ("Pointer<CXFileUniqueID>")]Pointer<CXFileUniqueID> @outID);
+	internal static extern int clang_getFileUniqueID (CXFile @file, [CTypeDetails ("Pointer<CXFileUniqueID>")]System.IntPtr @outID);
 
 	// function clang_isFileMultipleIncludeGuarded - Index.h (391, 1)
 	[DllImport (LibraryName)]
@@ -1561,7 +1561,7 @@ internal partial class Natives
 
 	// function clang_getFileContents - Index.h (418, 28)
 	[DllImport (LibraryName)]
-	internal static extern string clang_getFileContents (CXTranslationUnit @tu, CXFile @file, [CTypeDetails ("Pointer<size_t>")]Pointer<size_t> @size);
+	internal static extern string clang_getFileContents (CXTranslationUnit @tu, CXFile @file, [CTypeDetails ("Pointer<size_t>")]System.IntPtr @size);
 
 	// function clang_File_isEqual - Index.h (425, 20)
 	[DllImport (LibraryName)]
@@ -1613,23 +1613,23 @@ internal partial class Natives
 
 	// function clang_getExpansionLocation - Index.h (565, 21)
 	[DllImport (LibraryName)]
-	internal static extern void clang_getExpansionLocation (CXSourceLocation @location, [CTypeDetails ("Pointer<CXFile>")]Pointer<CXFile> @file, [CTypeDetails ("Pointer<uint>")]Pointer<uint> @line, [CTypeDetails ("Pointer<uint>")]Pointer<uint> @column, [CTypeDetails ("Pointer<uint>")]Pointer<uint> @offset);
+	internal static extern void clang_getExpansionLocation (CXSourceLocation @location, [CTypeDetails ("Pointer<CXFile>")]System.IntPtr @file, [CTypeDetails ("Pointer<uint>")]System.IntPtr @line, [CTypeDetails ("Pointer<uint>")]System.IntPtr @column, [CTypeDetails ("Pointer<uint>")]System.IntPtr @offset);
 
 	// function clang_getPresumedLocation - Index.h (611, 21)
 	[DllImport (LibraryName)]
-	internal static extern void clang_getPresumedLocation (CXSourceLocation @location, [CTypeDetails ("Pointer<CXString>")]Pointer<CXString> @filename, [CTypeDetails ("Pointer<uint>")]Pointer<uint> @line, [CTypeDetails ("Pointer<uint>")]Pointer<uint> @column);
+	internal static extern void clang_getPresumedLocation (CXSourceLocation @location, [CTypeDetails ("Pointer<CXString>")]System.IntPtr @filename, [CTypeDetails ("Pointer<uint>")]System.IntPtr @line, [CTypeDetails ("Pointer<uint>")]System.IntPtr @column);
 
 	// function clang_getInstantiationLocation - Index.h (624, 21)
 	[DllImport (LibraryName)]
-	internal static extern void clang_getInstantiationLocation (CXSourceLocation @location, [CTypeDetails ("Pointer<CXFile>")]Pointer<CXFile> @file, [CTypeDetails ("Pointer<uint>")]Pointer<uint> @line, [CTypeDetails ("Pointer<uint>")]Pointer<uint> @column, [CTypeDetails ("Pointer<uint>")]Pointer<uint> @offset);
+	internal static extern void clang_getInstantiationLocation (CXSourceLocation @location, [CTypeDetails ("Pointer<CXFile>")]System.IntPtr @file, [CTypeDetails ("Pointer<uint>")]System.IntPtr @line, [CTypeDetails ("Pointer<uint>")]System.IntPtr @column, [CTypeDetails ("Pointer<uint>")]System.IntPtr @offset);
 
 	// function clang_getSpellingLocation - Index.h (652, 21)
 	[DllImport (LibraryName)]
-	internal static extern void clang_getSpellingLocation (CXSourceLocation @location, [CTypeDetails ("Pointer<CXFile>")]Pointer<CXFile> @file, [CTypeDetails ("Pointer<uint>")]Pointer<uint> @line, [CTypeDetails ("Pointer<uint>")]Pointer<uint> @column, [CTypeDetails ("Pointer<uint>")]Pointer<uint> @offset);
+	internal static extern void clang_getSpellingLocation (CXSourceLocation @location, [CTypeDetails ("Pointer<CXFile>")]System.IntPtr @file, [CTypeDetails ("Pointer<uint>")]System.IntPtr @line, [CTypeDetails ("Pointer<uint>")]System.IntPtr @column, [CTypeDetails ("Pointer<uint>")]System.IntPtr @offset);
 
 	// function clang_getFileLocation - Index.h (681, 21)
 	[DllImport (LibraryName)]
-	internal static extern void clang_getFileLocation (CXSourceLocation @location, [CTypeDetails ("Pointer<CXFile>")]Pointer<CXFile> @file, [CTypeDetails ("Pointer<uint>")]Pointer<uint> @line, [CTypeDetails ("Pointer<uint>")]Pointer<uint> @column, [CTypeDetails ("Pointer<uint>")]Pointer<uint> @offset);
+	internal static extern void clang_getFileLocation (CXSourceLocation @location, [CTypeDetails ("Pointer<CXFile>")]System.IntPtr @file, [CTypeDetails ("Pointer<uint>")]System.IntPtr @line, [CTypeDetails ("Pointer<uint>")]System.IntPtr @column, [CTypeDetails ("Pointer<uint>")]System.IntPtr @offset);
 
 	// function clang_getRangeStart - Index.h (691, 33)
 	[DllImport (LibraryName)]
@@ -1641,15 +1641,15 @@ internal partial class Natives
 
 	// function clang_getSkippedRanges - Index.h (717, 35)
 	[DllImport (LibraryName)]
-	internal static extern Pointer<CXSourceRangeList> clang_getSkippedRanges (CXTranslationUnit @tu, CXFile @file);
+	internal static extern System.IntPtr clang_getSkippedRanges (CXTranslationUnit @tu, CXFile @file);
 
 	// function clang_getAllSkippedRanges - Index.h (727, 35)
 	[DllImport (LibraryName)]
-	internal static extern Pointer<CXSourceRangeList> clang_getAllSkippedRanges (CXTranslationUnit @tu);
+	internal static extern System.IntPtr clang_getAllSkippedRanges (CXTranslationUnit @tu);
 
 	// function clang_disposeSourceRangeList - Index.h (732, 21)
 	[DllImport (LibraryName)]
-	internal static extern void clang_disposeSourceRangeList ([CTypeDetails ("Pointer<CXSourceRangeList>")]Pointer<CXSourceRangeList> @ranges);
+	internal static extern void clang_disposeSourceRangeList ([CTypeDetails ("Pointer<CXSourceRangeList>")]System.IntPtr @ranges);
 
 	// function clang_getNumDiagnosticsInSet - Index.h (793, 25)
 	[DllImport (LibraryName)]
@@ -1661,7 +1661,7 @@ internal partial class Natives
 
 	// function clang_loadDiagnostics - Index.h (849, 32)
 	[DllImport (LibraryName)]
-	internal static extern CXDiagnosticSet clang_loadDiagnostics ([CTypeDetails ("Pointer<byte>")]string @file, [CTypeDetails ("Pointer<CXLoadDiag_Error>")]Pointer<CXLoadDiag_Error> @error, [CTypeDetails ("Pointer<CXString>")]Pointer<CXString> @errorString);
+	internal static extern CXDiagnosticSet clang_loadDiagnostics ([CTypeDetails ("Pointer<byte>")]string @file, [CTypeDetails ("Pointer<CXLoadDiag_Error>")]System.IntPtr @error, [CTypeDetails ("Pointer<CXString>")]System.IntPtr @errorString);
 
 	// function clang_disposeDiagnosticSet - Index.h (856, 21)
 	[DllImport (LibraryName)]
@@ -1709,7 +1709,7 @@ internal partial class Natives
 
 	// function clang_getDiagnosticOption - Index.h (1024, 25)
 	[DllImport (LibraryName)]
-	internal static extern CXString clang_getDiagnosticOption (CXDiagnostic @Diag, [CTypeDetails ("Pointer<CXString>")]Pointer<CXString> @Disable);
+	internal static extern CXString clang_getDiagnosticOption (CXDiagnostic @Diag, [CTypeDetails ("Pointer<CXString>")]System.IntPtr @Disable);
 
 	// function clang_getDiagnosticCategory - Index.h (1037, 25)
 	[DllImport (LibraryName)]
@@ -1737,7 +1737,7 @@ internal partial class Natives
 
 	// function clang_getDiagnosticFixIt - Index.h (1112, 25)
 	[DllImport (LibraryName)]
-	internal static extern CXString clang_getDiagnosticFixIt (CXDiagnostic @Diagnostic, uint @FixIt, [CTypeDetails ("Pointer<CXSourceRange>")]Pointer<CXSourceRange> @ReplacementRange);
+	internal static extern CXString clang_getDiagnosticFixIt (CXDiagnostic @Diagnostic, uint @FixIt, [CTypeDetails ("Pointer<CXSourceRange>")]System.IntPtr @ReplacementRange);
 
 	// function clang_getTranslationUnitSpelling - Index.h (1134, 1)
 	[DllImport (LibraryName)]
@@ -1745,7 +1745,7 @@ internal partial class Natives
 
 	// function clang_createTranslationUnitFromSourceFile - Index.h (1176, 34)
 	[DllImport (LibraryName)]
-	internal static extern CXTranslationUnit clang_createTranslationUnitFromSourceFile (CXIndex @CIdx, [CTypeDetails ("Pointer<byte>")]string @source_filename, int @num_clang_command_line_args, [CTypeDetails ("Pointer<string>")]Pointer<string> @clang_command_line_args, uint @num_unsaved_files, [CTypeDetails ("Pointer<CXUnsavedFile>")]Pointer<CXUnsavedFile> @unsaved_files);
+	internal static extern CXTranslationUnit clang_createTranslationUnitFromSourceFile (CXIndex @CIdx, [CTypeDetails ("Pointer<byte>")]string @source_filename, int @num_clang_command_line_args, [CTypeDetails ("Pointer<string>")]System.IntPtr @clang_command_line_args, uint @num_unsaved_files, [CTypeDetails ("Pointer<CXUnsavedFile>")]System.IntPtr @unsaved_files);
 
 	// function clang_createTranslationUnit - Index.h (1190, 34)
 	[DllImport (LibraryName)]
@@ -1753,7 +1753,7 @@ internal partial class Natives
 
 	// function clang_createTranslationUnit2 - Index.h (1202, 33)
 	[DllImport (LibraryName)]
-	internal static extern CXErrorCode clang_createTranslationUnit2 (CXIndex @CIdx, [CTypeDetails ("Pointer<byte>")]string @ast_filename, [CTypeDetails ("Pointer<CXTranslationUnit>")]Pointer<CXTranslationUnit> @out_TU);
+	internal static extern CXErrorCode clang_createTranslationUnit2 (CXIndex @CIdx, [CTypeDetails ("Pointer<byte>")]string @ast_filename, [CTypeDetails ("Pointer<CXTranslationUnit>")]System.IntPtr @out_TU);
 
 	// function clang_defaultEditingTranslationUnitOptions - Index.h (1350, 25)
 	[DllImport (LibraryName)]
@@ -1761,15 +1761,15 @@ internal partial class Natives
 
 	// function clang_parseTranslationUnit - Index.h (1359, 1)
 	[DllImport (LibraryName)]
-	internal static extern CXTranslationUnit clang_parseTranslationUnit (CXIndex @CIdx, [CTypeDetails ("Pointer<byte>")]string @source_filename, [CTypeDetails ("Pointer<string>")]Pointer<string> @command_line_args, int @num_command_line_args, [CTypeDetails ("Pointer<CXUnsavedFile>")]Pointer<CXUnsavedFile> @unsaved_files, uint @num_unsaved_files, uint @options);
+	internal static extern CXTranslationUnit clang_parseTranslationUnit (CXIndex @CIdx, [CTypeDetails ("Pointer<byte>")]string @source_filename, [CTypeDetails ("Pointer<string>")]System.IntPtr @command_line_args, int @num_command_line_args, [CTypeDetails ("Pointer<CXUnsavedFile>")]System.IntPtr @unsaved_files, uint @num_unsaved_files, uint @options);
 
 	// function clang_parseTranslationUnit2 - Index.h (1412, 1)
 	[DllImport (LibraryName)]
-	internal static extern CXErrorCode clang_parseTranslationUnit2 (CXIndex @CIdx, [CTypeDetails ("Pointer<byte>")]string @source_filename, [CTypeDetails ("Pointer<string>")]Pointer<string> @command_line_args, int @num_command_line_args, [CTypeDetails ("Pointer<CXUnsavedFile>")]Pointer<CXUnsavedFile> @unsaved_files, uint @num_unsaved_files, uint @options, [CTypeDetails ("Pointer<CXTranslationUnit>")]Pointer<CXTranslationUnit> @out_TU);
+	internal static extern CXErrorCode clang_parseTranslationUnit2 (CXIndex @CIdx, [CTypeDetails ("Pointer<byte>")]string @source_filename, [CTypeDetails ("Pointer<string>")]System.IntPtr @command_line_args, int @num_command_line_args, [CTypeDetails ("Pointer<CXUnsavedFile>")]System.IntPtr @unsaved_files, uint @num_unsaved_files, uint @options, [CTypeDetails ("Pointer<CXTranslationUnit>")]System.IntPtr @out_TU);
 
 	// function clang_parseTranslationUnit2FullArgv - Index.h (1426, 33)
 	[DllImport (LibraryName)]
-	internal static extern CXErrorCode clang_parseTranslationUnit2FullArgv (CXIndex @CIdx, [CTypeDetails ("Pointer<byte>")]string @source_filename, [CTypeDetails ("Pointer<string>")]Pointer<string> @command_line_args, int @num_command_line_args, [CTypeDetails ("Pointer<CXUnsavedFile>")]Pointer<CXUnsavedFile> @unsaved_files, uint @num_unsaved_files, uint @options, [CTypeDetails ("Pointer<CXTranslationUnit>")]Pointer<CXTranslationUnit> @out_TU);
+	internal static extern CXErrorCode clang_parseTranslationUnit2FullArgv (CXIndex @CIdx, [CTypeDetails ("Pointer<byte>")]string @source_filename, [CTypeDetails ("Pointer<string>")]System.IntPtr @command_line_args, int @num_command_line_args, [CTypeDetails ("Pointer<CXUnsavedFile>")]System.IntPtr @unsaved_files, uint @num_unsaved_files, uint @options, [CTypeDetails ("Pointer<CXTranslationUnit>")]System.IntPtr @out_TU);
 
 	// function clang_defaultSaveOptions - Index.h (1455, 25)
 	[DllImport (LibraryName)]
@@ -1793,7 +1793,7 @@ internal partial class Natives
 
 	// function clang_reparseTranslationUnit - Index.h (1598, 20)
 	[DllImport (LibraryName)]
-	internal static extern int clang_reparseTranslationUnit (CXTranslationUnit @TU, uint @num_unsaved_files, [CTypeDetails ("Pointer<CXUnsavedFile>")]Pointer<CXUnsavedFile> @unsaved_files, uint @options);
+	internal static extern int clang_reparseTranslationUnit (CXTranslationUnit @TU, uint @num_unsaved_files, [CTypeDetails ("Pointer<CXUnsavedFile>")]System.IntPtr @unsaved_files, uint @options);
 
 	// function clang_getTUResourceUsageName - Index.h (1634, 13)
 	[DllImport (LibraryName)]
@@ -1905,11 +1905,11 @@ internal partial class Natives
 
 	// function clang_getCursorPlatformAvailability - Index.h (2865, 1)
 	[DllImport (LibraryName)]
-	internal static extern int clang_getCursorPlatformAvailability (CXCursor @cursor, [CTypeDetails ("Pointer<int>")]Pointer<int> @always_deprecated, [CTypeDetails ("Pointer<CXString>")]Pointer<CXString> @deprecated_message, [CTypeDetails ("Pointer<int>")]Pointer<int> @always_unavailable, [CTypeDetails ("Pointer<CXString>")]Pointer<CXString> @unavailable_message, [CTypeDetails ("Pointer<CXPlatformAvailability>")]Pointer<CXPlatformAvailability> @availability, int @availability_size);
+	internal static extern int clang_getCursorPlatformAvailability (CXCursor @cursor, [CTypeDetails ("Pointer<int>")]System.IntPtr @always_deprecated, [CTypeDetails ("Pointer<CXString>")]System.IntPtr @deprecated_message, [CTypeDetails ("Pointer<int>")]System.IntPtr @always_unavailable, [CTypeDetails ("Pointer<CXString>")]System.IntPtr @unavailable_message, [CTypeDetails ("Pointer<CXPlatformAvailability>")]System.IntPtr @availability, int @availability_size);
 
 	// function clang_disposeCXPlatformAvailability - Index.h (2877, 1)
 	[DllImport (LibraryName)]
-	internal static extern void clang_disposeCXPlatformAvailability ([CTypeDetails ("Pointer<CXPlatformAvailability>")]Pointer<CXPlatformAvailability> @availability);
+	internal static extern void clang_disposeCXPlatformAvailability ([CTypeDetails ("Pointer<CXPlatformAvailability>")]System.IntPtr @availability);
 
 	// function clang_getCursorLanguage - Index.h (2892, 36)
 	[DllImport (LibraryName)]
@@ -1949,11 +1949,11 @@ internal partial class Natives
 
 	// function clang_getOverriddenCursors - Index.h (3060, 21)
 	[DllImport (LibraryName)]
-	internal static extern void clang_getOverriddenCursors (CXCursor @cursor, [CTypeDetails ("Pointer<Pointer<CXCursor>>")]Pointer<Pointer<CXCursor>> @overridden, [CTypeDetails ("Pointer<uint>")]Pointer<uint> @num_overridden);
+	internal static extern void clang_getOverriddenCursors (CXCursor @cursor, [CTypeDetails ("Pointer<System.IntPtr>")]System.IntPtr @overridden, [CTypeDetails ("Pointer<uint>")]System.IntPtr @num_overridden);
 
 	// function clang_disposeOverriddenCursors - Index.h (3068, 21)
 	[DllImport (LibraryName)]
-	internal static extern void clang_disposeOverriddenCursors ([CTypeDetails ("Pointer<CXCursor>")]Pointer<CXCursor> @overridden);
+	internal static extern void clang_disposeOverriddenCursors ([CTypeDetails ("Pointer<CXCursor>")]System.IntPtr @overridden);
 
 	// function clang_getIncludedFile - Index.h (3074, 23)
 	[DllImport (LibraryName)]
@@ -2321,7 +2321,7 @@ internal partial class Natives
 
 	// function clang_Cursor_isExternalSymbol - Index.h (4397, 25)
 	[DllImport (LibraryName)]
-	internal static extern uint clang_Cursor_isExternalSymbol (CXCursor @C, [CTypeDetails ("Pointer<CXString>")]Pointer<CXString> @language, [CTypeDetails ("Pointer<CXString>")]Pointer<CXString> @definedIn, [CTypeDetails ("Pointer<uint>")]Pointer<uint> @isGenerated);
+	internal static extern uint clang_Cursor_isExternalSymbol (CXCursor @C, [CTypeDetails ("Pointer<CXString>")]System.IntPtr @language, [CTypeDetails ("Pointer<CXString>")]System.IntPtr @definedIn, [CTypeDetails ("Pointer<uint>")]System.IntPtr @isGenerated);
 
 	// function clang_Cursor_getCommentRange - Index.h (4406, 30)
 	[DllImport (LibraryName)]
@@ -2341,11 +2341,11 @@ internal partial class Natives
 
 	// function clang_Cursor_getCXXManglings - Index.h (4439, 29)
 	[DllImport (LibraryName)]
-	internal static extern Pointer<CXStringSet> clang_Cursor_getCXXManglings (CXCursor _0);
+	internal static extern System.IntPtr clang_Cursor_getCXXManglings (CXCursor _0);
 
 	// function clang_Cursor_getObjCManglings - Index.h (4445, 29)
 	[DllImport (LibraryName)]
-	internal static extern Pointer<CXStringSet> clang_Cursor_getObjCManglings (CXCursor _0);
+	internal static extern System.IntPtr clang_Cursor_getObjCManglings (CXCursor _0);
 
 	// function clang_Cursor_getModule - Index.h (4464, 25)
 	[DllImport (LibraryName)]
@@ -2445,7 +2445,7 @@ internal partial class Natives
 
 	// function clang_getToken - Index.h (4767, 25)
 	[DllImport (LibraryName)]
-	internal static extern Pointer<CXToken> clang_getToken (CXTranslationUnit @TU, CXSourceLocation @Location);
+	internal static extern System.IntPtr clang_getToken (CXTranslationUnit @TU, CXSourceLocation @Location);
 
 	// function clang_getTokenKind - Index.h (4773, 28)
 	[DllImport (LibraryName)]
@@ -2465,15 +2465,15 @@ internal partial class Natives
 
 	// function clang_tokenize - Index.h (4811, 21)
 	[DllImport (LibraryName)]
-	internal static extern void clang_tokenize (CXTranslationUnit @TU, CXSourceRange @Range, [CTypeDetails ("Pointer<Pointer<CXToken>>")]Pointer<Pointer<CXToken>> @Tokens, [CTypeDetails ("Pointer<uint>")]Pointer<uint> @NumTokens);
+	internal static extern void clang_tokenize (CXTranslationUnit @TU, CXSourceRange @Range, [CTypeDetails ("Pointer<System.IntPtr>")]System.IntPtr @Tokens, [CTypeDetails ("Pointer<uint>")]System.IntPtr @NumTokens);
 
 	// function clang_annotateTokens - Index.h (4844, 21)
 	[DllImport (LibraryName)]
-	internal static extern void clang_annotateTokens (CXTranslationUnit @TU, [CTypeDetails ("Pointer<CXToken>")]Pointer<CXToken> @Tokens, uint @NumTokens, [CTypeDetails ("Pointer<CXCursor>")]Pointer<CXCursor> @Cursors);
+	internal static extern void clang_annotateTokens (CXTranslationUnit @TU, [CTypeDetails ("Pointer<CXToken>")]System.IntPtr @Tokens, uint @NumTokens, [CTypeDetails ("Pointer<CXCursor>")]System.IntPtr @Cursors);
 
 	// function clang_disposeTokens - Index.h (4851, 21)
 	[DllImport (LibraryName)]
-	internal static extern void clang_disposeTokens (CXTranslationUnit @TU, [CTypeDetails ("Pointer<CXToken>")]Pointer<CXToken> @Tokens, uint @NumTokens);
+	internal static extern void clang_disposeTokens (CXTranslationUnit @TU, [CTypeDetails ("Pointer<CXToken>")]System.IntPtr @Tokens, uint @NumTokens);
 
 	// function clang_getCursorKindSpelling - Index.h (4868, 25)
 	[DllImport (LibraryName)]
@@ -2481,7 +2481,7 @@ internal partial class Natives
 
 	// function clang_getDefinitionSpellingAndExtent - Index.h (4869, 21)
 	[DllImport (LibraryName)]
-	internal static extern void clang_getDefinitionSpellingAndExtent (CXCursor _0, [CTypeDetails ("Pointer<string>")]Pointer<string> @startBuf, [CTypeDetails ("Pointer<string>")]Pointer<string> @endBuf, [CTypeDetails ("Pointer<uint>")]Pointer<uint> @startLine, [CTypeDetails ("Pointer<uint>")]Pointer<uint> @startColumn, [CTypeDetails ("Pointer<uint>")]Pointer<uint> @endLine, [CTypeDetails ("Pointer<uint>")]Pointer<uint> @endColumn);
+	internal static extern void clang_getDefinitionSpellingAndExtent (CXCursor _0, [CTypeDetails ("Pointer<string>")]System.IntPtr @startBuf, [CTypeDetails ("Pointer<string>")]System.IntPtr @endBuf, [CTypeDetails ("Pointer<uint>")]System.IntPtr @startLine, [CTypeDetails ("Pointer<uint>")]System.IntPtr @startColumn, [CTypeDetails ("Pointer<uint>")]System.IntPtr @endLine, [CTypeDetails ("Pointer<uint>")]System.IntPtr @endColumn);
 
 	// function clang_enableStackTraces - Index.h (4876, 21)
 	[DllImport (LibraryName)]
@@ -2525,7 +2525,7 @@ internal partial class Natives
 
 	// function clang_getCompletionParent - Index.h (5223, 1)
 	[DllImport (LibraryName)]
-	internal static extern CXString clang_getCompletionParent (CXCompletionString @completion_string, [CTypeDetails ("Pointer<CXCursorKind>")]Pointer<CXCursorKind> @kind);
+	internal static extern CXString clang_getCompletionParent (CXCompletionString @completion_string, [CTypeDetails ("Pointer<CXCursorKind>")]System.IntPtr @kind);
 
 	// function clang_getCompletionBriefComment - Index.h (5231, 1)
 	[DllImport (LibraryName)]
@@ -2537,11 +2537,11 @@ internal partial class Natives
 
 	// function clang_getCompletionNumFixIts - Index.h (5279, 1)
 	[DllImport (LibraryName)]
-	internal static extern uint clang_getCompletionNumFixIts ([CTypeDetails ("Pointer<CXCodeCompleteResults>")]Pointer<CXCodeCompleteResults> @results, uint @completion_index);
+	internal static extern uint clang_getCompletionNumFixIts ([CTypeDetails ("Pointer<CXCodeCompleteResults>")]System.IntPtr @results, uint @completion_index);
 
 	// function clang_getCompletionFixIt - Index.h (5325, 25)
 	[DllImport (LibraryName)]
-	internal static extern CXString clang_getCompletionFixIt ([CTypeDetails ("Pointer<CXCodeCompleteResults>")]Pointer<CXCodeCompleteResults> @results, uint @completion_index, uint @fixit_index, [CTypeDetails ("Pointer<CXSourceRange>")]Pointer<CXSourceRange> @replacement_range);
+	internal static extern CXString clang_getCompletionFixIt ([CTypeDetails ("Pointer<CXCodeCompleteResults>")]System.IntPtr @results, uint @completion_index, uint @fixit_index, [CTypeDetails ("Pointer<CXSourceRange>")]System.IntPtr @replacement_range);
 
 	// function clang_defaultCodeCompleteOptions - Index.h (5504, 25)
 	[DllImport (LibraryName)]
@@ -2549,39 +2549,39 @@ internal partial class Natives
 
 	// function clang_codeCompleteAt - Index.h (5575, 24)
 	[DllImport (LibraryName)]
-	internal static extern Pointer<CXCodeCompleteResults> clang_codeCompleteAt (CXTranslationUnit @TU, [CTypeDetails ("Pointer<byte>")]string @complete_filename, uint @complete_line, uint @complete_column, [CTypeDetails ("Pointer<CXUnsavedFile>")]Pointer<CXUnsavedFile> @unsaved_files, uint @num_unsaved_files, uint @options);
+	internal static extern System.IntPtr clang_codeCompleteAt (CXTranslationUnit @TU, [CTypeDetails ("Pointer<byte>")]string @complete_filename, uint @complete_line, uint @complete_column, [CTypeDetails ("Pointer<CXUnsavedFile>")]System.IntPtr @unsaved_files, uint @num_unsaved_files, uint @options);
 
 	// function clang_sortCodeCompletionResults - Index.h (5591, 6)
 	[DllImport (LibraryName)]
-	internal static extern void clang_sortCodeCompletionResults ([CTypeDetails ("Pointer<CXCompletionResult>")]Pointer<CXCompletionResult> @Results, uint @NumResults);
+	internal static extern void clang_sortCodeCompletionResults ([CTypeDetails ("Pointer<CXCompletionResult>")]System.IntPtr @Results, uint @NumResults);
 
 	// function clang_disposeCodeCompleteResults - Index.h (5598, 6)
 	[DllImport (LibraryName)]
-	internal static extern void clang_disposeCodeCompleteResults ([CTypeDetails ("Pointer<CXCodeCompleteResults>")]Pointer<CXCodeCompleteResults> @Results);
+	internal static extern void clang_disposeCodeCompleteResults ([CTypeDetails ("Pointer<CXCodeCompleteResults>")]System.IntPtr @Results);
 
 	// function clang_codeCompleteGetNumDiagnostics - Index.h (5605, 10)
 	[DllImport (LibraryName)]
-	internal static extern uint clang_codeCompleteGetNumDiagnostics ([CTypeDetails ("Pointer<CXCodeCompleteResults>")]Pointer<CXCodeCompleteResults> @Results);
+	internal static extern uint clang_codeCompleteGetNumDiagnostics ([CTypeDetails ("Pointer<CXCodeCompleteResults>")]System.IntPtr @Results);
 
 	// function clang_codeCompleteGetDiagnostic - Index.h (5617, 14)
 	[DllImport (LibraryName)]
-	internal static extern CXDiagnostic clang_codeCompleteGetDiagnostic ([CTypeDetails ("Pointer<CXCodeCompleteResults>")]Pointer<CXCodeCompleteResults> @Results, uint @Index);
+	internal static extern CXDiagnostic clang_codeCompleteGetDiagnostic ([CTypeDetails ("Pointer<CXCodeCompleteResults>")]System.IntPtr @Results, uint @Index);
 
 	// function clang_codeCompleteGetContexts - Index.h (5630, 20)
 	[DllImport (LibraryName)]
-	internal static extern ulong clang_codeCompleteGetContexts ([CTypeDetails ("Pointer<CXCodeCompleteResults>")]Pointer<CXCodeCompleteResults> @Results);
+	internal static extern ulong clang_codeCompleteGetContexts ([CTypeDetails ("Pointer<CXCodeCompleteResults>")]System.IntPtr @Results);
 
 	// function clang_codeCompleteGetContainerKind - Index.h (5650, 19)
 	[DllImport (LibraryName)]
-	internal static extern CXCursorKind clang_codeCompleteGetContainerKind ([CTypeDetails ("Pointer<CXCodeCompleteResults>")]Pointer<CXCodeCompleteResults> @Results, [CTypeDetails ("Pointer<uint>")]Pointer<uint> @IsIncomplete);
+	internal static extern CXCursorKind clang_codeCompleteGetContainerKind ([CTypeDetails ("Pointer<CXCodeCompleteResults>")]System.IntPtr @Results, [CTypeDetails ("Pointer<uint>")]System.IntPtr @IsIncomplete);
 
 	// function clang_codeCompleteGetContainerUSR - Index.h (5664, 10)
 	[DllImport (LibraryName)]
-	internal static extern CXString clang_codeCompleteGetContainerUSR ([CTypeDetails ("Pointer<CXCodeCompleteResults>")]Pointer<CXCodeCompleteResults> @Results);
+	internal static extern CXString clang_codeCompleteGetContainerUSR ([CTypeDetails ("Pointer<CXCodeCompleteResults>")]System.IntPtr @Results);
 
 	// function clang_codeCompleteGetObjCSelector - Index.h (5678, 10)
 	[DllImport (LibraryName)]
-	internal static extern CXString clang_codeCompleteGetObjCSelector ([CTypeDetails ("Pointer<CXCodeCompleteResults>")]Pointer<CXCodeCompleteResults> @Results);
+	internal static extern CXString clang_codeCompleteGetObjCSelector ([CTypeDetails ("Pointer<CXCodeCompleteResults>")]System.IntPtr @Results);
 
 	// function clang_getClangVersion - Index.h (5694, 25)
 	[DllImport (LibraryName)]
@@ -2637,7 +2637,7 @@ internal partial class Natives
 
 	// function clang_getRemappingsFromFileList - Index.h (5837, 13)
 	[DllImport (LibraryName)]
-	internal static extern CXRemapping clang_getRemappingsFromFileList ([CTypeDetails ("Pointer<string>")]Pointer<string> @filePaths, uint @numFiles);
+	internal static extern CXRemapping clang_getRemappingsFromFileList ([CTypeDetails ("Pointer<string>")]System.IntPtr @filePaths, uint @numFiles);
 
 	// function clang_remap_getNumFiles - Index.h (5843, 25)
 	[DllImport (LibraryName)]
@@ -2645,7 +2645,7 @@ internal partial class Natives
 
 	// function clang_remap_getFilenames - Index.h (5853, 21)
 	[DllImport (LibraryName)]
-	internal static extern void clang_remap_getFilenames (CXRemapping _0, uint @index, [CTypeDetails ("Pointer<CXString>")]Pointer<CXString> @original, [CTypeDetails ("Pointer<CXString>")]Pointer<CXString> @transformed);
+	internal static extern void clang_remap_getFilenames (CXRemapping _0, uint @index, [CTypeDetails ("Pointer<CXString>")]System.IntPtr @original, [CTypeDetails ("Pointer<CXString>")]System.IntPtr @transformed);
 
 	// function clang_remap_dispose - Index.h (5859, 21)
 	[DllImport (LibraryName)]
@@ -2665,47 +2665,47 @@ internal partial class Natives
 
 	// function clang_index_getObjCContainerDeclInfo - Index.h (6334, 1)
 	[DllImport (LibraryName)]
-	internal static extern Pointer<CXIdxObjCContainerDeclInfo> clang_index_getObjCContainerDeclInfo ([CTypeDetails ("Pointer<CXIdxDeclInfo>")]Pointer<CXIdxDeclInfo> _0);
+	internal static extern System.IntPtr clang_index_getObjCContainerDeclInfo ([CTypeDetails ("Pointer<CXIdxDeclInfo>")]System.IntPtr _0);
 
 	// function clang_index_getObjCInterfaceDeclInfo - Index.h (6337, 1)
 	[DllImport (LibraryName)]
-	internal static extern Pointer<CXIdxObjCInterfaceDeclInfo> clang_index_getObjCInterfaceDeclInfo ([CTypeDetails ("Pointer<CXIdxDeclInfo>")]Pointer<CXIdxDeclInfo> _0);
+	internal static extern System.IntPtr clang_index_getObjCInterfaceDeclInfo ([CTypeDetails ("Pointer<CXIdxDeclInfo>")]System.IntPtr _0);
 
 	// function clang_index_getObjCCategoryDeclInfo - Index.h (6341, 1)
 	[DllImport (LibraryName)]
-	internal static extern Pointer<CXIdxObjCCategoryDeclInfo> clang_index_getObjCCategoryDeclInfo ([CTypeDetails ("Pointer<CXIdxDeclInfo>")]Pointer<CXIdxDeclInfo> _0);
+	internal static extern System.IntPtr clang_index_getObjCCategoryDeclInfo ([CTypeDetails ("Pointer<CXIdxDeclInfo>")]System.IntPtr _0);
 
 	// function clang_index_getObjCProtocolRefListInfo - Index.h (6344, 1)
 	[DllImport (LibraryName)]
-	internal static extern Pointer<CXIdxObjCProtocolRefListInfo> clang_index_getObjCProtocolRefListInfo ([CTypeDetails ("Pointer<CXIdxDeclInfo>")]Pointer<CXIdxDeclInfo> _0);
+	internal static extern System.IntPtr clang_index_getObjCProtocolRefListInfo ([CTypeDetails ("Pointer<CXIdxDeclInfo>")]System.IntPtr _0);
 
 	// function clang_index_getObjCPropertyDeclInfo - Index.h (6347, 1)
 	[DllImport (LibraryName)]
-	internal static extern Pointer<CXIdxObjCPropertyDeclInfo> clang_index_getObjCPropertyDeclInfo ([CTypeDetails ("Pointer<CXIdxDeclInfo>")]Pointer<CXIdxDeclInfo> _0);
+	internal static extern System.IntPtr clang_index_getObjCPropertyDeclInfo ([CTypeDetails ("Pointer<CXIdxDeclInfo>")]System.IntPtr _0);
 
 	// function clang_index_getIBOutletCollectionAttrInfo - Index.h (6350, 1)
 	[DllImport (LibraryName)]
-	internal static extern Pointer<CXIdxIBOutletCollectionAttrInfo> clang_index_getIBOutletCollectionAttrInfo ([CTypeDetails ("Pointer<CXIdxAttrInfo>")]Pointer<CXIdxAttrInfo> _0);
+	internal static extern System.IntPtr clang_index_getIBOutletCollectionAttrInfo ([CTypeDetails ("Pointer<CXIdxAttrInfo>")]System.IntPtr _0);
 
 	// function clang_index_getCXXClassDeclInfo - Index.h (6353, 1)
 	[DllImport (LibraryName)]
-	internal static extern Pointer<CXIdxCXXClassDeclInfo> clang_index_getCXXClassDeclInfo ([CTypeDetails ("Pointer<CXIdxDeclInfo>")]Pointer<CXIdxDeclInfo> _0);
+	internal static extern System.IntPtr clang_index_getCXXClassDeclInfo ([CTypeDetails ("Pointer<CXIdxDeclInfo>")]System.IntPtr _0);
 
 	// function clang_index_getClientContainer - Index.h (6360, 1)
 	[DllImport (LibraryName)]
-	internal static extern CXIdxClientContainer clang_index_getClientContainer ([CTypeDetails ("Pointer<CXIdxContainerInfo>")]Pointer<CXIdxContainerInfo> _0);
+	internal static extern CXIdxClientContainer clang_index_getClientContainer ([CTypeDetails ("Pointer<CXIdxContainerInfo>")]System.IntPtr _0);
 
 	// function clang_index_setClientContainer - Index.h (6367, 1)
 	[DllImport (LibraryName)]
-	internal static extern void clang_index_setClientContainer ([CTypeDetails ("Pointer<CXIdxContainerInfo>")]Pointer<CXIdxContainerInfo> _0, CXIdxClientContainer _1);
+	internal static extern void clang_index_setClientContainer ([CTypeDetails ("Pointer<CXIdxContainerInfo>")]System.IntPtr _0, CXIdxClientContainer _1);
 
 	// function clang_index_getClientEntity - Index.h (6373, 1)
 	[DllImport (LibraryName)]
-	internal static extern CXIdxClientEntity clang_index_getClientEntity ([CTypeDetails ("Pointer<CXIdxEntityInfo>")]Pointer<CXIdxEntityInfo> _0);
+	internal static extern CXIdxClientEntity clang_index_getClientEntity ([CTypeDetails ("Pointer<CXIdxEntityInfo>")]System.IntPtr _0);
 
 	// function clang_index_setClientEntity - Index.h (6379, 1)
 	[DllImport (LibraryName)]
-	internal static extern void clang_index_setClientEntity ([CTypeDetails ("Pointer<CXIdxEntityInfo>")]Pointer<CXIdxEntityInfo> _0, CXIdxClientEntity _1);
+	internal static extern void clang_index_setClientEntity ([CTypeDetails ("Pointer<CXIdxEntityInfo>")]System.IntPtr _0, CXIdxClientEntity _1);
 
 	// function clang_IndexAction_create - Index.h (6393, 30)
 	[DllImport (LibraryName)]
@@ -2717,19 +2717,19 @@ internal partial class Natives
 
 	// function clang_indexSourceFile - Index.h (6467, 20)
 	[DllImport (LibraryName)]
-	internal static extern int clang_indexSourceFile (CXIndexAction _0, CXClientData @client_data, [CTypeDetails ("Pointer<IndexerCallbacks>")]Pointer<IndexerCallbacks> @index_callbacks, uint @index_callbacks_size, uint @index_options, [CTypeDetails ("Pointer<byte>")]string @source_filename, [CTypeDetails ("Pointer<string>")]Pointer<string> @command_line_args, int @num_command_line_args, [CTypeDetails ("Pointer<CXUnsavedFile>")]Pointer<CXUnsavedFile> @unsaved_files, uint @num_unsaved_files, [CTypeDetails ("Pointer<CXTranslationUnit>")]Pointer<CXTranslationUnit> @out_TU, uint @TU_options);
+	internal static extern int clang_indexSourceFile (CXIndexAction _0, CXClientData @client_data, [CTypeDetails ("Pointer<IndexerCallbacks>")]System.IntPtr @index_callbacks, uint @index_callbacks_size, uint @index_options, [CTypeDetails ("Pointer<byte>")]string @source_filename, [CTypeDetails ("Pointer<string>")]System.IntPtr @command_line_args, int @num_command_line_args, [CTypeDetails ("Pointer<CXUnsavedFile>")]System.IntPtr @unsaved_files, uint @num_unsaved_files, [CTypeDetails ("Pointer<CXTranslationUnit>")]System.IntPtr @out_TU, uint @TU_options);
 
 	// function clang_indexSourceFileFullArgv - Index.h (6485, 20)
 	[DllImport (LibraryName)]
-	internal static extern int clang_indexSourceFileFullArgv (CXIndexAction _0, CXClientData @client_data, [CTypeDetails ("Pointer<IndexerCallbacks>")]Pointer<IndexerCallbacks> @index_callbacks, uint @index_callbacks_size, uint @index_options, [CTypeDetails ("Pointer<byte>")]string @source_filename, [CTypeDetails ("Pointer<string>")]Pointer<string> @command_line_args, int @num_command_line_args, [CTypeDetails ("Pointer<CXUnsavedFile>")]Pointer<CXUnsavedFile> @unsaved_files, uint @num_unsaved_files, [CTypeDetails ("Pointer<CXTranslationUnit>")]Pointer<CXTranslationUnit> @out_TU, uint @TU_options);
+	internal static extern int clang_indexSourceFileFullArgv (CXIndexAction _0, CXClientData @client_data, [CTypeDetails ("Pointer<IndexerCallbacks>")]System.IntPtr @index_callbacks, uint @index_callbacks_size, uint @index_options, [CTypeDetails ("Pointer<byte>")]string @source_filename, [CTypeDetails ("Pointer<string>")]System.IntPtr @command_line_args, int @num_command_line_args, [CTypeDetails ("Pointer<CXUnsavedFile>")]System.IntPtr @unsaved_files, uint @num_unsaved_files, [CTypeDetails ("Pointer<CXTranslationUnit>")]System.IntPtr @out_TU, uint @TU_options);
 
 	// function clang_indexTranslationUnit - Index.h (6508, 20)
 	[DllImport (LibraryName)]
-	internal static extern int clang_indexTranslationUnit (CXIndexAction _0, CXClientData @client_data, [CTypeDetails ("Pointer<IndexerCallbacks>")]Pointer<IndexerCallbacks> @index_callbacks, uint @index_callbacks_size, uint @index_options, CXTranslationUnit _5);
+	internal static extern int clang_indexTranslationUnit (CXIndexAction _0, CXClientData @client_data, [CTypeDetails ("Pointer<IndexerCallbacks>")]System.IntPtr @index_callbacks, uint @index_callbacks_size, uint @index_options, CXTranslationUnit _5);
 
 	// function clang_indexLoc_getFileLocation - Index.h (6523, 21)
 	[DllImport (LibraryName)]
-	internal static extern void clang_indexLoc_getFileLocation (CXIdxLoc @loc, [CTypeDetails ("Pointer<CXIdxClientFile>")]Pointer<CXIdxClientFile> @indexFile, [CTypeDetails ("Pointer<CXFile>")]Pointer<CXFile> @file, [CTypeDetails ("Pointer<uint>")]Pointer<uint> @line, [CTypeDetails ("Pointer<uint>")]Pointer<uint> @column, [CTypeDetails ("Pointer<uint>")]Pointer<uint> @offset);
+	internal static extern void clang_indexLoc_getFileLocation (CXIdxLoc @loc, [CTypeDetails ("Pointer<CXIdxClientFile>")]System.IntPtr @indexFile, [CTypeDetails ("Pointer<CXFile>")]System.IntPtr @file, [CTypeDetails ("Pointer<uint>")]System.IntPtr @line, [CTypeDetails ("Pointer<uint>")]System.IntPtr @column, [CTypeDetails ("Pointer<uint>")]System.IntPtr @offset);
 
 	// function clang_indexLoc_getCXSourceLocation - Index.h (6534, 18)
 	[DllImport (LibraryName)]
@@ -2745,27 +2745,27 @@ internal class Delegates
 {
 public delegate NClang.Natives.CXChildVisitResult CXCursorVisitor (NClang.Natives.CXCursor p0, NClang.Natives.CXCursor p1, System.IntPtr p2);
 public delegate void delegate1 (System.IntPtr p0);
-public delegate void CXInclusionVisitor (System.IntPtr p0, NClang.Natives.Pointer<NClang.Natives.CXSourceLocation> p1, System.UInt32 p2, System.IntPtr p3);
+public delegate void CXInclusionVisitor (System.IntPtr p0, System.IntPtr p1, System.UInt32 p2, System.IntPtr p3);
 public delegate CXVisitorResult delegate3 (System.IntPtr p0, CXCursor p1, CXSourceRange p2);
 public delegate int delegate4 (CXClientData p0, System.IntPtr p1);
 public delegate void delegate5 (CXClientData p0, CXDiagnosticSet p1, System.IntPtr p2);
 public delegate CXIdxClientFile delegate6 (CXClientData p0, CXFile p1, System.IntPtr p2);
-public delegate CXIdxClientFile delegate7 (CXClientData p0, Pointer<CXIdxIncludedFileInfo> p1);
-public delegate CXIdxClientASTFile delegate8 (CXClientData p0, Pointer<CXIdxImportedASTFileInfo> p1);
+public delegate CXIdxClientFile delegate7 (CXClientData p0, System.IntPtr p1);
+public delegate CXIdxClientASTFile delegate8 (CXClientData p0, System.IntPtr p1);
 public delegate CXIdxClientContainer delegate9 (CXClientData p0, System.IntPtr p1);
-public delegate void delegate10 (CXClientData p0, Pointer<CXIdxDeclInfo> p1);
-public delegate void delegate11 (CXClientData p0, Pointer<CXIdxEntityRefInfo> p1);
+public delegate void delegate10 (CXClientData p0, System.IntPtr p1);
+public delegate void delegate11 (CXClientData p0, System.IntPtr p1);
 public delegate NClang.Natives.CXVisitorResult CXFieldVisitor (NClang.Natives.CXCursor p0, System.IntPtr p1);
 public delegate void delegate13 (System.IntPtr p0);
 public delegate CXVisitorResult delegate14 (System.IntPtr p0, CXCursor p1, CXSourceRange p2);
 public delegate int delegate15 (CXClientData p0, System.IntPtr p1);
 public delegate void delegate16 (CXClientData p0, CXDiagnosticSet p1, System.IntPtr p2);
 public delegate CXIdxClientFile delegate17 (CXClientData p0, CXFile p1, System.IntPtr p2);
-public delegate CXIdxClientFile delegate18 (CXClientData p0, Pointer<CXIdxIncludedFileInfo> p1);
-public delegate CXIdxClientASTFile delegate19 (CXClientData p0, Pointer<CXIdxImportedASTFileInfo> p1);
+public delegate CXIdxClientFile delegate18 (CXClientData p0, System.IntPtr p1);
+public delegate CXIdxClientASTFile delegate19 (CXClientData p0, System.IntPtr p1);
 public delegate CXIdxClientContainer delegate20 (CXClientData p0, System.IntPtr p1);
-public delegate void delegate21 (CXClientData p0, Pointer<CXIdxDeclInfo> p1);
-public delegate void delegate22 (CXClientData p0, Pointer<CXIdxEntityRefInfo> p1);
+public delegate void delegate21 (CXClientData p0, System.IntPtr p1);
+public delegate void delegate22 (CXClientData p0, System.IntPtr p1);
 }
 
 internal struct Pointer<T>
@@ -2812,3 +2812,4 @@ internal class CTypeDetailsAttribute : Attribute
 }
 
 }
+

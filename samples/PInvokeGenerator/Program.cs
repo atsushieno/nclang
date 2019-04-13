@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom.Compiler;
 using NClang;
 using System.Collections.Generic;
 using System.IO;
@@ -23,22 +24,31 @@ namespace PInvokeGenerator
 		List<TypeDef> usings = new List<TypeDef> ();
 		bool PreferStringOverByteArray;
 
+		IList<Named> members = new List<Named> ();
+		TextWriter output = Console.Out;
+		bool skip_standard_c_types = false;
+		string type_scope = "internal";
+
 		void Run (string [] args)
+		{
+			Parse (args);
+			Generate ();
+		}
+		
+		void Parse (string [] args)
 		{
 			var idx = ClangService.CreateIndex ();
 			var tus = new List<ClangTranslationUnit> ();
-			TextWriter output = Console.Out;
 			List<Regex> fileMatches = new List<Regex> ();
 			bool onlyExplicit = false;
-			bool skipStandardCTypes = false;
-			string type_scope = "internal";
 
 			Args.Add ("-x");
 			Args.Add ("c++");
 			Args.Add ("--std=c++1y");
 			foreach (var arg in args) {
 				if (arg == "--help" || arg == "-?") {
-					Console.Error.WriteLine ($"[USAGE] {GetType ().Assembly.GetName ().CodeBase} [options] [inputs]");
+					Console.Error.WriteLine (
+						$"[USAGE] {GetType ().Assembly.GetName ().CodeBase} [options] [inputs]");
 					Console.Error.WriteLine (@"options:
 	--out:[filename]	output source file name.
 	--lib:[library]		library name specified on [DllImport].
@@ -46,7 +56,8 @@ namespace PInvokeGenerator
 	--match:[regex]		when specified, process only matching files.
 	--arg:[namespace]	compiler arguments to parse the sources.");
 					return;
-				} else if (arg.StartsWith ("--out:", StringComparison.Ordinal))
+				}
+				else if (arg.StartsWith ("--out:", StringComparison.Ordinal))
 					output = File.CreateText (arg.Substring (6));
 				else if (arg.StartsWith ("--lib:", StringComparison.Ordinal))
 					LibraryName = arg.Substring (6);
@@ -59,7 +70,7 @@ namespace PInvokeGenerator
 				else if (arg == "--only-explicit")
 					onlyExplicit = true;
 				else if (arg == "--skip-standard-c-types")
-					skipStandardCTypes = true;
+					skip_standard_c_types = true;
 				else if (arg == "--expose-types")
 					type_scope = "public";
 				else if (arg == "--prefer-string-over-byte-array")
@@ -67,54 +78,71 @@ namespace PInvokeGenerator
 				else
 					sources.Add (arg);
 			}
+
 			foreach (var source in sources) {
 				ClangTranslationUnit tu;
-				var err = idx.ParseTranslationUnit (source, Args.ToArray (), null, TranslationUnitFlags.SkipFunctionBodies, out tu);
+				var err = idx.ParseTranslationUnit (source, Args.ToArray (), null,
+					TranslationUnitFlags.SkipFunctionBodies, out tu);
 				if (err == ErrorCode.Success)
 					tus.Add (tu);
 			}
 
-			var members = new List<Named> ();
 			Struct current = null;
 			string current_typedef_name = null;
 			int anonymous_type_count = 0;
 
 			Action<ClangCursor> removeDuplicates = c => {
-				var dups = members.Where (m => m.Name == c.Spelling || m.Line == c.Location.FileLocation.Line && m.Column == c.Location.FileLocation.Column && m.SourceFile == c.Location.FileLocation.File.FileName).ToArray ();
+				var dups = members.Where (m =>
+					m.Name == c.Spelling || m.Line == c.Location.FileLocation.Line &&
+					m.Column == c.Location.FileLocation.Column &&
+					m.SourceFile == c.Location.FileLocation.File.FileName).ToArray ();
 				foreach (var d in dups)
 					members.Remove (d);
 			};
 
 			foreach (var tu in tus) {
 				for (int i = 0; i < tu.DiagnosticCount; i++)
-					Console.Error.WriteLine ($"[diag] {tu.GetDiagnostic (i).Location}: {tu.GetDiagnostic (i).Spelling}");
+					Console.Error.WriteLine (
+						$"[diag] {tu.GetDiagnostic (i).Location}: {tu.GetDiagnostic (i).Spelling}");
 
 				Func<ClangCursor, ClangCursor, IntPtr, ChildVisitResult> func = null;
 				func = (cursor, parent, clientData) => {
 					// skip ignored file.
-					if (onlyExplicit && !sources.Contains (cursor.Location.FileLocation.File.FileName))
+					if (onlyExplicit &&
+					    !sources.Contains (cursor.Location.FileLocation.File.FileName))
 						return ChildVisitResult.Continue;
-					if (fileMatches.Any () && !fileMatches.Any (fm => fm.IsMatch (cursor.Location.FileLocation.File.FileName)))
+					if (fileMatches.Any () && !fileMatches.Any (fm =>
+						    fm.IsMatch (cursor.Location.FileLocation.File.FileName)))
 						return ChildVisitResult.Continue;
 
 					// FIXME: this doesn't work.
 					if (cursor.Kind == CursorKind.InclusionDirective) {
 						Console.Error.WriteLine ("[diag] Include File " + cursor.IncludedFile);
-						idx.ParseTranslationUnit (cursor.IncludedFile.FileName, null, null, TranslationUnitFlags.None).GetCursor ().VisitChildren (func, IntPtr.Zero);
-					} else if (cursor.Kind == CursorKind.TypedefDeclaration) {
+						idx.ParseTranslationUnit (cursor.IncludedFile.FileName, null, null,
+								TranslationUnitFlags.None).GetCursor ()
+							.VisitChildren (func, IntPtr.Zero);
+					}
+					else if (cursor.Kind == CursorKind.TypedefDeclaration) {
 						if (cursor.Location.FileLocation.File != null) {
 							var alias = ToTypeName (cursor.CursorType);
 							InsideUsingDeclaration = true;
 							if (usings.All (u => u.Alias != alias)) {
-								var actual = ToTypeName (cursor.TypeDefDeclUnderlyingType);
+								var actual =
+									ToTypeName (cursor.TypeDefDeclUnderlyingType);
 								var td = new TypeDef {
 									Alias = alias,
-									ActualInC = cursor.TypeDefDeclUnderlyingType.Spelling,
-									Managed = cursor.TypeDefDeclUnderlyingType.ArraySize < 0 ? actual : $"System.IntPtr/*{actual}[]*/",
+									ActualInC = cursor.TypeDefDeclUnderlyingType
+										.Spelling,
+									Managed =
+										cursor.TypeDefDeclUnderlyingType
+											.ArraySize < 0
+											? actual
+											: $"System.IntPtr/*{actual}[]*/",
 									Location = cursor.Location,
 								};
 								usings.Add (td);
 							}
+
 							InsideUsingDeclaration = false;
 
 							current_typedef_name = alias;
@@ -124,22 +152,32 @@ namespace PInvokeGenerator
 
 							return ChildVisitResult.Continue;
 						}
-					} else if (cursor.Kind == CursorKind.EnumConstantDeclaration) {
+					}
+					else if (cursor.Kind == CursorKind.EnumConstantDeclaration) {
 						removeDuplicates (cursor);
 						current.Fields.Add (new Variable () {
 							Type = ToTypeName (cursor.CursorType),
 							Name = cursor.Spelling,
 							// FIXME: this is HACK.
-							Value = (cursor.EnumConstantDeclValue != 0 ? (decimal)cursor.EnumConstantDeclValue : (decimal)cursor.EnumConstantDeclUnsignedValue).ToString (),
+							Value = (cursor.EnumConstantDeclValue != 0
+									? (decimal) cursor.EnumConstantDeclValue
+									: (decimal) cursor
+										.EnumConstantDeclUnsignedValue)
+								.ToString (),
 						});
 						return ChildVisitResult.Continue;
-					} else if (cursor.Kind == CursorKind.FieldDeclaration) {
+					}
+					else if (cursor.Kind == CursorKind.FieldDeclaration) {
 						removeDuplicates (cursor);
 						var typeCursor = cursor.CursorType.TypeDeclaration;
-						var type = !string.IsNullOrEmpty (typeCursor.DisplayName) ?
-								  ToTypeName (cursor.CursorType) :
-								  members.FirstOrDefault (m => m.Line == typeCursor.Location.FileLocation.Line && m.Column == typeCursor.Location.FileLocation.Column && m.SourceFile == typeCursor.Location.FileLocation.File.FileName)?.Name ??
-								  ToTypeName (cursor.CursorType);
+						var type = !string.IsNullOrEmpty (typeCursor.DisplayName)
+							? ToTypeName (cursor.CursorType)
+							: members.FirstOrDefault (m =>
+								  m.Line == typeCursor.Location.FileLocation.Line &&
+								  m.Column == typeCursor.Location.FileLocation.Column &&
+								  m.SourceFile == typeCursor.Location.FileLocation.File
+									  .FileName)?.Name ??
+							  ToTypeName (cursor.CursorType);
 						var variable = new Variable () {
 							Type = type,
 							TypeDetails = GetTypeDetails (cursor.CursorType),
@@ -148,16 +186,25 @@ namespace PInvokeGenerator
 							Name = cursor.Spelling
 						};
 						if (current == null)
-							Console.Error.WriteLine ($"[warn] {cursor.Spelling}: globally declared fields are ignored");
+							Console.Error.WriteLine (
+								$"[warn] {cursor.Spelling}: globally declared fields are ignored");
 						else
 							current.Fields.Add (variable);
 						return ChildVisitResult.Continue;
-					} else if (cursor.Kind == CursorKind.StructDeclaration || cursor.Kind == CursorKind.UnionDeclaration || cursor.Kind == CursorKind.EnumDeclaration) {
+					}
+					else if (cursor.Kind == CursorKind.StructDeclaration ||
+						 cursor.Kind == CursorKind.UnionDeclaration ||
+						 cursor.Kind == CursorKind.EnumDeclaration) {
 						removeDuplicates (cursor);
 						var parentType = current;
 						current = new Struct () {
-							Name = current_typedef_name != null && parentType == null ? current_typedef_name :
-								string.IsNullOrEmpty (cursor.DisplayName) ? "anonymous_type_" + (anonymous_type_count++) : cursor.DisplayName,
+							Name = current_typedef_name != null && parentType == null
+								?
+								current_typedef_name
+								:
+								string.IsNullOrEmpty (cursor.DisplayName)
+									? "anonymous_type_" + (anonymous_type_count++)
+									: cursor.DisplayName,
 							Location = cursor.Location,
 							IsUnion = cursor.Kind == CursorKind.UnionDeclaration,
 							IsEnum = cursor.Kind == CursorKind.EnumDeclaration,
@@ -167,39 +214,45 @@ namespace PInvokeGenerator
 							func (child, cursor, clientData);
 						current = parentType;
 						return ChildVisitResult.Continue;
-					} else if (cursor.Kind == CursorKind.FunctionDeclaration) {
+					}
+					else if (cursor.Kind == CursorKind.FunctionDeclaration) {
 						removeDuplicates (cursor);
 						var fargs = Enumerable.Range (0, cursor.ArgumentCount)
-								     .Select (i => cursor.GetArgument (i));
+							.Select (i => cursor.GetArgument (i));
 
 						// function with va_list isn't supported in P/Invoke.
 						if (fargs.Any (a => a.CursorType.Spelling == "va_list")) {
-							Console.Error.WriteLine ($"Cannot bind {cursor.DisplayName} because it contains va_list.");
+							Console.Error.WriteLine (
+								$"Cannot bind {cursor.DisplayName} because it contains va_list.");
 							return ChildVisitResult.Continue;
 						}
-						
+
 						members.Add (new Function () {
 							Name = cursor.Spelling,
 							Return = ToTypeName (cursor.ResultType),
 							Location = cursor.Location,
 							Args = fargs.Select (a => new Variable () {
-								Name = a.Spelling,
-								Type = ToTypeName (a.CursorType),
-								TypeDetails = GetTypeDetails (a.CursorType)
+									Name = a.Spelling,
+									Type = ToTypeName (a.CursorType),
+									TypeDetails = GetTypeDetails (a.CursorType)
 								})
-							            .ToArray ()
+								.ToArray ()
 						});
 						return ChildVisitResult.Continue;
 					}
+
 					return ChildVisitResult.Recurse;
 				};
 				tu.GetCursor ().VisitChildren (func, IntPtr.Zero);
 			}
+		}
 
+		void Generate ()
+		{
 			output.WriteLine ("// This source file is generated by nclang PInvokeGenerator.");
 			output.WriteLine ("using System;");
 			output.WriteLine ("using System.Runtime.InteropServices;");
-			if (!skipStandardCTypes) {
+			if (!skip_standard_c_types) {
 				output.WriteLine ("using time_t = System.IntPtr;");
 				output.WriteLine ("using size_t = System.IntPtr;");
 			}

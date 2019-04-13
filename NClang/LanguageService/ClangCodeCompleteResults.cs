@@ -9,7 +9,7 @@ using LibClang = NClang.Natives.Natives;
 namespace NClang
 {
 	
-	public class ClangCodeCompleteResults : ClangObject, IDisposable
+	public class ClangCodeCompleteResults : ClangDisposable
 	{
 		static readonly int result_size = Marshal.SizeOf (typeof(CXCompletionResult));
 		CXCodeCompleteResults? source;
@@ -19,29 +19,31 @@ namespace NClang
 		{
 		}
 
-		CXCodeCompleteResults Source {
-			get { return (CXCodeCompleteResults)(source ?? (source = (CXCodeCompleteResults)Marshal.PtrToStructure (Handle, typeof(CXCodeCompleteResults)))); }
-		}
+		CXCodeCompleteResults Source =>
+			(CXCodeCompleteResults) (source ?? (source = (CXCodeCompleteResults) Marshal.PtrToStructure (Handle, typeof (CXCodeCompleteResults))));
 
 		public int ResultCount {
 			get { return (int)Source.NumResults; }
 		}
+	
+		public void Sort ()
+		{
+			LibClang.clang_sortCodeCompletionResults (Source.Results, Source.NumResults);
+		}
 
-        public void Sort()
-        {
-		LibClang.clang_sortCodeCompletionResults(Source.Results, Source.NumResults);
-        }
-
-        public IEnumerable<ClangCompletionResult> Results {
-			get {
+		public IEnumerable<ClangCompletionResult> Results {
+			get
+			{
 				for (int i = 0; i < Source.NumResults; i++)
-					yield return new ClangCompletionResult ((IntPtr) Source.Results + result_size * i);
+					yield return new ClangCompletionResult (
+						(IntPtr) Source.Results + result_size * i);
 			}
 		}
 
-		public void Dispose ()
+		public override void Dispose ()
 		{
 			LibClang.clang_disposeCodeCompleteResults (Handle);
+			base.Dispose ();
 		}
 
 		public int DiagnosticsCount {

@@ -12,7 +12,7 @@ namespace NClang
 		public ClangCompileCommand (IntPtr handle)
 			: base (handle)
 		{
-			// no need to dispose the handle. CXCompileCommands shoulta take care of it.
+			// no need to dispose the handle. CXCompileCommands should take care of it.
 		}
 
 		public string Directory {

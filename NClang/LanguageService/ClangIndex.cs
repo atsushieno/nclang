@@ -72,10 +72,16 @@ namespace NClang
         ///   '-fsyntax-only'
         ///   '-o \&lt;output file&gt;'  (both '-o' and '\&lt;output file&gt;' are ignored)
         /// </remarks>
-		public ClangTranslationUnit CreateTranslationUnitFromSourceFile (string sourceFilename, string [] clangCommandLineAgs, ClangUnsavedFile [] unsavedFiles)
+		public ClangTranslationUnit CreateTranslationUnitFromSourceFile (string sourceFilename, string [] clangCommandLineArgs, ClangUnsavedFile [] unsavedFiles)
 		{
-			var cx = unsavedFiles.Select (o => new CXUnsavedFile () { Filename = o.FileName, Contents = o.Contents}).ToArray ();
-			return new ClangTranslationUnit (LibClang.clang_createTranslationUnitFromSourceFile (Handle, sourceFilename, clangCommandLineAgs.Length, clangCommandLineAgs, (uint) unsavedFiles.Length, cx));
+			var unsavedFilesNative = unsavedFiles.Select (o => new CXUnsavedFile () { Filename = o.FileName, Contents = o.Contents}).ToArray ().ToHGlobalNativeArray ();
+
+			var cl = new NativeArrayHolder (clangCommandLineArgs.ToHGlobalAllocatedArray ());
+			
+			var ret = new ClangTranslationUnit (LibClang.clang_createTranslationUnitFromSourceFile (Handle, sourceFilename, clangCommandLineArgs.Length, cl.NativeArray, (uint) unsavedFiles.Length, unsavedFilesNative));
+			ret.AddToFreeList (cl);
+			ret.AddToFreeList (unsavedFilesNative);
+			return ret;
 		}
 
         /// <summary>
@@ -127,8 +133,14 @@ namespace NClang
         /// </returns>
 		public ClangTranslationUnit ParseTranslationUnit (string sourceFilename, string [] commandLineArgs, ClangUnsavedFile [] unsavedFiles, TranslationUnitFlags options)
 		{
-			var files = (unsavedFiles ?? new ClangUnsavedFile [0]).Select (u => new CXUnsavedFile () { Filename = u.FileName, Contents = u.Contents}).ToArray ();
-			return new ClangTranslationUnit (LibClang.clang_parseTranslationUnit (Handle, sourceFilename, commandLineArgs, (commandLineArgs ?? new string [0]).Length, files, (uint) files.Length, (uint) options));
+			var files = (unsavedFiles ?? new ClangUnsavedFile [0]).Select (u => new CXUnsavedFile () { Filename = u.FileName, Contents = u.Contents}).ToArray ().ToHGlobalNativeArray ();
+
+			var cl = new NativeArrayHolder (commandLineArgs.ToHGlobalAllocatedArray ());
+			
+			var ret = new ClangTranslationUnit (LibClang.clang_parseTranslationUnit (Handle, sourceFilename, cl.NativeArray, (commandLineArgs ?? new string [0]).Length, files, (uint) unsavedFiles.Length, (uint) options));
+			ret.AddToFreeList (cl);
+			ret.AddToFreeList (files);
+			return ret;
 		}
 
         /// <summary>
@@ -173,10 +185,12 @@ namespace NClang
         /// <returns>An <seealso cref="ErrorCode"/>.</returns>
         public ErrorCode ParseTranslationUnit(string sourceFilename, string [] commandLineArgs, ClangUnsavedFile [] unsavedFiles, TranslationUnitFlags options, out ClangTranslationUnit translationUnit)
         {
-            var files = (unsavedFiles ?? new ClangUnsavedFile [0]).Select(u => new CXUnsavedFile() { Filename = u.FileName, Contents = u.Contents}).ToArray();
+            var files = (unsavedFiles ?? new ClangUnsavedFile [0]).Select(u => new CXUnsavedFile() { Filename = u.FileName, Contents = u.Contents}).ToArray().ToHGlobalNativeArray ();
+	    var cl = new NativeArrayHolder(commandLineArgs.ToHGlobalAllocatedArray ());
             IntPtr tuptr = IntPtr.Zero;
-            var error = (ErrorCode) LibClang.clang_parseTranslationUnit2(Handle, sourceFilename, commandLineArgs, commandLineArgs.Length, files, (uint)files.Length, (uint) options, tuptr);
+            var error = (ErrorCode) LibClang.clang_parseTranslationUnit2(Handle, sourceFilename, cl.NativeArray, commandLineArgs.Length, files, (uint) unsavedFiles?.Length, (uint) options, tuptr);
 	    translationUnit = error == ErrorCode.Success ? new ClangTranslationUnit (Marshal.ReadIntPtr (tuptr)) : null;
+	    translationUnit?.AddToFreeList (cl);
             return error;
         }
 
