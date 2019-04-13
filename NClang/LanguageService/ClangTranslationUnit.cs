@@ -69,7 +69,7 @@ namespace NClang
 
 		public void Reparse (ClangUnsavedFile [] unsavedFiles, ReparseTranslationUnitFlags options)
 		{
-			var cx = unsavedFiles.Select (o => new CXUnsavedFile {Filename = o.FileName, Contents = o.Contents}).ToArray ().ToHGlobalNativeArray ();
+			var cx = unsavedFiles.Select (o => new CXUnsavedFile (o.FileName, o.Contents)).ToArray ().ToHGlobalNativeArray ();
 			var ret = (ErrorCode) LibClang.clang_reparseTranslationUnit (Handle, (uint) unsavedFiles.Length, cx, (uint) options);
 			Marshal.FreeHGlobal (cx);
 			if (ret != ErrorCode.Success)

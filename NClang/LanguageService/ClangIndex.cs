@@ -74,7 +74,7 @@ namespace NClang
         /// </remarks>
 		public ClangTranslationUnit CreateTranslationUnitFromSourceFile (string sourceFilename, string [] clangCommandLineArgs, ClangUnsavedFile [] unsavedFiles)
 		{
-			var unsavedFilesNative = unsavedFiles.Select (o => new CXUnsavedFile () { Filename = o.FileName, Contents = o.Contents}).ToArray ().ToHGlobalNativeArray ();
+			var unsavedFilesNative = unsavedFiles.Select (o => new CXUnsavedFile (o.FileName, o.Contents)).ToArray ().ToHGlobalNativeArray ();
 
 			var cl = new NativeArrayHolder (clangCommandLineArgs.ToHGlobalAllocatedArray ());
 			
@@ -133,7 +133,7 @@ namespace NClang
         /// </returns>
 		public ClangTranslationUnit ParseTranslationUnit (string sourceFilename, string [] commandLineArgs, ClangUnsavedFile [] unsavedFiles, TranslationUnitFlags options)
 		{
-			var files = (unsavedFiles ?? new ClangUnsavedFile [0]).Select (u => new CXUnsavedFile () { Filename = u.FileName, Contents = u.Contents}).ToArray ().ToHGlobalNativeArray ();
+			var files = (unsavedFiles ?? new ClangUnsavedFile [0]).Select (u => new CXUnsavedFile (u.FileName, u.Contents)).ToArray ().ToHGlobalNativeArray ();
 
 			var cl = new NativeArrayHolder (commandLineArgs.ToHGlobalAllocatedArray ());
 			
@@ -143,58 +143,78 @@ namespace NClang
 			return ret;
 		}
 
-        /// <summary>
-        /// Parse the given source file and the translation unit corresponding
-        /// to that file.
-        /// </summary>
-        /// <remarks>
-        /// This routine is the main entry point for the Clang C API, providing the
-        /// ability to parse a source file into a translation unit that can then be
-        /// queried by other functions in the API. This routine accepts a set of
-        /// command-line arguments so that the compilation can be configured in the same
-        /// way that the compiler is configured on the command line.
-        /// </remarks>
-        /// <param name="sourceFilename">
-        /// The name of the source file to load, or NULL if the
-        /// source file is included in \p command_line_args.
-        /// </param>
-        /// <param name="commandLineArgs">
-        /// The command-line arguments that would be
-        /// passed to the clang executable if it were being invoked out-of-process.
-        /// These command-line options will be parsed and will affect how the translation
-        /// unit is parsed. Note that the following options are ignored: '-c', 
-        /// '-emit-ast', '-fsyntax-only' (which is the default), and '-o \&lt;output file&gt;'.
-        /// </param>
-        /// <param name="unsavedFiles">
-        /// the files that have not yet been saved to disk
-        /// but may be required for parsing, including the contents of
-        /// those files.  The contents and name of these files (as specified by
-        /// CXUnsavedFile) are copied when necessary, so the client only needs to
-        /// guarantee their validity until the call to this function returns.
-        /// </param>
-        /// <param name="options">
-        /// A bitmask of options that affects how the translation unit
-        /// is managed but not its compilation. This should be a bitwise OR of the
-        /// <see cref="TranslationUnitFlags"/> flags.
-        /// </param>
-        /// <param name="translationUnit">
-        /// A new translation unit describing the parsed code and containing
-        /// any diagnostics produced by the compiler. If there is a failure from which
-        /// the compiler cannot recover, returns <c>null</c>.
-        /// </param>
-        /// <returns>An <seealso cref="ErrorCode"/>.</returns>
-        public ErrorCode ParseTranslationUnit(string sourceFilename, string [] commandLineArgs, ClangUnsavedFile [] unsavedFiles, TranslationUnitFlags options, out ClangTranslationUnit translationUnit)
-        {
-            var files = (unsavedFiles ?? new ClangUnsavedFile [0]).Select(u => new CXUnsavedFile() { Filename = u.FileName, Contents = u.Contents}).ToArray().ToHGlobalNativeArray ();
-	    var cl = new NativeArrayHolder(commandLineArgs.ToHGlobalAllocatedArray ());
-            IntPtr tuptr = IntPtr.Zero;
-            var error = (ErrorCode) LibClang.clang_parseTranslationUnit2(Handle, sourceFilename, cl.NativeArray, commandLineArgs.Length, files, (uint) unsavedFiles?.Length, (uint) options, tuptr);
-	    translationUnit = error == ErrorCode.Success ? new ClangTranslationUnit (Marshal.ReadIntPtr (tuptr)) : null;
-	    translationUnit?.AddToFreeList (cl);
-            return error;
-        }
+	/// <summary>
+	/// Parse the given source file and the translation unit corresponding
+	/// to that file.
+	/// </summary>
+	/// <remarks>
+	/// This routine is the main entry point for the Clang C API, providing the
+	/// ability to parse a source file into a translation unit that can then be
+	/// queried by other functions in the API. This routine accepts a set of
+	/// command-line arguments so that the compilation can be configured in the same
+	/// way that the compiler is configured on the command line.
+	/// </remarks>
+	/// <param name="sourceFilename">
+	/// The name of the source file to load, or NULL if the
+	/// source file is included in \p command_line_args.
+	/// </param>
+	/// <param name="commandLineArgs">
+	/// The command-line arguments that would be
+	/// passed to the clang executable if it were being invoked out-of-process.
+	/// These command-line options will be parsed and will affect how the translation
+	/// unit is parsed. Note that the following options are ignored: '-c', 
+	/// '-emit-ast', '-fsyntax-only' (which is the default), and '-o \&lt;output file&gt;'.
+	/// </param>
+	/// <param name="unsavedFiles">
+	/// the files that have not yet been saved to disk
+	/// but may be required for parsing, including the contents of
+	/// those files.  The contents and name of these files (as specified by
+	/// CXUnsavedFile) are copied when necessary, so the client only needs to
+	/// guarantee their validity until the call to this function returns.
+	/// </param>
+	/// <param name="options">
+	/// A bitmask of options that affects how the translation unit
+	/// is managed but not its compilation. This should be a bitwise OR of the
+	/// <see cref="TranslationUnitFlags"/> flags.
+	/// </param>
+	/// <param name="translationUnit">
+	/// A new translation unit describing the parsed code and containing
+	/// any diagnostics produced by the compiler. If there is a failure from which
+	/// the compiler cannot recover, returns <c>null</c>.
+	/// </param>
+	/// <returns>An <seealso cref="ErrorCode"/>.</returns>
+	public ErrorCode ParseTranslationUnit (string sourceFilename, string [] commandLineArgs,
+		ClangUnsavedFile [] unsavedFiles, TranslationUnitFlags options,
+		out ClangTranslationUnit translationUnit)
+	{
+		unsavedFiles = unsavedFiles ?? new ClangUnsavedFile [0];
+		
+		var files = unsavedFiles.Select (u => new CXUnsavedFile (u.FileName, u.Contents)).ToArray ();
+		var filesNative = files.ToHGlobalNativeArray ();
+		var cl = new NativeArrayHolder (commandLineArgs.ToHGlobalAllocatedArray ());
+		unsafe {
+			int tup = 0;
+			IntPtr tuptr = new IntPtr (&tup);
 
-		// HighLevelApi
+			var error = (ErrorCode) LibClang.clang_parseTranslationUnit2 (Handle, sourceFilename,
+				cl.NativeArray,
+				commandLineArgs.Length, filesNative, unsavedFiles != null ? (uint) unsavedFiles.Length : 0,
+				(uint) options, tuptr);
+
+			translationUnit = error == ErrorCode.Success ? new ClangTranslationUnit (Marshal.ReadIntPtr (tuptr)) : null;
+			if (translationUnit != null) {
+				translationUnit.AddToFreeList (cl);
+				translationUnit.AddToFreeList (filesNative);
+			} else {
+				cl.Dispose ();
+				Marshal.FreeHGlobal (filesNative);
+			}
+
+			return error;
+		}
+	}
+
+	// HighLevelApi
         /// <summary>
         /// An indexing action/session, to be applied to one or multiple
         /// translation units.

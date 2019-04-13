@@ -17,7 +17,7 @@ namespace NClang.Natives
 
 		internal static CXUnsavedFile [] ToNative (this IEnumerable<ClangUnsavedFile> source)
 		{
-			return source != null && source.Any () ? source.Select (s => new CXUnsavedFile () { Filename = s.FileName, Contents = s.Contents}).ToArray () : new CXUnsavedFile [0];
+			return source != null && source.Any () ? source.Select (s => new CXUnsavedFile (s.FileName, s.Contents)).ToArray () : new CXUnsavedFile [0];
 		}
 	}
 }

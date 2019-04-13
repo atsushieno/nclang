@@ -3,6 +3,9 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using NClang.Natives;
 
+using CXIndex = System.IntPtr;
+using CXTranslationUnit = System.IntPtr;
+
 namespace NClang
 {
 	static class Extensions
@@ -75,6 +78,16 @@ namespace NClang
 			public static implicit operator CXString (ClangString src)
 			{
 				return new CXString () {data = src.Data, private_flags = src.PrivateFlags};
+			}
+		}
+
+		partial struct CXUnsavedFile
+		{
+			public CXUnsavedFile (string filename, string contents)
+			{
+				Filename = filename;
+				Contents = contents;
+				Length = (ulong) contents.Length;
 			}
 		}
 	}

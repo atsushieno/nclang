@@ -28,19 +28,18 @@ namespace PInvokeGenerator
 		TextWriter output = Console.Out;
 		bool skip_standard_c_types = false;
 		string type_scope = "internal";
+		bool only_explicit = false;
+		List<Regex> file_matches = new List<Regex> ();
 
 		void Run (string [] args)
 		{
-			Parse (args);
+			ProcessCommandLineArguments (args);
+			Parse ();
 			Generate ();
 		}
-		
-		void Parse (string [] args)
+
+		void ProcessCommandLineArguments (string [] args)
 		{
-			var idx = ClangService.CreateIndex ();
-			var tus = new List<ClangTranslationUnit> ();
-			List<Regex> fileMatches = new List<Regex> ();
-			bool onlyExplicit = false;
 
 			Args.Add ("-x");
 			Args.Add ("c++");
@@ -66,9 +65,9 @@ namespace PInvokeGenerator
 				else if (arg.StartsWith ("--arg:", StringComparison.Ordinal))
 					Args.Add (arg.Substring (6));
 				else if (arg.StartsWith ("--match:", StringComparison.Ordinal))
-					fileMatches.Add (new Regex (arg.Substring (8)));
+					file_matches.Add (new Regex (arg.Substring (8)));
 				else if (arg == "--only-explicit")
-					onlyExplicit = true;
+					only_explicit = true;
 				else if (arg == "--skip-standard-c-types")
 					skip_standard_c_types = true;
 				else if (arg == "--expose-types")
@@ -78,6 +77,12 @@ namespace PInvokeGenerator
 				else
 					sources.Add (arg);
 			}
+		}
+		
+		void Parse ()
+		{
+			var idx = ClangService.CreateIndex ();
+			var tus = new List<ClangTranslationUnit> ();
 
 			foreach (var source in sources) {
 				ClangTranslationUnit tu;
@@ -85,6 +90,8 @@ namespace PInvokeGenerator
 					TranslationUnitFlags.SkipFunctionBodies, out tu);
 				if (err == ErrorCode.Success)
 					tus.Add (tu);
+				else
+					Console.Error.WriteLine ($"[err] translation failed. Error code {err}");
 			}
 
 			Struct current = null;
@@ -108,10 +115,10 @@ namespace PInvokeGenerator
 				Func<ClangCursor, ClangCursor, IntPtr, ChildVisitResult> func = null;
 				func = (cursor, parent, clientData) => {
 					// skip ignored file.
-					if (onlyExplicit &&
+					if (only_explicit &&
 					    !sources.Contains (cursor.Location.FileLocation.File.FileName))
 						return ChildVisitResult.Continue;
-					if (fileMatches.Any () && !fileMatches.Any (fm =>
+					if (file_matches.Any () && !file_matches.Any (fm =>
 						    fm.IsMatch (cursor.Location.FileLocation.File.FileName)))
 						return ChildVisitResult.Continue;
 

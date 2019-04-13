@@ -143,7 +143,7 @@ internal struct CXTranslationUnitImpl // Index.h (92, 16)
 }
 
 [StructLayout (LayoutKind.Sequential)]
-internal struct CXUnsavedFile // Index.h (107, 8)
+internal partial struct CXUnsavedFile // Index.h (107, 8)
 {
 	[CTypeDetails ("Pointer<byte>")]internal string @Filename;
 	[CTypeDetails ("Pointer<byte>")]internal string @Contents;

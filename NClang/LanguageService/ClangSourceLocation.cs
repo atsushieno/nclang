@@ -104,12 +104,16 @@ namespace NClang
 			get { return LibClang.clang_Location_isFromMainFile (source) != 0; }
 		}
 
-		T Extract<M,N,T> (CXSourceLocation source, Action<CXSourceLocation, IntPtr, IntPtr, IntPtr, IntPtr> func, Func<IntPtr,M> conv, Func<M,int,int,int,T> gen)
+		unsafe T Extract<M,N,T> (CXSourceLocation source, Action<CXSourceLocation, IntPtr, IntPtr, IntPtr, IntPtr> func, Func<IntPtr,M> conv, Func<M,int,int,int,T> gen)
 		{
-			IntPtr f = IntPtr.Zero;
-			IntPtr l = IntPtr.Zero, c = IntPtr.Zero, o = IntPtr.Zero; // of uint
-			func (source, f, l, c, o);
-			return gen (conv (Marshal.ReadIntPtr (f)), Marshal.ReadInt32 (l), Marshal.ReadInt32 (c), Marshal.ReadInt32 (o));
+			int f = 0, l = 0, c = 0, o = 0;
+			IntPtr fp = new IntPtr (&f),
+				lp = new IntPtr (&l),
+				cp = new IntPtr (&c),
+				op = new IntPtr (&o);
+			func (source, fp, lp, cp, op);
+			var m = conv (fp);
+			return gen (m, Marshal.ReadInt32 (lp), Marshal.ReadInt32 (cp), Marshal.ReadInt32 (op));
 		}
 
 		public PhysicalLocation ExpansionLocation {
@@ -123,7 +127,7 @@ namespace NClang
 
 		public LogicalLocation PresumedLocation {
 			get {
-				return Extract<string,CXString,LogicalLocation> (source, (x,y,z,a,b) => LibClang.clang_getPresumedLocation (x, y,z,a), f => Marshal.PtrToStructure<CXString> (f).Unwrap (),
+				return Extract<string,CXString,LogicalLocation> (source, (x,y,z,a,b) => LibClang.clang_getPresumedLocation (x, y,z,a), f => Marshal.PtrToStructure<CXString> (Marshal.ReadIntPtr (f)).Unwrap (),
 					(f, l, c, o) => new LogicalLocation (f, l, c));
 			}
 		}
