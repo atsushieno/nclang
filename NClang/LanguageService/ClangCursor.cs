@@ -508,10 +508,20 @@ namespace NClang
 		/// <c>true</c> if the traversal was terminated prematurely by the visitor returning
 		/// <c>ChildVisitResult.Break</c>.
 		/// </returns>
-		public bool VisitChildren<T> (Func<ClangCursor,ClangCursor,T,ChildVisitResult> visitor, T clientData)
+		public bool VisitChildren<T> (Func<ClangCursor, ClangCursor, T, ChildVisitResult> visitor, T clientData)
 		{
-            // clientData is holding by function closure.
-            var ret = LibClang.clang_visitChildren(source, (cursor, parent, z) => visitor(new ClangCursor(cursor), new ClangCursor(parent), clientData), IntPtr.Zero);
+			// clientData is holding by function closure.
+			Exception managedError = null;
+			var ret = LibClang.clang_visitChildren (source, (cursor, parent, z) => {
+				try {
+					return visitor (new ClangCursor (cursor), new ClangCursor (parent), clientData);
+				} catch (Exception ex) {
+					managedError = ex;
+					return ChildVisitResult.Break;
+				}
+			}, IntPtr.Zero);
+			if (managedError != null)
+				throw managedError;
 			return ret != 0;
 		}
 
@@ -938,7 +948,7 @@ namespace NClang
 		/// Given a CXCursor_ModuleImportDecl cursor, return the associated module.
 		/// </summary>
 		public ClangModule Module {
-			get { return new ClangModule (LibClang.clang_Cursor_getModule (source)); }
+			get { return ClangModule.Get (LibClang.clang_Cursor_getModule (source)); }
 		}
 
 		// HighLevelAPI

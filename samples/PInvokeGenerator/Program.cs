@@ -133,13 +133,17 @@ namespace PInvokeGenerator
 								  ToTypeName (cursor.CursorType) :
 								  members.FirstOrDefault (m => m.Line == typeCursor.Location.FileLocation.Line && m.Column == typeCursor.Location.FileLocation.Column && m.SourceFile == typeCursor.Location.FileLocation.File.FileName)?.Name ??
 								  ToTypeName (cursor.CursorType);
-						current.Fields.Add (new Variable () {
+						var variable = new Variable () {
 							Type = type,
 							TypeDetails = GetTypeDetails (cursor.CursorType),
 							ArraySize = cursor.CursorType.ArraySize,
 							SizeOf = cursor.CursorType.SizeOf,
 							Name = cursor.Spelling
-						});
+						};
+						if (current == null)
+							Console.Error.WriteLine ($"[warn] {cursor.Spelling}: globally declared fields are ignored");
+						else
+							current.Fields.Add (variable);
 						return ChildVisitResult.Continue;
 					}
 					if (cursor.Kind == CursorKind.StructDeclaration || cursor.Kind == CursorKind.UnionDeclaration || cursor.Kind == CursorKind.EnumDeclaration) {

@@ -7,6 +7,9 @@ namespace NClang
 
 	public class ClangModule : ClangObject
 	{
+		public static ClangModule Get (IntPtr handle) =>
+			handle == IntPtr.Zero ? null : new ClangModule (handle);
+		
 		public ClangModule (IntPtr handle)
 			: base (handle)
 		{
@@ -17,7 +20,7 @@ namespace NClang
 		}
 
 		public ClangModule Parent {
-			get { return new ClangModule (LibClang.clang_Module_getParent (Handle)); }
+			get { return ClangModule.Get (LibClang.clang_Module_getParent (Handle)); }
 		}
 
 		public string Name {
