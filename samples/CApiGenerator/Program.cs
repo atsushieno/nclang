@@ -76,7 +76,7 @@ namespace CApiGenerator
 				else if (arg == "--only-explicit")
 					opts.OnlyExplicit = true;
 				else if (arg.StartsWith ("--match:", StringComparison.Ordinal))
-					opts.FileMatches.Add (new Regex (arg.Substring (8)));
+					opts.FileMatches.Add (arg.Substring (8));
 				else if (arg.Contains (Path.DirectorySeparatorChar) || arg.Contains (Path.AltDirectorySeparatorChar))
 					foreach (var file in Directory.GetFiles (Path.GetDirectoryName (arg), Path.GetFileName (arg)))
 						opts.Sources.Add (file);
@@ -103,7 +103,7 @@ namespace CApiGenerator
 		public List<string> ClangArgs = new List<string> ();
 		public bool OnlyExplicit;
 		public List<string> Sources = new List<string> ();
-		public List<Regex> FileMatches = new List<Regex> ();
+		public List<string> FileMatches = new List<string> ();
 
 		public virtual bool ShouldGenerateCodeFor (NamedConstruct obj)
 		{
@@ -115,7 +115,7 @@ namespace CApiGenerator
 			if (OnlyExplicit)
 				return Sources.Contains (filename);
 			else
-				return !FileMatches.Any () || FileMatches.Any (fm => fm.IsMatch (filename));
+				return !FileMatches.Any () || FileMatches.Any (fm => filename.IndexOf (fm, StringComparison.OrdinalIgnoreCase) >= 0);
 		}
 	}
 }

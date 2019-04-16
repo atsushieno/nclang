@@ -22,8 +22,19 @@ namespace CApiGenerator
 				for (int i = 0; i < tu.DiagnosticCount; i++)
 					Console.Error.WriteLine ("[diag] " + tu.GetDiagnostic (i).Spelling);
 
-				Func<ClangCursor, ClangCursor, IntPtr, ChildVisitResult> func = null;
+				Func<ClangCursor, ClangCursor, IntPtr, ChildVisitResult> func = null, doVisit = null;
+				Exception error = null;
 				func = (cursor, parent, clientData) => {
+					try {
+						return doVisit (cursor, parent, clientData);
+					} catch (Exception ex) {
+						error = ex;
+						return ChildVisitResult.Break;
+					}
+				};
+				doVisit = (cursor, parent, clientData) => {
+					if (cursor.Location.FileLocation?.File?.FileName == null)
+						return ChildVisitResult.Continue; // skip non-file input
 					if (!opts.ShouldParse (cursor.Location.FileLocation?.File?.FileName))
 						return ChildVisitResult.Continue; // skip unmatched files.
 					string id = cursor.Kind + " " + cursor.Location;
@@ -36,8 +47,20 @@ namespace CApiGenerator
 						cursor.VisitChildren (func, IntPtr.Zero);
 						current_namespace = "";
 						return ChildVisitResult.Continue;
+					} else if (cursor.Kind == CursorKind.TypeAliasDeclaration
+					           || cursor.Kind == CursorKind.TypeAliasTemplateDecl
+						   || cursor.Kind == CursorKind.ClassTemplatePartialSpecialization
+						   || cursor.Kind == CursorKind.NonTypeTemplateParameter) {
+						// no need to care.
+						return ChildVisitResult.Continue;
+					} else if (cursor.Kind == CursorKind.CXXFinalAttribute) {
+						// "class XXX final"
+						return ChildVisitResult.Continue;
 					} else if (cursor.Kind == CursorKind.ClassDeclaration
-						 || cursor.Kind == CursorKind.ClassTemplate) {
+						 || cursor.Kind == CursorKind.ClassTemplate
+						 // FIXME: examine if they should apply here...
+						 || cursor.Kind == CursorKind.StructDeclaration
+						 || cursor.Kind == CursorKind.UnionDeclaration) {
 						current_type_parameters = cursor.Kind == CursorKind.ClassTemplate ? new List<TypeParameter> () : null;
 						current = new ClassDeclaration () {
 							Namespace = current_namespace,
@@ -58,7 +81,7 @@ namespace CApiGenerator
 							current.BaseType = cursor.Spelling;
 						return ChildVisitResult.Continue;
 					} else if (cursor.Kind == CursorKind.TemplateTypeParameter) {
-						Console.Error.WriteLine ($"--- [template type parameter] {cursor.Spelling} {cursor.TemplateCursorKind} | {cursor.SpecializedCursorTemplate.Spelling} at {cursor.Location.SpellingLocation}");
+						Console.Error.WriteLine ($"    --- <{cursor.Spelling}> {cursor.TemplateCursorKind} | [{cursor.SpecializedCursorTemplate.Spelling}] at {cursor.Location.SpellingLocation}");
 						if (current_type_parameters != null)
 							current_type_parameters.Add (new TypeParameter {
 								Name = cursor.Spelling,
@@ -151,14 +174,16 @@ namespace CApiGenerator
 							// they are safe to ignore
 							return ChildVisitResult.Continue;
 						default:
-							Console.Error.WriteLine ($"{cursor.Location.SpellingLocation} [{cursor.Kind}] {cursor.Spelling}");
+							Console.Error.WriteLine ($"{cursor.Location.SpellingLocation} Unhandled token: [{cursor.Kind}] {cursor.Spelling}");
 							break;
 						}
 					}
 
-					return ChildVisitResult.Recurse;
+					return ChildVisitResult.Continue;
 				};
 				tu.GetCursor ().VisitChildren (func, IntPtr.Zero);
+				if (error != null)
+					throw error;
 			}
 
 			return members;

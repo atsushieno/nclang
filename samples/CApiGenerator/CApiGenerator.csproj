@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>net462</TargetFrameworks>
-        <OutputType>Library</OutputType>
+        <OutputType>Exe</OutputType>
         <RootNamespace>CApiGenerator</RootNamespace>
         <AssemblyName>CApiGenerator</AssemblyName>
         <DebugType>full</DebugType>
