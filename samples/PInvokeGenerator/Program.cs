@@ -7,6 +7,26 @@ using System.Text.RegularExpressions;
 
 namespace PInvokeGenerator
 {
+	static class Extensions
+	{
+		public static int GetLine (this ClangCursor cursor)
+		{
+			var loc = cursor.Location.FileLocation;
+			return loc?.Line ?? -1;
+		}
+		
+		public static int GetColumn (this ClangCursor cursor)
+		{
+			var loc = cursor.Location.FileLocation;
+			return loc?.Column ?? -1;
+		}
+		
+		public static string GetFile (this ClangCursor cursor)
+		{
+			var loc = cursor.Location.FileLocation;
+			return loc?.File?.FileName;
+		}
+	}
 	class Driver
 	{
 		public static void Main (string [] args)
@@ -22,6 +42,7 @@ namespace PInvokeGenerator
 		List<string> sources = new List<string> ();
 		List<TypeDef> usings = new List<TypeDef> ();
 		bool PreferStringOverByteArray;
+		bool UnknownAliasAsIntPtr;
 
 		void Run (string [] args)
 		{
@@ -64,6 +85,8 @@ namespace PInvokeGenerator
 					type_scope = "public";
 				else if (arg == "--prefer-string-over-byte-array")
 					PreferStringOverByteArray = true;
+				else if (arg == "--unknown-alias-as-pointer")
+					UnknownAliasAsIntPtr = true;
 				else
 					sources.Add (arg);
 			}
@@ -89,12 +112,21 @@ namespace PInvokeGenerator
 				for (int i = 0; i < tu.DiagnosticCount; i++)
 					Console.Error.WriteLine ($"[diag] {tu.GetDiagnostic (i).Location}: {tu.GetDiagnostic (i).Spelling}");
 
-				Func<ClangCursor, ClangCursor, IntPtr, ChildVisitResult> func = null;
+				Exception error = null;
+				Func<ClangCursor, ClangCursor, IntPtr, ChildVisitResult> func = null, doVisit = null;
 				func = (cursor, parent, clientData) => {
+					try {
+						return doVisit (cursor, parent, clientData);
+					} catch (Exception ex) {
+						error = ex;
+						return ChildVisitResult.Break;
+					}
+				};
+				doVisit = (cursor, parent, clientData) => {
 					// skip ignored file.
-					if (onlyExplicit && !sources.Contains (cursor.Location.FileLocation.File.FileName))
+					if (onlyExplicit && !sources.Contains (cursor.GetFile ()))
 						return ChildVisitResult.Continue;
-					if (fileMatches.Any () && !fileMatches.Any (fm => fm.IsMatch (cursor.Location.FileLocation.File.FileName)))
+					if (fileMatches.Any () && !fileMatches.Any (fm => fm.IsMatch (cursor.GetFile ())))
 						return ChildVisitResult.Continue;
 
 					// FIXME: this doesn't work.
@@ -102,7 +134,7 @@ namespace PInvokeGenerator
 						Console.Error.WriteLine ("[diag] Include File " + cursor.IncludedFile);
 						idx.ParseTranslationUnit (cursor.IncludedFile.FileName, null, null, TranslationUnitFlags.None).GetCursor ().VisitChildren (func, IntPtr.Zero);
 					} else if (cursor.Kind == CursorKind.TypedefDeclaration) {
-						if (cursor.Location.FileLocation.File != null) {
+						if (cursor.GetFile () != null) {
 							var alias = ToTypeName (cursor.CursorType);
 							InsideUsingDeclaration = true;
 							if (usings.All (u => u.Alias != alias)) {
@@ -138,7 +170,7 @@ namespace PInvokeGenerator
 						var typeCursor = cursor.CursorType.TypeDeclaration;
 						var type = !string.IsNullOrEmpty (typeCursor.DisplayName) ?
 								  ToTypeName (cursor.CursorType) :
-								  members.FirstOrDefault (m => m.Line == typeCursor.Location.FileLocation.Line && m.Column == typeCursor.Location.FileLocation.Column && m.SourceFile == typeCursor.Location.FileLocation.File.FileName)?.Name ??
+								  members.FirstOrDefault (m => m.Line == typeCursor.GetLine () && m.Column == typeCursor.GetColumn () && m.SourceFile == typeCursor.GetFile ())?.Name ??
 								  ToTypeName (cursor.CursorType);
 						var variable = new Variable () {
 							Type = type,
@@ -173,7 +205,7 @@ namespace PInvokeGenerator
 								     .Select (i => cursor.GetArgument (i));
 
 						// function with va_list isn't supported in P/Invoke.
-						if (fargs.Any (a => a.CursorType.Spelling == "va_list")) {
+						if (fargs.Any (a => a.CursorType?.Spelling == "va_list")) {
 							Console.Error.WriteLine ($"Cannot bind {cursor.DisplayName} because it contains va_list.");
 							return ChildVisitResult.Continue;
 						}
@@ -216,15 +248,19 @@ namespace PInvokeGenerator
 				if (mbr != null)
 					mbr.Name = u.Alias;
 				else {
-					// FIXME: this does not seem to work
+					// FIXME: hacky matching.
 					var del = delegates.FirstOrDefault (d => u.Managed.EndsWith (d.TypeNameForDeclaration, StringComparison.Ordinal));
 					if (del != null) {
 						del.TypeNameForDeclaration = u.Alias;
 						del.TypeNameForReference = "Delegates." + u.Alias;
 						output.WriteLine ("using {0} = {1}; // {2} ({3},{4})", u.Managed.Substring (Namespace.Length + 1), WithNamespace (del.TypeNameForReference), u.SourceFileName, u.Line, u.Column);
+					} else {
+						if (UnknownAliasAsIntPtr)
+							output.WriteLine ("using {0} = System.IntPtr;", u.Alias);
+						else
+							Console.Error.WriteLine (
+								$"[warn] typedef \"{u.Alias}\" is being missed. It should be mapped to \"{u.ActualInC}\", but \"{u.Managed}\" did not match anything. (Declared at {u.SourceFile}({u.Line}, {u.Column}).)");
 					}
-					else
-						Console.Error.WriteLine ($"[warn] typedef \"{u.Alias}\" is being missed. It should be mapped to \"{u.ActualInC}\", but \"{u.Managed}\" did not match anything. (Declared at {u.SourceFile}({u.Line}, {u.Column}).)");
 				}
 			}
 			// some code references function pointer types without "Delegates.", so workaround that with hacky "Delegates." addition.
